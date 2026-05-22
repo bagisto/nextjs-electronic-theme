@@ -1,0 +1,108 @@
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import clsx from "clsx";
+import { forwardRef } from "react";
+import { isArray } from '@/utils/type-guards';
+interface InputTextProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
+  className?: string;
+  label: string;
+  name: string;
+  errorMsg?: string | string[] | Record<string, unknown>;
+  defaultValue?: string;
+  typeName?: string;
+  placeholder?: string;
+  size?: "sm" | "md" | "lg";
+  labelPlacement?: "inside" | "outside" | "outside-left";
+  showAsterisk?: boolean; // Show asterisk if true
+}
+
+const sizeClasses = {
+  sm: "text-sm px-2 py-1",
+  md: "text-base px-3 py-2",
+  lg: "text-lg px-4 py-3",
+};
+
+const InputText = forwardRef<HTMLInputElement, InputTextProps>(
+  (
+    {
+      className,
+      label,
+      name,
+      errorMsg,
+      defaultValue,
+      typeName = "text",
+      placeholder,
+      size = "sm",
+      labelPlacement = "inside",
+      required,
+      showAsterisk = true,
+      ...rest
+    },
+    ref
+  ) => {
+    const hasError = Boolean(errorMsg);
+
+    const borderColorClass = hasError
+      ? "border-red-500"
+      : "border-gray-300 dark:border-gray-500";
+
+    return (
+      <div className={clsx("max-w-full mb-2.5", className)}>
+        {labelPlacement !== "inside" && (
+          <label
+            className={clsx(
+              "px-1 mb-1 block font-medium text-black dark:text-white"
+            )}
+            htmlFor={name}
+          >
+            {label} {showAsterisk && <span className="text-red-500">*</span>}
+          </label>
+        )}
+        <div className="relative">
+          <input
+            ref={ref}
+            className={clsx(
+              "w-full border bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:border-neutral-400 dark:focus:ring-neutral-500 dark:focus:border-neutral-500 transition-all duration-200",
+              borderColorClass === "border-red-500" ? "border-red-500 dark:border-red-500" : "border-neutral-300 dark:border-neutral-700",
+              sizeClasses[size],
+              "rounded-lg",
+              labelPlacement === "inside"
+                ? "placeholder-input-color dark:placeholder-selected-color-dark"
+                : ""
+            )}
+            defaultValue={defaultValue}
+            id={name}
+            name={name}
+            placeholder={labelPlacement === "inside" ? label : placeholder}
+            type={typeName}
+            required={required}
+            {...rest}
+          />
+          {hasError && (
+            <ul className="absolute -bottom-8 py-2 text-sm text-red-500">
+              {isArray(errorMsg) ? (
+                (errorMsg as string[]).map((msg, index) => (
+                  <li key={index} className="flex items-center gap-1">
+                    <ExclamationCircleIcon className="h-5 w-5" />
+                    {msg}
+                  </li>
+                ))
+              ) : (
+                <li className="flex items-center gap-1 text-xs sm:text-sm">
+                  <ExclamationCircleIcon className="size-[18px]" />
+                  {typeof errorMsg === "string"
+                    ? errorMsg
+                    : JSON.stringify(errorMsg)}
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      </div>
+    );
+  }
+);
+
+InputText.displayName = "InputText";
+
+export default InputText;

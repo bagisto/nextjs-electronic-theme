@@ -1,0 +1,382 @@
+@import "tailwindcss";
+@plugin '../config/hero.ts';
+@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+
+html,
+body {
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 transparent;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background-color: #6b7280;
+  border-radius: 9999px;
+}
+
+.dark html::-webkit-scrollbar-thumb,
+.dark body::-webkit-scrollbar-thumb {
+  background-color: #d4d4d4;
+}
+
+@theme {
+  /* Custom breakpoints */
+  --breakpoint-xxs: 375px;
+  --breakpoint-xs: 425px;
+  --breakpoint-xss: 525px;
+  --breakpoint-400: 400px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1610px;
+  --breakpoint-3xl: 1640px;
+  --breakpoint-1366: 1366px;
+  /* Custom spacing */
+  --spacing-7_5: 30px;
+  --spacing-30: 120px;
+  --spacing-92_5: 23.125rem;
+  /* Font sizes */
+  --font-size-xxs: 13px;
+  /* Font family */
+  --font-family-archivo: var(--font-archivo);
+  --font-archivo: var(--font-archivo);
+}
+
+/* GLOBAL VARIABLES */
+:root {
+  /* Font families */
+  font-family: var(--font-archivo);
+  --background: #ffffff;
+  --foreground: #000;
+  --color-selected-black: #00000099;
+
+  /* Design System Primary Colors */
+  --color-coral: #FF6B4A;
+  --color-salmon: #FF7C5C;
+  --color-pink: #FFB3BA;
+  --color-beige: #F5E6D3;
+  --color-sky-blue: #87CEEB;
+
+  /* Neutral Colors */
+  --color-white: #FFFFFF;
+  --color-light-gray: #F8F8F8;
+  --color-medium-gray: #6B7280;
+  --color-dark-gray: #1F2937;
+  --color-black: #000000;
+
+  /* Accent Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+
+  --hero-background: #ffffff;
+  --hero-foreground: #000;
+  --dark-grey: #404040;
+  --selected-color: #E3ECFF;
+  --selected-color-dark: #555b69;
+  --selected-bottom-dark: #95B6FF;
+  --selected-bg-bottom-dark: #314779;
+  --input-color: #B3B3B3;
+
+  /* Typography Scale */
+  --font-size-hero: 64px;
+  --font-size-h1: 48px;
+  --font-size-h2: 36px;
+  --font-size-h3: 30px;
+  --font-size-h4: 24px;
+  --font-size-body-lg: 18px;
+  --font-size-body: 16px;
+  --font-size-body-sm: 14px;
+  --font-size-caption: 12px;
+  --font-size-xxs: 13px;
+
+  /* Line Heights */
+  --line-height-headline: 1.2;
+  --line-height-heading: 1.3;
+  --line-height-body: 1.6;
+  --line-height-caption: 1.4;
+
+  /* Spacing - Base 4px */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --spacing-4xl: 96px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
+  --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+  /* font size  */
+  /* Spacing */
+  --space-30: 120px;
+  --space-7_5: 30px;
+  --space-92_5: 23.125rem;
+
+  /* Screens (breakpoints) */
+  --screen-xxs: 360px;
+  --screen-xs: 425px;
+  --screen-xss: 525px;
+  --screen-400: 400px;
+  --screen-sm: 640px;
+  --screen-md: 768px;
+  --screen-lg: 1024px;
+  --screen-xl: 1280px;
+  --screen-2xl: 1610px;
+  --screen-3xl: 1640px;
+  --screen-1366: 1366px;
+}
+
+.dark {
+  --background: #171717;
+  --foreground: #ffffff;
+
+  --hero-background: #171717;
+  --hero-foreground: #ffffff;
+}
+
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-font-color: var(--font-color);
+  --color-selected-black: var(--color-selected-black);
+
+  --color-dark-grey: var(--dark-grey);
+  --color-selected-color: var(--selected-color);
+  --color-selected-color-dark: var(--selected-color-dark);
+  --color-selected-bottom-dark: var(--selected-bottom-dark);
+  --color-selected-bg-bottom-dark: var(--selected-bg-bottom-dark);
+  --color-input-color: var(--input-color);
+
+  /* Design system colors */
+  --color-coral: var(--color-coral);
+  --color-salmon: var(--color-salmon);
+  --color-pink: var(--color-pink);
+  --color-beige: var(--color-beige);
+  --color-sky-blue: var(--color-sky-blue);
+  --color-white: var(--color-white);
+  --color-light-gray: var(--color-light-gray);
+  --color-medium-gray: var(--color-medium-gray);
+  --color-dark-gray: var(--color-dark-gray);
+  --color-black: var(--color-black);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-error);
+}
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+}
+
+@layer components {
+
+  /* Color utilities */
+  .bg-coral {
+    @apply bg-[#FF6B4A];
+  }
+
+  .bg-salmon {
+    @apply bg-[#FF7C5C];
+  }
+
+  .bg-pink {
+    @apply bg-[#FFB3BA];
+  }
+
+  .bg-beige {
+    @apply bg-[#F5E6D3];
+  }
+
+  .bg-sky-blue {
+    @apply bg-[#87CEEB];
+  }
+
+  .text-coral {
+    @apply text-[#FF6B4A];
+  }
+
+  .text-salmon {
+    @apply text-[#FF7C5C];
+  }
+
+  .border-coral {
+    @apply border-[#FF6B4A];
+  }
+
+  /* Typography utilities */
+  .text-hero {
+    font-size: var(--font-size-hero);
+    font-weight: 700;
+    line-height: var(--line-height-headline);
+  }
+
+  .text-h1 {
+    font-size: var(--font-size-h1);
+    font-weight: 700;
+    line-height: var(--line-height-heading);
+  }
+
+  .text-h2 {
+    font-size: var(--font-size-h2);
+    font-weight: 600;
+    line-height: var(--line-height-heading);
+  }
+
+  .text-h3 {
+    font-size: var(--font-size-h3);
+    font-weight: 600;
+    line-height: var(--line-height-heading);
+  }
+
+  .text-h4 {
+    font-size: var(--font-size-h4);
+    font-weight: 600;
+    line-height: var(--line-height-heading);
+  }
+
+  .text-body-lg {
+    font-size: var(--font-size-body-lg);
+    font-weight: 400;
+    line-height: var(--line-height-body);
+  }
+
+  .text-body {
+    font-size: var(--font-size-body);
+    font-weight: 400;
+    line-height: var(--line-height-body);
+  }
+
+  .text-body-sm {
+    font-size: var(--font-size-body-sm);
+    font-weight: 400;
+    line-height: var(--line-height-body);
+  }
+
+  .text-caption {
+    font-size: var(--font-size-caption);
+    font-weight: 400;
+    line-height: var(--line-height-caption);
+  }
+
+  /* Rounded utilities */
+  .rounded-sm {
+    border-radius: var(--radius-sm);
+  }
+
+  .rounded-md {
+    border-radius: var(--radius-md);
+  }
+
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+
+  .placeholder-input-color::placeholder {
+    color: var(--input-color);
+  }
+
+  .dark .placeholder-selected-color-dark::placeholder {
+    color: var(--selected-color-dark);
+  }
+
+  .mobile-heading h2 {
+    @apply sticky bg-white z-50 dark:bg-background top-0;
+  }
+
+  .prose h1 {
+    margin: 12px 0 !important;
+    font-family: Archivo, sans-serif !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+  }
+
+  .prose p {
+    color: var(--color-selected-black) !important;
+    font-weight: 300 !important;
+  }
+
+  .dark .prose p {
+    color: white !important;
+    font-weight: 300 !important;
+  }
+
+  .margin-t {
+    margin-top: -9px;
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .image-carousel-aspect {
+    aspect-ratio: 1.72;
+  }
+
+  @media (min-width: 768px) {
+    .image-carousel-aspect {
+      aspect-ratio: 1.98;
+    }
+  }
+
+  /* Scrollbar hide utility for horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
