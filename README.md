@@ -1,7 +1,3 @@
-# nextjs-electronic-theme
-
-A modern electronics eCommerce theme built with **Bagisto Headless Commerce** and **Next.js**, featuring a responsive UI, fast performance, product-focused layouts, and a scalable storefront architecture for electronic and gadget stores.
-
 <p align="center">
     <a href="https://bagisto.com/en/headless-ecommerce/">Website</a> | <a href="https://bagisto.com/en/bagisto-headless-ecommerce-installation-guide/">Documentation</a> | <a href="https://forums.bagisto.com/">Forums</a> | <a href="https://www.facebook.com/groups/bagisto/">Community</a>
 </p>
@@ -15,9 +11,9 @@ A modern electronics eCommerce theme built with **Bagisto Headless Commerce** an
     <a href="https://packagist.org/packages/bagisto/bagisto"><img src="https://poser.pugx.org/bagisto/bagisto/license.svg" alt="License"></a>
 </p>
 
-## Overview
+## Bagisto Headless Electronic Theme
 
-A **headless eCommerce theme** built with **Next.js** and powered by **Bagisto**, designed specifically for electronics and gadget retailers. This theme delivers exceptional performance and a modern shopping experience optimized for tech products.
+A **headless electronic eCommerce theme** built with **Next.js** and powered by **Bagisto**, designed specifically for electronics and gadget retailers. This theme delivers exceptional performance and a modern shopping experience optimized for tech products.
 
 Through layered caching and optimized rendering strategies, it consistently achieves a **100/100 Core Web Vitals score**, delivering lightning-fast performance and seamless shopping experiences.
 
