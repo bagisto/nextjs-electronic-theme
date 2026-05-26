@@ -157,8 +157,8 @@ export default function Stepper(
         <h1 className="text-xl px-2 font-semibold block lg:hidden">Checkout</h1>
       </header>
 
-      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-500 dark:scrollbar-thumb-neutral-300 h-[calc(100dvh-300px)] overflow-y-auto lg:h-[calc(100dvh-124px)]">
-        <div className="flex h-full flex-col gap-y-8 pl-2 pr-6 sm:px-3 sm:pr-10">
+      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-500 dark:scrollbar-thumb-neutral-300 h-[calc(100dvh-200px)] overflow-y-auto lg:h-[calc(100dvh-124px)]">
+        <div className="flex h-full flex-col gap-y-8 pl-2 pr-6 sm:px-3 sm:pr-10" style={{ marginTop: "20px" }}>
           {steps.map((step) => (
             <StepItem key={step.id} step={step} />
           ))}

@@ -170,13 +170,17 @@ export const useCustomerProfile = (): UseCustomerProfileReturn => {
         }
 
         try {
+            const base64Data = imageBase64.includes(",")
+                ? imageBase64.split(",")[1]
+                : imageBase64;
+
             await updateProfileImageMutation({
                 variables: {
                     input: {
                         firstName: profile?.firstName ?? user?.firstName ?? "",
                         lastName: profile?.lastName ?? user?.lastName ?? "",
                         email: profile?.email ?? user?.email ?? "",
-                        image: imageBase64,
+                        image: base64Data,
                     }
                 }
             });

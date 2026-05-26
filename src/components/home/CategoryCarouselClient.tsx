@@ -56,7 +56,7 @@ export default function CategoryCarouselClient({
   };
 
   return (
-    <section className="w-full mt-[58px] py-[70px] bg-[#F5F7F9] dark:bg-neutral-900">
+    <section className="w-full overflow-x-clip mt-[58px] py-[70px] bg-[#F5F7F9] dark:bg-neutral-900">
       <div className="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8">
         <div className="mb-6 md:mb-8 flex items-center justify-between">
           <Heading size={{ mobile: "text-xl", laptop: "text-2xl" }}>Popular Categories</Heading>
@@ -115,7 +115,7 @@ export default function CategoryCarouselClient({
             <button
               onClick={() => scroll("right")}
               aria-label="Scroll categories right"
-              className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-800 shadow-md text-neutral-700 dark:text-neutral-200 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
+              className="md:hidden absolute right-1 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 dark:border-neutral-600 bg-white dark:bg-neutral-800 shadow-md text-neutral-700 dark:text-neutral-200 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer"
             >
               <ArrowRightIcon className="h-5 w-5" />
             </button>

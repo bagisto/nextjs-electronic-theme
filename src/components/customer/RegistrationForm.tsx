@@ -135,7 +135,7 @@ export default function RegistrationForm() {
           </div>
 
           {/* Email + Phone side by side */}
-          <div className="flex gap-3">
+          <div className="flex lg:flex-row flex-col gap-3">
             <div className="flex-1 min-w-0">
               <label htmlFor="signup-email" className={labelBase}>
                 Email <span className="text-red-500">*</span>
@@ -224,7 +224,7 @@ export default function RegistrationForm() {
           </div>
 
           {/* Password + Confirm Password side by side */}
-          <div className="flex gap-3">
+          <div className="flex lg:flex-row flex-col gap-3">
             <div className="flex-1 min-w-0">
               <label htmlFor="signup-password" className={labelBase}>
                 Password <span className="text-red-500">*</span>

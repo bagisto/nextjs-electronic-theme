@@ -284,6 +284,12 @@ export interface UpdateCartItemVariables {
   // token removed - now passed in Authorization header
   cartItemId: number;
   quantity: number;
+  groupedQty?: string;
+  bundleOptions?: string;
+  bundleOptionQty?: string;
+  links?: number[];
+  booking?: string;
+  bookingNote?: string;
 }
 export interface UpdateCartItemOperation {
   data: UpdateCartItemData;

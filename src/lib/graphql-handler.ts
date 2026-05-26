@@ -152,6 +152,12 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     variableSchema: {
       cartItemId: { type: "number", required: true },
       quantity: { type: "number", required: true },
+      groupedQty: { type: "string", required: false },
+      bundleOptions: { type: "string", required: false },
+      bundleOptionQty: { type: "string", required: false },
+      links: { type: "object", required: false },
+      booking: { type: "string", required: false },
+      bookingNote: { type: "string", required: false },
     },
   },
   CreateUpdateCartItem: {
@@ -161,6 +167,12 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     variableSchema: {
       cartItemId: { type: "number", required: true },
       quantity: { type: "number", required: true },
+      groupedQty: { type: "string", required: false },
+      bundleOptions: { type: "string", required: false },
+      bundleOptionQty: { type: "string", required: false },
+      links: { type: "object", required: false },
+      booking: { type: "string", required: false },
+      bookingNote: { type: "string", required: false },
     },
   },
   GetCartItem: {

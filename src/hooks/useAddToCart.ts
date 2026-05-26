@@ -162,9 +162,21 @@ export const useAddProduct = () => {
   const onUpdateCart = useCallback(async ({
     cartItemId,
     quantity,
+    links,
+    booking,
+    groupedQty,
+    bundleOptions,
+    bundleOptionQty,
+    bookingNote,
   }: {
     cartItemId: number;
     quantity: number;
+    links?: number[];
+    booking?: any;
+    groupedQty?: Record<string, number>;
+    bundleOptions?: Record<string, string[]>;
+    bundleOptionQty?: Record<string, number>;
+    bookingNote?: string;
   }) => {
     if (quantity < 1) {
       showToast("Quantity must be at least 1", "warning");
@@ -173,11 +185,31 @@ export const useAddProduct = () => {
 
     const token = getCartToken();
 
+    const bookingJSON = booking ? JSON.stringify(booking) : undefined;
+    const groupedQtyJSON =
+      groupedQty && Object.keys(groupedQty).length
+        ? JSON.stringify(groupedQty)
+        : undefined;
+    const bundleOptionsJSON =
+      bundleOptions && Object.keys(bundleOptions).length
+        ? JSON.stringify(bundleOptions)
+        : undefined;
+    const bundleOptionQtyJSON =
+      bundleOptionQty && Object.keys(bundleOptionQty).length
+        ? JSON.stringify(bundleOptionQty)
+        : undefined;
+
     try {
       const { data } = await updateCartItemMutation({
         variables: {
           cartItemId,
           quantity,
+          links,
+          booking: bookingJSON,
+          groupedQty: groupedQtyJSON,
+          bundleOptions: bundleOptionsJSON,
+          bundleOptionQty: bundleOptionQtyJSON,
+          bookingNote: bookingNote ?? "",
         },
         context: {
           headers: {

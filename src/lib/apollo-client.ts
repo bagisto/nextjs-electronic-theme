@@ -89,9 +89,15 @@ function createApolloClient() {
 
 const getClient = reactCache(createApolloClient);
 
+// Singleton for the browser — reuses the same InMemoryCache across renders
+let browserClient: ReturnType<typeof createApolloClient> | null = null;
+
 export default function initializeApollo() {
   if (typeof window === "undefined") {
     return getClient();
   }
-  return createApolloClient();
+  if (!browserClient) {
+    browserClient = createApolloClient();
+  }
+  return browserClient;
 }

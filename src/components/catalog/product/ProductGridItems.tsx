@@ -22,6 +22,7 @@ const imageUrl = getImageUrl(product?.baseImageUrl, baseUrl, NOT_IMAGE);
         price={price}
         specialPrice={product?.minimumPrice}
         product={product}
+        priority={index < 5}
       />
     );
   });

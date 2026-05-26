@@ -86,8 +86,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
 
   const handleUpdateQuantity = async (cartItemId: string, currentQty: number, delta: number) => {
-    const newQty = currentQty + delta;
-    if (newQty < 1) return; 
+    const newQty = Number(currentQty) + delta;
+    if (!Number.isFinite(newQty) || newQty < 1) return;
 
     setLoadingItemId(cartItemId);
     setLoadingDirection(delta > 0 ? 'increase' : 'decrease');
@@ -211,6 +211,10 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 const isItemLoadingIncrease = isItemLoading && loadingDirection === 'increase';
 
                 const currencyCode = (cartObj as any)?.currencyCode || "USD";
+                const itemType = item?.node?.type;
+                const canChangeQty = item?.node?.canChangeQty !== false;
+                const isBookingNeedsReselect =
+                  itemType === "booking" && !canChangeQty;
 
                 return (
                   <li key={i} className="flex gap-4 group">
@@ -254,42 +258,57 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       </div>
 
                       <div className="flex items-center justify-between mt-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Qty</span>
-                          <div className="flex items-center h-9 px-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
-                            <button
-                              onClick={() => handleUpdateQuantity(itemId, item?.node?.quantity, -1)}
-                              disabled={isItemLoading || isItemRemoving || item?.node?.quantity <= 1}
-                              className="w-7 h-7 flex items-center cursor-pointer justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors disabled:opacity-30"
-                              aria-label="Decrease quantity"
-                            >
-                              {isItemLoadingDecrease ? (
-                                <div className="w-3 h-3 border border-neutral-400 border-t-transparent rounded-full animate-spin" />
-                              ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
-                                </svg>
-                              )}
-                            </button>
-                            <span className="w-8 text-center text-sm text-neutral-900 dark:text-white">
-                              {item?.node?.quantity}
+                        {isBookingNeedsReselect ? (
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                              Qty {item?.node?.quantity}
                             </span>
-                            <button
-                              onClick={() => handleUpdateQuantity(itemId, item?.node?.quantity, 1)}
-                              disabled={isItemLoading || isItemRemoving}
-                              className="w-7 h-7 flex items-center cursor-pointer justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors disabled:opacity-30"
-                              aria-label="Increase quantity"
+                            <Link
+                              href={merchandiseUrl}
+                              onClick={onClose}
+                              className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 underline-offset-2 hover:underline"
                             >
-                              {isItemLoadingIncrease ? (
-                                <div className="w-3 h-3 border border-neutral-400 border-t-transparent rounded-full animate-spin" />
-                              ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-                                </svg>
-                              )}
-                            </button>
+                              Edit booking
+                            </Link>
                           </div>
-                        </div>
+                        ) : (
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Qty</span>
+                            <div className="flex items-center h-9 px-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+                              <button
+                                onClick={() => handleUpdateQuantity(itemId, item?.node?.quantity, -1)}
+                                disabled={isItemLoading || isItemRemoving || item?.node?.quantity <= 1}
+                                className="w-7 h-7 flex items-center cursor-pointer justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors disabled:opacity-30"
+                                aria-label="Decrease quantity"
+                              >
+                                {isItemLoadingDecrease ? (
+                                  <div className="w-3 h-3 border border-neutral-400 border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
+                                  </svg>
+                                )}
+                              </button>
+                              <span className="w-8 text-center text-sm text-neutral-900 dark:text-white">
+                                {item?.node?.quantity}
+                              </span>
+                              <button
+                                onClick={() => handleUpdateQuantity(itemId, item?.node?.quantity, 1)}
+                                disabled={isItemLoading || isItemRemoving}
+                                className="w-7 h-7 flex items-center cursor-pointer justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors disabled:opacity-30"
+                                aria-label="Increase quantity"
+                              >
+                                {isItemLoadingIncrease ? (
+                                  <div className="w-3 h-3 border border-neutral-400 border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
+                                  </svg>
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         <button
                           onClick={() => handleRemoveItem(itemId)}

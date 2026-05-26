@@ -227,6 +227,17 @@ export function AddToCart({
     ...groupedQuantities,
   };
 
+  const ticketDefaults: Record<string, number> = {};
+  if (bookingInfo?.type === "event") {
+    for (const edge of bookingInfo?.eventTickets?.edges || []) {
+      ticketDefaults[String(edge.node._id)] = 1;
+    }
+  }
+  const effectiveTicketQtys: Record<string, number> = {
+    ...ticketDefaults,
+    ...ticketQtys,
+  };
+
   const toggleLink = (linkId: string | number) => {
     const numericId =
       typeof linkId === "number"
@@ -292,13 +303,13 @@ export function AddToCart({
     bookingInfo,
     bookingSelection,
     bookingNote,
-    ticketQtys,
+    ticketQtys: effectiveTicketQtys,
     slotsLoading: slotMeta.loading,
     noSlotsForDate: slotMeta.noSlotsForDate,
     selectedSlotQty: slotMeta.selectedSlotQty,
   });
 
-  const actionWithVariant = async (data: any) => {
+  const actionWithVariant = async () => {
     setSubmitted(true);
     if (!validation.ok) {
       const msg = validation.message || "Please complete your selection.";
@@ -308,6 +319,8 @@ export function AddToCart({
     }
     setSubmitError("");
 
+    const currentQty = Math.max(1, Number(quantity) || 1);
+
     const pid =
       type === "configurable"
         ? String(selectedVariantId)
@@ -316,7 +329,7 @@ export function AddToCart({
     let bookingPayload: any = undefined;
     if (type === "booking") {
       if (bookingInfo?.type === "event") {
-        bookingPayload = { qty: ticketQtys };
+        bookingPayload = { qty: effectiveTicketQtys };
       } else {
         bookingPayload = bookingSelection;
       }
@@ -358,7 +371,10 @@ export function AddToCart({
     }
 
     const parentQuantity =
-      type === "booking" || type === "grouped" ? 1 : data.quantity;
+      type === "grouped" ||
+      (type === "booking" && bookingInfo?.type === "event")
+        ? 1
+        : currentQty;
 
     onAddToCart({
       productId: pid,
@@ -434,7 +450,7 @@ export function AddToCart({
 
           <BookingProductSelector
             bookingProduct={bookingInfo}
-            ticketQuantities={ticketQtys}
+            ticketQuantities={effectiveTicketQtys}
             onTicketQuantityChange={handleTicketQtyChange}
             selection={bookingSelection}
             onSelectionChange={setBookingSelection}

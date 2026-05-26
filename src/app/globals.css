@@ -379,4 +379,26 @@ body {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Hide scrollbar inside the mobile category drawer */
+  .drawer-scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .drawer-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Body scroll lock while the mobile drawer is open (useBodyScrollLock) */
+  .scroll-locked {
+    overflow: hidden !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    touch-action: none;
+    -webkit-overflow-scrolling: none;
+  }
 }

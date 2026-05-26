@@ -1,4 +1,3 @@
-
 export const encodeJWT = (payload: object): string => {
   try {
     const jsonStr = JSON.stringify(payload);
@@ -6,7 +5,7 @@ export const encodeJWT = (payload: object): string => {
 
     const header = btoa(JSON.stringify({ alg: "none", typ: "JWT" }));
 
-    const token = `${header}.${encodedPayload}`;
+    const token = `${header}.${encodedPayload}.`;
 
     return encodeURIComponent(token);
   } catch (e) {
@@ -15,8 +14,10 @@ export const encodeJWT = (payload: object): string => {
   }
 };
 
-
-export const decodeJWT = <T = any>(token: string, isGuest: boolean = true): T | null => {
+export const decodeJWT = <T = any>(
+  token: string,
+  isGuest: boolean = true,
+): T | null => {
   try {
     if (!isGuest) {
       return { sessionToken: token } as unknown as T;

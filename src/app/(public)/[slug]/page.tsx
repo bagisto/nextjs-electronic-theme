@@ -194,6 +194,9 @@ async function CategoryPLP({
         : { first: ITEMS_PER_PAGE, after: cursor }),
       sortKey: selectedSort.sortKey,
       reverse: selectedSort.reverse,
+    }, {
+      tags: ["categories", `category-${numericId}`],
+      life: "minutes",
     }),
   ]);
 

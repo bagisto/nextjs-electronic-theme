@@ -1,84 +1,85 @@
 "use client";
 
-import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-} from "@heroui/drawer";
-import { useDisclosure } from "@heroui/react";
+import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import BottomNavbar from "./BottomNavbar";
-import { MobileSearchBar } from "./MobileSearch";
 import { useState } from "react";
-
-
-
+import { useBodyScrollLock } from "@utils/hooks/useBodyScrollLock";
 
 export default function MobileMenu({ menu }: { menu: any }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [activeTab, setActiveTab] = useState<
     "home" | "category" | "cart" | "account" | null
-  >(null);
+  >("home");
 
+  const isOpen = activeTab === "category";
+
+  useBodyScrollLock(isOpen);
+
+  const handleClose = () => {
+    setActiveTab(null);
+  };
 
   return (
     <>
       <BottomNavbar
-        onMenuOpen={onOpen}
+        onMenuOpen={() => setActiveTab("category")}
         setActiveTab={setActiveTab}
-        activeTab={activeTab} />
+        activeTab={activeTab}
+      />
 
-      <Drawer
-        backdrop="transparent"
-        hideCloseButton
-        isOpen={isOpen}
-        radius="none"
-        placement="left"
-        onOpenChange={(open) => {
-          onOpenChange();
-          if (!open) {
-            setActiveTab(null);
-          }
-        }}
-        classNames={{
-          base: "z-40",
-          backdrop: "z-[35]",
-          wrapper: "z-40",
-        }}
-      >
-        <DrawerContent
-          className="
-            z-40 bg-white dark:bg-neutral-950
-            h-full
-          "
-        >
-          {(onClose) => (
-            <>
-              <DrawerBody className="px-4 xxs:pt-[76px] xxs:pb-[80px] pt-[66px] pb-[80px] md:pt-[84px] overflow-y-auto bg-white dark:bg-neutral-950">
-                <MobileSearchBar onClose={onClose} />
-                <h1 className="text-2xl text-neutral-900 dark:text-white px-2 font-bold mt-4"> Categories </h1>
-                <ul className="flex w-full flex-col">
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleClose}
+              className="fixed inset-0 z-40 bg-transparent lg:hidden"
+              style={{ top: "64px", bottom: "64px" }}
+            />
+
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed left-0 z-50 w-full max-w-[448px] border-r border-neutral-200 bg-white dark:border-neutral-800 dark:bg-black lg:hidden drawer-scrollbar-hidden"
+              style={{
+                top: "64px",
+                bottom: "64px",
+                width: "100%",
+                maxWidth: "448px",
+                height: "calc(100dvh - 128px)",
+              }}
+            >
+              <div className="h-full overflow-y-auto px-4 py-4 drawer-scrollbar-hidden">
+
+                <h1 className="mt-4 px-2 text-2xl font-semibold text-black dark:text-white">
+                  Category
+                </h1>
+
+                <ul className="mt-2 flex w-full flex-col drawer-scrollbar-hidden">
                   {menu.map((item: any) => (
                     <li
                       key={item.id + item.name}
-                      className="px-2 py-3 text-lg text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white transition-colors duration-200 font-medium"
+                      className="p-2 text-xl text-black dark:text-white"
                     >
                       <Link
                         href={item.slug ? `/${item.slug}` : "/search"}
                         aria-label={`${item?.name}`}
-                        onClick={onClose}
-                        className="cursor-pointer"
+                        onClick={handleClose}
                       >
                         {item.name}
                       </Link>
                     </li>
                   ))}
                 </ul>
-              </DrawerBody>
-            </>
-          )}
-        </DrawerContent>
-      </Drawer>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

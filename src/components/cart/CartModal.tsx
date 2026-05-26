@@ -138,6 +138,9 @@ export default function CartModal({
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                               const baseImage: any = safeParse(item?.node?.baseImage);
+                              const canChangeQty = item?.node?.canChangeQty !== false;
+                              const isBookingNeedsReselect =
+                                item?.node?.type === "booking" && !canChangeQty;
 
                               return (
                                 <li key={i} className="flex w-full flex-col">
@@ -184,21 +187,36 @@ export default function CartModal({
                                       />
                                       <div className="flex items-center gap-x-2">
                                         <DeleteItemButton item={item} />
-                                        <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
-                                          <EditItemQuantityButton
-                                            item={item}
-                                            type="minus"
-                                          />
-                                          <p className="w-6 text-center">
-                                            <span className="w-full text-sm">
-                                              {item?.node?.quantity}
+                                        {isBookingNeedsReselect ? (
+                                          <div className="ml-auto flex items-center gap-2">
+                                            <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                                              Qty {item?.node?.quantity}
                                             </span>
-                                          </p>
-                                          <EditItemQuantityButton
-                                            item={item}
-                                            type="plus"
-                                          />
-                                        </div>
+                                            <Link
+                                              href={merchandiseUrl}
+                                              onClick={onClose}
+                                              className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 underline-offset-2 hover:underline"
+                                            >
+                                              Edit booking
+                                            </Link>
+                                          </div>
+                                        ) : (
+                                          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
+                                            <EditItemQuantityButton
+                                              item={item}
+                                              type="minus"
+                                            />
+                                            <p className="w-6 text-center">
+                                              <span className="w-full text-sm">
+                                                {item?.node?.quantity}
+                                              </span>
+                                            </p>
+                                            <EditItemQuantityButton
+                                              item={item}
+                                              type="plus"
+                                            />
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </div>
@@ -298,6 +316,9 @@ export default function CartModal({
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                               const baseImage: any = safeParse(item?.node?.baseImage);
+                              const canChangeQty = item?.node?.canChangeQty !== false;
+                              const isBookingNeedsReselect =
+                                item?.node?.type === "booking" && !canChangeQty;
 
                               return (
                                 <li key={i} className="flex w-full flex-col">
@@ -344,21 +365,36 @@ export default function CartModal({
                                       />
                                       <div className="flex items-center gap-x-2">
                                         <DeleteItemButton item={item} />
-                                        <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
-                                          <EditItemQuantityButton
-                                            item={item}
-                                            type="minus"
-                                          />
-                                          <p className="w-6 text-center">
-                                            <span className="w-full text-sm">
-                                              {item?.node?.quantity}
+                                        {isBookingNeedsReselect ? (
+                                          <div className="ml-auto flex items-center gap-2">
+                                            <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                                              Qty {item?.node?.quantity}
                                             </span>
-                                          </p>
-                                          <EditItemQuantityButton
-                                            item={item}
-                                            type="plus"
-                                          />
-                                        </div>
+                                            <Link
+                                              href={merchandiseUrl}
+                                              onClick={onClose}
+                                              className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 underline-offset-2 hover:underline"
+                                            >
+                                              Edit booking
+                                            </Link>
+                                          </div>
+                                        ) : (
+                                          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
+                                            <EditItemQuantityButton
+                                              item={item}
+                                              type="minus"
+                                            />
+                                            <p className="w-6 text-center">
+                                              <span className="w-full text-sm">
+                                                {item?.node?.quantity}
+                                              </span>
+                                            </p>
+                                            <EditItemQuantityButton
+                                              item={item}
+                                              type="plus"
+                                            />
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </div>

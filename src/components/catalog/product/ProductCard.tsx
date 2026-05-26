@@ -20,6 +20,7 @@ export default function ProductCard({
   specialPrice,
   imageUrl,
   product,
+  priority = false,
 }: {
   currency: string;
   price: string;
@@ -35,6 +36,7 @@ export default function ProductCard({
     compareAtPrice?: string;
     reviews?: { edges?: Array<{ node?: { rating?: number | string } }> };
   };
+  priority?: boolean;
 }) {
   const reviewEdges = product?.reviews?.edges || [];
   const reviewCount = reviewEdges.length;
@@ -91,6 +93,8 @@ export default function ProductCard({
               src={imageUrl}
               width={353}
               height={353}
+              sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+              priority={priority}
               className={`w-full h-full object-contain transition duration-500 ease-in-out group-hover:scale-105`}
             />
           </div>

@@ -388,7 +388,7 @@ export default function CredentialModal({
                 </span>
               </label>
               <Link
-                className="text-sm text-green-600 dark:text-green-400 hover:underline transition-colors duration-200 cursor-pointer"
+                className="text-sm text-green-600 dark:text-green-400 underline transition-colors duration-200 cursor-pointer"
                 href="/customer/forget-password"
                 onClick={onClose}
               >
