@@ -129,6 +129,9 @@ export function AddToCart({
   const { toggleCompare, isInCompare, creating } = useCompare();
   const { showToast } = useCustomToast();
 
+  const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(null);
+  const [optimisticCompare, setOptimisticCompare] = useState<boolean | null>(null);
+
   const [selectedLinks, setSelectedLinks] = useState<number[]>([]);
   const [ticketQtys, setTicketQtys] = useState<Record<string, number>>({});
   const [groupedQuantities, setGroupedQuantities] = useState<
@@ -540,15 +543,24 @@ export function AddToCart({
         {(() => {
           const cleanedProductId = String(productId).split("/").pop() ?? "";
           const targetId = type === "configurable" ? String(selectedVariantId) : cleanedProductId;
-          const isWishlisted = isInWishlist(targetId);
+          const serverWishlisted = isInWishlist(targetId);
+          const isWishlisted = optimisticWishlist !== null ? optimisticWishlist : serverWishlisted;
           const isDisabled = type === "configurable" && !buttonStatus;
 
           return (
             <button
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
                 if (isDisabled || toggling) return;
-                toggleWishlist(targetId);
+                const next = !isWishlisted;
+                setOptimisticWishlist(next);
+                try {
+                  await toggleWishlist(targetId);
+                } catch {
+                  setOptimisticWishlist(!next);
+                } finally {
+                  setOptimisticWishlist(null);
+                }
               }}
               disabled={isDisabled || toggling}
               className={clsx(
@@ -579,15 +591,24 @@ export function AddToCart({
         {(() => {
           const cleanedProductId = String(productId).split("/").pop() ?? "";
           const targetId = type === "configurable" ? String(selectedVariantId) : cleanedProductId;
-          const isCompared = isInCompare(targetId);
+          const serverCompared = isInCompare(targetId);
+          const isCompared = optimisticCompare !== null ? optimisticCompare : serverCompared;
           const isDisabled = type === "configurable" && !buttonStatus;
 
           return (
             <button
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
                 if (isDisabled || creating) return;
-                toggleCompare(targetId);
+                const next = !isCompared;
+                setOptimisticCompare(next);
+                try {
+                  await toggleCompare(targetId);
+                } catch {
+                  setOptimisticCompare(!next);
+                } finally {
+                  setOptimisticCompare(null);
+                }
               }}
               disabled={isDisabled || creating}
               className={clsx(

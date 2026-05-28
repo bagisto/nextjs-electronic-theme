@@ -127,6 +127,19 @@ export function formatDate(dateStr: string): string {
   return dateObj.toLocaleDateString("en-US", options);
 }
 
+export const isShippingRequired = (cartOrItems: any): boolean => {
+  const items = Array.isArray(cartOrItems)
+    ? cartOrItems
+    : cartOrItems?.items?.edges || [];
+
+  if (items.length === 0) return false;
+
+  return items.some((item: any) => {
+    const type = item?.node ? item.node.type : item.type;
+    return type !== "virtual" && type !== "downloadable" && type !== "booking";
+  });
+};
+
 export const isCheckout = (
   items: Array<CartItem>,
   isGuest: boolean,
@@ -138,6 +151,8 @@ export const isCheckout = (
   if (!isArray(items) || items.length === 0) {
     return "/";
   }
+
+  const shippingRequired = isShippingRequired(items);
 
   if (isGuest) {
     const hasRestrictedProduct = items.some(
@@ -158,7 +173,9 @@ export const isCheckout = (
     }
 
     if (isSeclectAddress) {
-      return "/checkout?step=shipping";
+      return shippingRequired
+        ? "/checkout?step=shipping"
+        : "/checkout?step=payment";
     }
 
     if (!email || typeof email === "object") {
@@ -173,6 +190,12 @@ export const isCheckout = (
 
     if (isSelectShipping) {
       return "/checkout?step=payment";
+    }
+
+    if (isSeclectAddress) {
+      return shippingRequired
+        ? "/checkout?step=shipping"
+        : "/checkout?step=payment";
     }
 
     if (!email || typeof email === "object") {
@@ -314,7 +337,7 @@ export const getValidTitle = (text: string) => {
 
 export function safePriceValue(product: ProductData): number {
   if (typeof product?.price === "string") {
-    const priceValue = product?.type === "configurable"
+    const priceValue = product?.type === "configurable" || product?.type === "grouped" || product?.type === "bundle"
       ? product?.minimumPrice ?? "0"
       : product?.price ?? "0";
     return parseFloat(priceValue) || 0;

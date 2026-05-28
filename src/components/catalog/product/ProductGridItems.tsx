@@ -10,7 +10,7 @@ export default function ProductGridItems({
 
 const imageUrl = getImageUrl(product?.baseImageUrl, baseUrl, NOT_IMAGE);
     const price =
-  product?.type === "configurable"
+  product?.type === "configurable" || product?.type === "grouped" || product?.type === "bundle"
     ? product?.minimumPrice ?? "0"
     : product?.price ?? "0";
     const currency = product?.priceHtml?.currencyCode;

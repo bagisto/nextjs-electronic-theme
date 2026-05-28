@@ -8,12 +8,14 @@ export const Review: FC<{
   billingAddress?: AddressDataTypes;
   selectedShippingRate?: string;
   selectedShippingRateTitle?: string;
+  isShippingRequired?: boolean;
 }> = ({
   selectedPaymentTitle,
   shippingAddress,
   billingAddress,
   selectedShippingRate,
   selectedShippingRateTitle,
+  isShippingRequired = true,
 }) => {
   return (
     <OrderReview
@@ -22,6 +24,7 @@ export const Review: FC<{
       selectedShipping={selectedShippingRate}
       selectedShippingRateTitle={selectedShippingRateTitle}
       shippingAddress={shippingAddress}
+      isShippingRequired={isShippingRequired}
     />
   );
 };

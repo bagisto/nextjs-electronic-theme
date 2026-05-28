@@ -10,42 +10,11 @@ export const useCompare = () => {
     const isLoggedIn = !!user?.email;
 
     const { data: compareData, loading, error, refetch } = useQuery(GET_COMPARE_ITEMS, {
-        variables: { first: 10 },
         skip: !isLoggedIn,
     });
 
-    const [createCompareMutation, { loading: creating }] = useMutation(CREATE_COMPARE_ITEM, {
-        onCompleted: (response) => {
-            if (response?.createCompareItem?.compareItem) {
-                showToast("Item added to comparison successfully", "success");
-                refetch();
-            } else {
-                showToast("Failed to add item to comparison", "danger");
-            }
-        },
-        onError: (err: any) => {
-            const message = err?.message || "Something went wrong";
-            if (message === "This product is already in your comparison list" || message.includes("already")) {
-                showToast(message, "warning");
-            } else {
-                showToast(message, "danger");
-            }
-        }
-    });
-
-    const [deleteCompareMutation, { loading: deleting }] = useMutation(DELETE_COMPARE_ITEM, {
-        onCompleted: (response) => {
-            if (response?.deleteCompareItem?.compareItem) {
-                showToast("Item removed from comparison successfully", "success");
-                refetch();
-            } else {
-                showToast("Failed to remove item from comparison", "danger");
-            }
-        },
-        onError: (err: any) => {
-            showToast(err?.message || "Failed to remove item", "danger");
-        }
-    });
+    const [createCompareMutation, { loading: creating }] = useMutation(CREATE_COMPARE_ITEM);
+    const [deleteCompareMutation, { loading: deleting }] = useMutation(DELETE_COMPARE_ITEM);
 
     const compareItems = compareData?.compareItems?.edges?.map(
         ({ node }: { node: { id: string; product: any } }) => ({
@@ -100,21 +69,31 @@ export const useCompare = () => {
             return;
         }
 
-        try {
-            let id = productId;
-            if (typeof id === 'string' && isNaN(Number(id))) {
-                if (id.includes('/')) {
-                    id = id.split('/').pop() || id;
-                }
+        let id = productId;
+        if (typeof id === 'string' && isNaN(Number(id))) {
+            if (id.includes('/')) {
+                id = id.split('/').pop() || id;
             }
+        }
 
-            await createCompareMutation({
-                variables: {
-                    productId: parseInt(id.toString())
-                }
-            });
-        } catch (e) {
-            console.error(e, "error");
+        const result = await createCompareMutation({
+            variables: { productId: parseInt(id.toString()) }
+        });
+
+        if (result.data?.createCompareItem?.compareItem) {
+            showToast("Item added to comparison successfully", "success");
+            refetch();
+        } else if (result.errors?.length) {
+            const message = result.errors[0].message || "Something went wrong";
+            if (message.includes("already")) {
+                showToast(message, "warning");
+            } else {
+                showToast(message, "danger");
+            }
+            throw new Error(message);
+        } else {
+            showToast("Failed to add item to comparison", "danger");
+            throw new Error("Failed to add item to comparison");
         }
     };
 
@@ -124,12 +103,20 @@ export const useCompare = () => {
             return;
         }
 
-        try {
-            await deleteCompareMutation({
-                variables: { id }
-            });
-        } catch (e) {
-            console.error(e, "error");
+        const result = await deleteCompareMutation({
+            variables: { id }
+        });
+
+        if (result.data?.deleteCompareItem?.compareItem) {
+            showToast("Item removed from comparison successfully", "success");
+            refetch();
+        } else if (result.errors?.length) {
+            const message = result.errors[0].message || "Failed to remove item";
+            showToast(message, "danger");
+            throw new Error(message);
+        } else {
+            showToast("Failed to remove item from comparison", "danger");
+            throw new Error("Failed to remove item from comparison");
         }
     };
 

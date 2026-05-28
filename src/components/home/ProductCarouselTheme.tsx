@@ -22,7 +22,7 @@ const Theme = ({ title, description, products }: ProductsSectionProps) => {
          {products.map((item, index) => {
                  const imageUrl = getImageUrl(item?.baseImageUrl, baseUrl, NOT_IMAGE);
                   const ProductPrice =
-                    item?.type === "configurable"
+                    item?.type === "configurable" || item?.type === "grouped" || item?.type === "bundle"
                       ? item?.minimumPrice ?? "0"
                       : item?.price ?? "0";
 

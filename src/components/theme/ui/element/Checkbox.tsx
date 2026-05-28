@@ -8,7 +8,7 @@ const CheckBox = forwardRef<HTMLInputElement, any>(
         <label className="relative flex cursor-pointer items-center gap-x-2">
           <input
             ref={ref}
-            className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-neutral-300 dark:border-neutral-700 shadow transition-all checked:border-neutral-900 checked:bg-neutral-900 dark:checked:border-white dark:checked:bg-white hover:shadow-md"
+            className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-neutral-300 dark:border-neutral-700 shadow transition-all checked:border-neutral-900 checked:bg-neutral-900 dark:checked:border-black dark:checked:bg-black hover:shadow-md"
             defaultChecked={defaultValue}
             id={id}
             name={name}
@@ -32,7 +32,7 @@ const CheckBox = forwardRef<HTMLInputElement, any>(
             </svg>
           </span>
         </label>
-        <span className="ml-3 text-neutral-400 dark:text-white">{label}</span>
+        <span className="ml-3 text-neutral-500 dark:text-white/60">{label}</span>
       </div>
     );
   },

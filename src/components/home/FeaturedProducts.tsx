@@ -28,21 +28,35 @@ const FeaturedProductCard = ({ product }: { product: any }) => {
 
   const imageUrl = getImageUrl(product?.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE;
 
-  const price = product?.type === "configurable" ? product?.minimumPrice : product?.price;
+  const price =
+    product?.type === "configurable" || product?.type === "grouped" || product?.type === "bundle"
+      ? product?.minimumPrice
+      : product?.price;
   const currency = "USD"; // Default currency
   const hasDiscount = product?.compareAtPrice && parseFloat(product.compareAtPrice) > parseFloat(price);
 
-  const inWishlist = isInWishlist(product.id);
-  const inCompare = isInCompare(product.id);
+  const serverInWishlist = isInWishlist(product.id);
+  const serverInCompare = isInCompare(product.id);
+
+  const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(null);
+  const [optimisticCompare, setOptimisticCompare] = useState<boolean | null>(null);
+
+  const inWishlist = optimisticWishlist !== null ? optimisticWishlist : serverInWishlist;
+  const inCompare = optimisticCompare !== null ? optimisticCompare : serverInCompare;
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (isWishlistPending) return;
+    const next = !inWishlist;
+    setOptimisticWishlist(next);
     setIsWishlistPending(true);
     try {
       await toggleWishlist(product.id);
+    } catch {
+      setOptimisticWishlist(!next);
     } finally {
+      setOptimisticWishlist(null);
       setIsWishlistPending(false);
     }
   };
@@ -51,10 +65,15 @@ const FeaturedProductCard = ({ product }: { product: any }) => {
     e.preventDefault();
     e.stopPropagation();
     if (isComparePending) return;
+    const next = !inCompare;
+    setOptimisticCompare(next);
     setIsComparePending(true);
     try {
       await toggleCompare(product.id);
+    } catch {
+      setOptimisticCompare(!next);
     } finally {
+      setOptimisticCompare(null);
       setIsComparePending(false);
     }
   };
@@ -96,7 +115,7 @@ const FeaturedProductCard = ({ product }: { product: any }) => {
           <button
             disabled={isComparePending}
             className={`w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-colors ${isComparePending ? "cursor-wait opacity-70" : "cursor-pointer"} ${inCompare
-                ? "bg-emerald-600 dark:bg-white"
+                ? "bg-emerald-600"
                 : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
               }`}
             onClick={handleCompareClick}
@@ -107,7 +126,7 @@ const FeaturedProductCard = ({ product }: { product: any }) => {
               <InlineSpinner className={inCompare ? "border-white/40 border-t-white dark:border-neutral-300 dark:border-t-neutral-900" : ""} />
             ) : (
               <CompareIcon className={`w-4 h-4 ${inCompare
-                ? "text-white dark:text-neutral-900"
+                ? "text-white"
                 : "text-neutral-600 dark:text-neutral-300"
                 }`} />
             )}
@@ -148,9 +167,9 @@ const FeaturedProductCard = ({ product }: { product: any }) => {
         </div>
 
         <div className="flex items-center gap-2 mt-1.5">
-          {product?.type === "configurable" && (
+          {(product?.type === "configurable" || product?.type === "grouped" || product?.type === "bundle") && (
             <span className="text-xs text-neutral-400 dark:text-neutral-500">
-              From
+              {product?.type === "configurable" ? "From" : "Starting at"}
             </span>
           )}
           {product?.type === "simple" && product.specialPrice ? (

@@ -3,7 +3,7 @@ import { useScrollTo } from "@/hooks/useScrollTo";
 import { Price } from "@components/theme/ui/Price";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { createUrl, safeParse } from "@utils/helper";
+import { createUrl, safeParse, isShippingRequired } from "@utils/helper";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,6 +20,7 @@ export default function CartItemAccordion({
   const cart = Array.isArray(cartItems?.items?.edges)
     ? cartItems?.items?.edges
     : [];
+  const shippingRequired = isShippingRequired(cartItems);
 
   const scrollTo = useScrollTo();
 
@@ -128,22 +129,24 @@ export default function CartItemAccordion({
                   currencyCode={"USD"}
                 />
               </div>
-              <div className="mb-3 flex items-center justify-between pb-1 pt-1">
-                <p className="text-black[60%] font-archivo text-base font-normal dark:text-white">
-                  Shipping
-                </p>
-                {cartItems?.shippingAmount ? (
-                  <Price
-                    amount={cartItems?.shippingAmount || "0"}
-                    className="text-right text-base text-black dark:text-white"
-                    currencyCode={"USD"}
-                  />
-                ) : (
-                  <p className="text-right text-base">
-                    Calculated at Next Step
+              {shippingRequired && (
+                <div className="mb-3 flex items-center justify-between pb-1 pt-1">
+                  <p className="text-black[60%] font-archivo text-base font-normal dark:text-white">
+                    Shipping
                   </p>
-                )}
-              </div>
+                  {cartItems?.shippingAmount ? (
+                    <Price
+                      amount={cartItems?.shippingAmount || "0"}
+                      className="text-right text-base text-black dark:text-white"
+                      currencyCode={"USD"}
+                    />
+                  ) : (
+                    <p className="text-right text-base">
+                      Calculated at Next Step
+                    </p>
+                  )}
+                </div>
+              )}
               <div className="mb-3 flex items-center justify-between pb-1 pt-1">
                 <p className="text-xl font-bold dark:text-white">Total</p>
                 <Price

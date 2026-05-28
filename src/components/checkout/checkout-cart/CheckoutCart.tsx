@@ -4,7 +4,7 @@ import { Price } from "@components/theme/ui/Price";
 import CartItemAccordion from "./CartItemAccordian";
 import { NOT_IMAGE } from "@utils/constants";
 import Link from "next/link";
-import { createUrl, safeParse } from "@utils/helper";
+import { createUrl, safeParse, isShippingRequired } from "@utils/helper";
 type MerchandiseSearchParams = {
   [key: string]: string;
 };
@@ -14,6 +14,7 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
   const cart = Array.isArray(cartItems?.items?.edges)
     ? cartItems?.items?.edges
     : [];
+  const shippingRequired = isShippingRequired(cartItems);
   return (
     <>
       <CartItemAccordion cartItems={cartItems} />
@@ -96,21 +97,23 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
               currencyCode={"USD"}
             />
           </div>
-          <div className="mb-3 flex items-center justify-between pb-1 pt-1">
-            <p className="text-black[60%] font-archivo text-base font-normal">
-              {" "}
-              Shipping
-            </p>
-            {cartItems?.shippingAmount ? (
-              <Price
-                amount={cartItems?.shippingAmount}
-                className="text-right text-base text-black dark:text-white"
-                currencyCode={"USD"}
-              />
-            ) : (
-              <p className="text-right text-base">Calculated at Next Step</p>
-            )}
-          </div>
+          {shippingRequired && (
+            <div className="mb-3 flex items-center justify-between pb-1 pt-1">
+              <p className="text-black[60%] font-archivo text-base font-normal">
+                {" "}
+                Shipping
+              </p>
+              {cartItems?.shippingAmount ? (
+                <Price
+                  amount={cartItems?.shippingAmount}
+                  className="text-right text-base text-black dark:text-white"
+                  currencyCode={"USD"}
+                />
+              ) : (
+                <p className="text-right text-base">Calculated at Next Step</p>
+              )}
+            </div>
+          )}
           <div className="my-6 flex items-center justify-between">
             <p className="font-archivo text-2xl font-normal text-black/[60%] dark:text-white">
               Grand Total

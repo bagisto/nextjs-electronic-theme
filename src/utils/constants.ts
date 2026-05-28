@@ -253,7 +253,7 @@ export const EMAIL_REGEX = /^(?![.-])(?!.*[.-]@)(?!.*\.\.)[a-zA-Z0-9._-]+@[a-zA-
 
 export const IS_VALID_INPUT = /^[a-zA-Z0-9\s]*$/;
 export const IS_VALID_ADDRESS = /^[a-zA-Z0-9\s,\/-]*$/;
-export const IS_VALID_PHONE = /^[0-9]{10}$/;
+export const IS_VALID_PHONE = /^(\+?[0-9]{1,3}[-\s]?)?[0-9]{10}$/;
 
 
 

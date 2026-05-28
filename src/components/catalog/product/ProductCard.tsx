@@ -40,9 +40,13 @@ export default function ProductCard({
 }) {
   const reviewEdges = product?.reviews?.edges || [];
   const reviewCount = reviewEdges.length;
-  const averageRating = reviewCount > 0
-    ? reviewEdges.reduce((sum, edge) => sum + Number(edge?.node?.rating ?? 0), 0) / reviewCount
-    : 0;
+  const averageRating =
+    reviewCount > 0
+      ? reviewEdges.reduce(
+          (sum, edge) => sum + Number(edge?.node?.rating ?? 0),
+          0,
+        ) / reviewCount
+      : 0;
   const roundedRating = Math.round(averageRating);
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlistPending, setIsWishlistPending] = useState(false);
@@ -50,43 +54,68 @@ export default function ProductCard({
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { toggleCompare, isInCompare } = useCompare();
 
-  const inWishlist = isInWishlist(product.id);
-  const inCompare = isInCompare(product.id);
+  const serverInWishlist = isInWishlist(product.id);
+  const serverInCompare = isInCompare(product.id);
+
+  // Optimistic local state: null means "follow server state"
+  const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(
+    null,
+  );
+  const [optimisticCompare, setOptimisticCompare] = useState<boolean | null>(
+    null,
+  );
+
+  const inWishlist =
+    optimisticWishlist !== null ? optimisticWishlist : serverInWishlist;
+  const inCompare =
+    optimisticCompare !== null ? optimisticCompare : serverInCompare;
 
   const handleWishlistClick = async () => {
     if (isWishlistPending) return;
+    const next = !inWishlist;
+    setOptimisticWishlist(next);
     setIsWishlistPending(true);
     try {
       await toggleWishlist(product.id);
+    } catch {
+      // revert on error
+      setOptimisticWishlist(!next);
     } finally {
+      setOptimisticWishlist(null);
       setIsWishlistPending(false);
     }
   };
 
   const handleCompareClick = async () => {
     if (isComparePending) return;
+    const next = !inCompare;
+    setOptimisticCompare(next);
     setIsComparePending(true);
     try {
       await toggleCompare(product.id);
+    } catch {
+      // revert on error
+      setOptimisticCompare(!next);
     } finally {
+      setOptimisticCompare(null);
       setIsComparePending(false);
     }
   };
-
-
-  const hasDiscount = product?.compareAtPrice && parseFloat(product.compareAtPrice) > parseFloat(price);
+  const hasDiscount =
+    product?.compareAtPrice &&
+    parseFloat(product.compareAtPrice) > parseFloat(price);
 
   return (
-    <Grid.Item
-      key={product.id}
-      className="animate-fadeIn flex flex-col"
-    >
+    <Grid.Item key={product.id} className="animate-fadeIn flex flex-col">
       <div
         className="group relative overflow-hidden rounded-2xl bg-[#F7F7F8] dark:bg-neutral-900 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <Link href={`/product/${product.urlKey}`} aria-label={`View ${product.name}`}>
+        <Link
+          href={`/product/${product.urlKey}`}
+          aria-label={`View ${product.name}`}
+        >
           <div className="aspect-square overflow-hidden flex items-center justify-center bg-transparent">
             <NextImage
               alt={product?.name || "Product image"}
@@ -100,13 +129,16 @@ export default function ProductCard({
           </div>
         </Link>
 
-        <div className={`absolute left-3 top-3 flex flex-col gap-2 transition-all duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
+        <div
+          className={`absolute left-3 top-3 flex flex-col gap-2 transition-all duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
+        >
           <button
             disabled={isWishlistPending}
-            className={`w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-colors ${isWishlistPending ? "cursor-wait opacity-70" : "cursor-pointer"} ${inWishlist
-              ? "bg-red-500 hover:bg-red-600"
-              : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-              }`}
+            className={`w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-colors ${isWishlistPending ? "cursor-wait opacity-70" : "cursor-pointer"} ${
+              inWishlist
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            }`}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             aria-busy={isWishlistPending}
             onClick={(e) => {
@@ -116,7 +148,9 @@ export default function ProductCard({
             }}
           >
             {isWishlistPending ? (
-              <InlineSpinner className={inWishlist ? "border-white/40 border-t-white" : ""} />
+              <InlineSpinner
+                className={inWishlist ? "border-white/40 border-t-white" : ""}
+              />
             ) : (
               <WishlistIcon
                 className={`w-4 h-4 ${inWishlist ? "text-white fill-current" : "text-neutral-600 dark:text-neutral-300"}`}
@@ -126,10 +160,11 @@ export default function ProductCard({
           </button>
           <button
             disabled={isComparePending}
-            className={`w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-colors ${isComparePending ? "cursor-wait opacity-70" : "cursor-pointer"} ${inCompare
-              ? "bg-emerald-500 dark:bg-white"
-              : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-              }`}
+            className={`w-9 h-9 rounded-full shadow-md flex items-center justify-center transition-colors ${isComparePending ? "cursor-wait opacity-70" : "cursor-pointer"} ${
+              inCompare
+                ? "bg-emerald-500"
+                : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
+            }`}
             aria-label={inCompare ? "Remove from compare" : "Add to compare"}
             aria-busy={isComparePending}
             onClick={(e) => {
@@ -139,17 +174,28 @@ export default function ProductCard({
             }}
           >
             {isComparePending ? (
-              <InlineSpinner className={inCompare ? "border-white/40 border-t-white dark:border-neutral-300 dark:border-t-neutral-900" : ""} />
+              <InlineSpinner
+                className={
+                  inCompare
+                    ? "border-white/40 border-t-white dark:border-neutral-300 dark:border-t-neutral-900"
+                    : ""
+                }
+              />
             ) : (
-              <CompareIcon className={`w-4 h-4 ${inCompare
-                ? "text-white dark:text-neutral-900"
-                : "text-neutral-600 dark:text-neutral-300"
-                }`} />
+              <CompareIcon
+                className={`w-4 h-4 ${
+                  inCompare
+                    ? "text-white"
+                    : "text-neutral-600 dark:text-neutral-300"
+                }`}
+              />
             )}
           </button>
         </div>
 
-        <div className={`absolute bottom-3 right-3 transition-all duration-300 w-10 h-10 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+        <div
+          className={`absolute bottom-3 right-3 transition-all duration-300 w-10 h-10 ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}
+        >
           <AddToCartButton
             productType={product.type}
             productId={product.id}
@@ -186,9 +232,11 @@ export default function ProductCard({
         </div>
 
         <div className="flex items-center gap-2 mt-1.5">
-          {product?.type === "configurable" && (
+          {(product?.type === "configurable" ||
+            product?.type === "grouped" ||
+            product?.type === "bundle") && (
             <span className="text-xs text-neutral-400 dark:text-neutral-500">
-              From
+              {product?.type === "configurable" ? "From" : "Starting at"}
             </span>
           )}
           {product?.type === "simple" && specialPrice ? (
@@ -227,7 +275,12 @@ export default function ProductCard({
         </div>
 
         <div className="mt-3 md:hidden">
-          <AddToCartButton productType={product.type} productId={product.id} productUrlKey={product.urlKey} isSaleable={product?.isSaleable} />
+          <AddToCartButton
+            productType={product.type}
+            productId={product.id}
+            productUrlKey={product.urlKey}
+            isSaleable={product?.isSaleable}
+          />
         </div>
       </div>
     </Grid.Item>

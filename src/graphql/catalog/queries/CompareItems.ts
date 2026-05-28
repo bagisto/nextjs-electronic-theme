@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_COMPARE_ITEMS = gql`
-  query CompareItems($first: Int!) {
-    compareItems(first: $first) {
+  query CompareItems {
+    compareItems {
       edges {
         node {
           id

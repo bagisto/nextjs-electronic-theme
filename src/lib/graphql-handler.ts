@@ -458,17 +458,11 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     name: "GetCompareItems",
     query: GET_COMPARE_ITEMS,
     operationType: "query",
-    variableSchema: {
-      first: { type: "number", required: false },
-    },
   },
   CompareItems: {
     name: "CompareItems",
     query: GET_COMPARE_ITEMS,
     operationType: "query",
-    variableSchema: {
-      first: { type: "number", required: false },
-    },
   },
   CreateCompareItem: {
     name: "CreateCompareItem",

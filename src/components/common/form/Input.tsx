@@ -51,7 +51,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(
         {labelPlacement !== "inside" && (
           <label
             className={clsx(
-              "px-1 mb-1 block font-medium text-black dark:text-white"
+              "px-1 mb-1 block font-medium text-black/60 dark:text-white/60 text-sm"
             )}
             htmlFor={name}
           >

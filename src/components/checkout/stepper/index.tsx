@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { useMemo } from "react";
-import LogoIcon from "@components/common/icons/LogoIcon";
+import  { CheckoutLogoIcon } from "@components/common/icons/LogoIcon";
 import Email from "./Email";
 import { GuestAddAdressForm } from "./GuestAddAdressForm";
 import Shipping from "./shipping";
 import Payment from "./payment";
 import Review from "./review";
+import { useAppSelector } from "@/store/hooks";
+import { isShippingRequired } from "@/utils/helper";
 
 
 
@@ -40,18 +42,20 @@ export default function Stepper(
     currentStep,
   }: CheckOutProps
 ) {
+  const cart = useAppSelector((state) => state.cartDetail?.cart);
+  const shippingRequired = isShippingRequired(cart);
 
   const steps = useMemo<Step[]>(() => {
-    return [
+    const allSteps: Step[] = [
       {
-        id: 1,
+        id: 0,
         key: "email",
         title: "Email",
         href: "/checkout",
         component: <Email />,
       },
       {
-        id: 2,
+        id: 0,
         key: "address",
         title: "Address",
         href: "/checkout",
@@ -63,7 +67,7 @@ export default function Stepper(
           />
       },
       {
-        id: 3,
+        id: 0,
         key: "shipping",
         title: "Shipping",
         href: "/checkout?step=address",
@@ -73,10 +77,10 @@ export default function Stepper(
         />,
       },
       {
-        id: 4,
+        id: 0,
         key: "payment",
         title: "Payment",
-        href: "/checkout?step=shipping",
+        href: shippingRequired ? "/checkout?step=shipping" : "/checkout?step=address",
         component: (
           <Payment
             selectedPayment={selectedPayment}
@@ -85,7 +89,7 @@ export default function Stepper(
         ),
       },
       {
-        id: 5,
+        id: 0,
         key: "review",
         title: "Review",
         href: "/checkout?step=payment",
@@ -96,10 +100,15 @@ export default function Stepper(
             selectedShippingRate={selectedShippingRate}
             selectedShippingRateTitle={selectedShippingRateTitle}
             shippingAddress={shippingAddress}
+            isShippingRequired={shippingRequired}
           />
         ),
       },
     ];
+
+    return allSteps
+      .filter((s) => (shippingRequired ? true : s.key !== "shipping"))
+      .map((s, idx) => ({ ...s, id: idx + 1 }));
   }, [
     currentStep,
     billingAddress,
@@ -108,6 +117,7 @@ export default function Stepper(
     selectedPayment,
     selectedPaymentTitle,
     selectedShippingRateTitle,
+    shippingRequired,
   ]);
 
   const currentStepIndex = steps.findIndex((s) => s.key === currentStep);
@@ -152,7 +162,7 @@ export default function Stepper(
           className="flex items-center gap-2 text-black dark:text-white md:pt-1 hidden lg:block"
           href="/"
         >
-          <LogoIcon />
+          <CheckoutLogoIcon />
         </Link>
         <h1 className="text-xl px-2 font-semibold block lg:hidden">Checkout</h1>
       </header>

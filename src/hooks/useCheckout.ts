@@ -2,7 +2,7 @@ import { useMutation, useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useCustomToast } from "./useToast";
 import { getCartToken } from "@utils/getCartToken";
-import { setCookie } from "@utils/helper";
+import { setCookie, isShippingRequired } from "@utils/helper";
 import { useGuestCartToken } from './useGuestCartToken';
 import { useDispatch } from "react-redux";
 import { clearCart } from "@/store/slices/cart-slice";
@@ -16,6 +16,7 @@ import { CREATE_CHECKOUT_SHIPPING_METHODS } from "@/graphql/checkout/mutations/C
 import { CREATE_CHECKOUT_PAYMENT_METHODS } from "@/graphql/checkout/mutations/CreateCheckoutPaymentMethod";
 import { CREATE_CHECKOUT_ORDER } from "@/graphql/checkout/mutations/CreateCheckoutOrder";
 import { useCartDetail } from "./useCartDetail";
+import { useAppSelector } from "@/store/hooks";
 
 export interface InputDataTypes {
   input: {
@@ -31,6 +32,7 @@ export const useCheckout = () => {
   const { showToast } = useCustomToast();
   const dispatch = useDispatch();
   const { getCartDetail } = useCartDetail();
+  const cart = useAppSelector((state) => state.cartDetail?.cart);
 
   // Apollo Mutations/Queries
   const [saveAddressMutation, { loading: isLoadingToSave }] = useMutation(CREATE_CHECKOUT_ADDRESS, {
@@ -60,7 +62,10 @@ export const useCheckout = () => {
       if (responseData?.success) {
         showToast(responseData?.message || "Address saved successfully", "success");
         getCartDetail();
-        router.replace("/checkout?step=shipping");
+        const nextStep = isShippingRequired(cart)
+          ? "/checkout?step=shipping"
+          : "/checkout?step=payment";
+        router.replace(nextStep);
       } else {
         showToast(responseData?.message || "Failed to save address", "warning");
       }

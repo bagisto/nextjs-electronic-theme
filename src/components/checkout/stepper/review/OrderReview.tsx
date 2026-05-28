@@ -12,12 +12,14 @@ export default function OrderReview({
   billingAddress,
   selectedShipping : _selectedShipping,
   selectedShippingRateTitle,
+  isShippingRequired = true,
 }: {
   selectedPaymentTitle?: string;
   shippingAddress?: AddressDataTypes;
   billingAddress?: AddressDataTypes;
   selectedShipping?: string;
   selectedShippingRateTitle?: string;
+  isShippingRequired?: boolean;
 }) {
   const { isPlaceOrder, SavePlaceOrder } = useCheckout();
   const { handleSubmit } = useForm();
@@ -52,27 +54,31 @@ export default function OrderReview({
                   {billingAddress?.country}
                 </th>
               </tr>
-              <tr className="">
-                <td className="py-4">Ship to</td>
-                <th
-                  className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
-                  scope="row"
-                >
-                  {shippingAddress?.firstName}, {shippingAddress?.lastName},{" "}
-                  {shippingAddress?.address}, {shippingAddress?.city},{" "}
-                  {shippingAddress?.state}, {shippingAddress?.postcode},{" "}
-                  {shippingAddress?.country}
-                </th>
-              </tr>
-              <tr className="">
-                <td className="py-4">Method</td>
-                <th
-                  className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
-                  scope="row"
-                >
-                  {selectedShippingRateTitle}
-                </th>
-              </tr>
+              {isShippingRequired && (
+                <>
+                  <tr className="">
+                    <td className="py-4">Ship to</td>
+                    <th
+                      className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                      scope="row"
+                    >
+                      {shippingAddress?.firstName}, {shippingAddress?.lastName},{" "}
+                      {shippingAddress?.address}, {shippingAddress?.city},{" "}
+                      {shippingAddress?.state}, {shippingAddress?.postcode},{" "}
+                      {shippingAddress?.country}
+                    </th>
+                  </tr>
+                  <tr className="">
+                    <td className="py-4">Method</td>
+                    <th
+                      className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                      scope="row"
+                    >
+                      {selectedShippingRateTitle}
+                    </th>
+                  </tr>
+                </>
+              )}
               <tr className="">
                 <td className="py-4">Payment</td>
                 <th

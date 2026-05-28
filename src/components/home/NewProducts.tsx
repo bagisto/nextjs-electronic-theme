@@ -30,23 +30,44 @@ const NewProductCard = ({ product }: { product: any }) => {
     getImageUrl(product?.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE;
 
   const price =
-    product?.type === "configurable" ? product?.minimumPrice : product?.price;
+    product?.type === "configurable" ||
+    product?.type === "grouped" ||
+    product?.type === "bundle"
+      ? product?.minimumPrice
+      : product?.price;
   const currency = "USD"; // Default currency
   const hasDiscount =
     product?.compareAtPrice &&
     parseFloat(product.compareAtPrice) > parseFloat(price);
 
-  const inWishlist = isInWishlist(product.id);
-  const inCompare = isInCompare(product.id);
+  const serverInWishlist = isInWishlist(product.id);
+  const serverInCompare = isInCompare(product.id);
+
+  const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(
+    null,
+  );
+  const [optimisticCompare, setOptimisticCompare] = useState<boolean | null>(
+    null,
+  );
+
+  const inWishlist =
+    optimisticWishlist !== null ? optimisticWishlist : serverInWishlist;
+  const inCompare =
+    optimisticCompare !== null ? optimisticCompare : serverInCompare;
 
   const handleWishlistClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (isWishlistPending) return;
+    const next = !inWishlist;
+    setOptimisticWishlist(next);
     setIsWishlistPending(true);
     try {
       await toggleWishlist(product.id);
+    } catch {
+      setOptimisticWishlist(!next);
     } finally {
+      setOptimisticWishlist(null);
       setIsWishlistPending(false);
     }
   };
@@ -55,10 +76,15 @@ const NewProductCard = ({ product }: { product: any }) => {
     e.preventDefault();
     e.stopPropagation();
     if (isComparePending) return;
+    const next = !inCompare;
+    setOptimisticCompare(next);
     setIsComparePending(true);
     try {
       await toggleCompare(product.id);
+    } catch {
+      setOptimisticCompare(!next);
     } finally {
+      setOptimisticCompare(null);
       setIsComparePending(false);
     }
   };
@@ -83,16 +109,19 @@ const NewProductCard = ({ product }: { product: any }) => {
         <div className="absolute left-3 top-3 flex flex-col gap-2 transition-all duration-300 opacity-0 group-hover:opacity-100 z-10">
           <button
             disabled={isWishlistPending}
-            className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-colors ${isWishlistPending ? "cursor-wait opacity-70" : "cursor-pointer"} ${inWishlist
+            className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-colors ${isWishlistPending ? "cursor-wait opacity-70" : "cursor-pointer"} ${
+              inWishlist
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-              }`}
+            }`}
             onClick={handleWishlistClick}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
             aria-busy={isWishlistPending}
           >
             {isWishlistPending ? (
-              <InlineSpinner className={inWishlist ? "border-white/40 border-t-white" : ""} />
+              <InlineSpinner
+                className={inWishlist ? "border-white/40 border-t-white" : ""}
+              />
             ) : (
               <WishlistIcon
                 className={`w-3.5 h-3.5 ${inWishlist ? "text-white fill-current" : "text-neutral-600 dark:text-neutral-300"}`}
@@ -102,22 +131,30 @@ const NewProductCard = ({ product }: { product: any }) => {
           </button>
           <button
             disabled={isComparePending}
-            className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-colors ${isComparePending ? "cursor-wait opacity-70" : "cursor-pointer"} ${inCompare
-                ? "bg-emerald-600 dark:bg-white"
+            className={`w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-colors ${isComparePending ? "cursor-wait opacity-70" : "cursor-pointer"} ${
+              inCompare
+                ? "bg-emerald-600"
                 : "bg-white dark:bg-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-              }`}
+            }`}
             onClick={handleCompareClick}
             aria-label={inCompare ? "Remove from compare" : "Add to compare"}
             aria-busy={isComparePending}
           >
             {isComparePending ? (
-              <InlineSpinner className={inCompare ? "border-white/40 border-t-white dark:border-neutral-300 dark:border-t-neutral-900" : ""} />
+              <InlineSpinner
+                className={
+                  inCompare
+                    ? "border-white/40 border-t-white dark:border-neutral-300 dark:border-t-neutral-900"
+                    : ""
+                }
+              />
             ) : (
               <CompareIcon
-                className={`w-3.5 h-3.5 ${inCompare
-                    ? "text-white dark:text-neutral-900"
+                className={`w-3.5 h-3.5 ${
+                  inCompare
+                    ? "text-white"
                     : "text-neutral-600 dark:text-neutral-300"
-                  }`}
+                }`}
               />
             )}
           </button>
@@ -148,9 +185,11 @@ const NewProductCard = ({ product }: { product: any }) => {
         </Link>
 
         <div className="flex items-center gap-2 mt-1.5">
-          {product?.type === "configurable" && (
+          {(product?.type === "configurable" ||
+            product?.type === "grouped" ||
+            product?.type === "bundle") && (
             <span className="text-xs text-neutral-400 dark:text-neutral-500">
-              From
+              {product?.type === "configurable" ? "From" : "Starting at"}
             </span>
           )}
           {product?.type === "simple" && product.specialPrice ? (

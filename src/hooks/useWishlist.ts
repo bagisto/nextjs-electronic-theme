@@ -17,39 +17,8 @@ export const useWishlist = () => {
         skip: !isLoggedIn,
     });
 
-    const [createWishlistMutation, { loading: creating }] = useMutation(CREATE_WISHLIST, {
-        onCompleted: (response) => {
-            if (response?.createWishlist?.wishlist) {
-                showToast("Item added to wishlist successfully", "success");
-                refetch();
-            } else {
-                showToast("Failed to add item to wishlist", "danger");
-            }
-        },
-        onError: (err: any) => {
-                showToast(err, "danger");
-        }
-    });
-
-    const [deleteWishlistMutation, { loading: deleting }] = useMutation(DELETE_WISHLIST, {
-        onCompleted: (response) => {
-            if (response?.deleteWishlist?.wishlist) {
-                showToast("Item removed from wishlist successfully", "success");
-                refetch();
-            } else {
-                showToast("Failed to remove item from wishlist", "danger");
-            }
-        },
-        onError: (err: any) => {
-            const message = err?.message || "Failed to remove item";
-            if (message === "Item Successfully Removed From Wishlist") {
-                showToast(message, "warning");
-                refetch();
-            } else {
-                showToast(message, "danger");
-            }
-        }
-    });
+    const [createWishlistMutation, { loading: creating }] = useMutation(CREATE_WISHLIST);
+    const [deleteWishlistMutation, { loading: deleting }] = useMutation(DELETE_WISHLIST);
 
     const [moveWishlistToCartMutation, { loading: movingToCart }] = useMutation(MOVE_WISHLIST_TO_CART, {
         onCompleted: (response) => {
@@ -116,35 +85,51 @@ export const useWishlist = () => {
             return;
         }
 
-        try {
-            let id = productId;
-            if (typeof id === 'string' && isNaN(Number(id))) {
-                if (id.includes('/')) {
-                    id = id.split('/').pop() || id;
-                }
+        let id = productId;
+        if (typeof id === 'string' && isNaN(Number(id))) {
+            if (id.includes('/')) {
+                id = id.split('/').pop() || id;
             }
+        }
 
-            await createWishlistMutation({
-                variables: {
-                    input: { productId: parseInt(id.toString()) }
-                }
-            });
-        } catch (e) {
-            console.error(e, "error")
+        const result = await createWishlistMutation({
+            variables: { input: { productId: parseInt(id.toString()) } }
+        });
+
+        if (result.data?.createWishlist?.wishlist) {
+            showToast("Item added to wishlist successfully", "success");
+            refetch();
+        } else if (result.errors?.length) {
+            showToast(result.errors[0].message || "Failed to add item to wishlist", "danger");
+            throw new Error(result.errors[0].message);
+        } else {
+            showToast("Failed to add item to wishlist", "danger");
+            throw new Error("Failed to add item to wishlist");
         }
     };
 
     const removeFromWishlist = async (id: string) => {
         if (!isLoggedIn) return;
 
-        try {
-            await deleteWishlistMutation({
-                variables: {
-                    input: { id }
-                }
-            });
-        } catch (e) {
-            console.error(e, "error")
+        const result = await deleteWishlistMutation({
+            variables: { input: { id } }
+        });
+
+        if (result.data?.deleteWishlist?.wishlist) {
+            showToast("Item removed from wishlist successfully", "success");
+            refetch();
+        } else if (result.errors?.length) {
+            const message = result.errors[0].message;
+            if (message === "Item Successfully Removed From Wishlist") {
+                showToast(message, "warning");
+                refetch();
+            } else {
+                showToast(message || "Failed to remove item", "danger");
+                throw new Error(message);
+            }
+        } else {
+            showToast("Failed to remove item from wishlist", "danger");
+            throw new Error("Failed to remove item from wishlist");
         }
     };
 
