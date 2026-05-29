@@ -258,3 +258,18 @@ export const IS_VALID_PHONE = /^(\+?[0-9]{1,3}[-\s]?)?[0-9]{10}$/;
 
 
 export const ITEMS_PER_PAGE = 15;
+
+
+export const COUNTRIES = [
+  "Afghanistan", "Albania", "Algeria", "Argentina", "Australia", "Austria",
+  "Bangladesh", "Belgium", "Brazil", "Canada", "Chile", "China", "Colombia",
+  "Croatia", "Czech Republic", "Denmark", "Egypt", "Ethiopia", "Finland",
+  "France", "Germany", "Ghana", "Greece", "Hungary", "India", "Indonesia",
+  "Iran", "Iraq", "Ireland", "Israel", "Italy", "Japan", "Jordan", "Kenya",
+  "Malaysia", "Mexico", "Morocco", "Netherlands", "New Zealand", "Nigeria",
+  "Norway", "Pakistan", "Peru", "Philippines", "Poland", "Portugal",
+  "Romania", "Russia", "Saudi Arabia", "Singapore", "South Africa",
+  "South Korea", "Spain", "Sri Lanka", "Sweden", "Switzerland", "Thailand",
+  "Turkey", "Ukraine", "United Arab Emirates", "United Kingdom",
+  "United States", "Vietnam",
+];

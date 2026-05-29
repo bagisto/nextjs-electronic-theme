@@ -47,7 +47,7 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
                             alt={item?.node?.baseImage || item?.product?.name}
                             className="h-full w-full object-cover"
                             height={64}
-                            src={baseImage?.small_image_url || ""}
+                           src={baseImage?.medium_image_url || baseImage?.small_image_url || ""}
                             width={74}
                             onError={(e) => (e.currentTarget.src = NOT_IMAGE)}
                           />

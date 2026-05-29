@@ -28,14 +28,20 @@ export function GridTileImage({
 } & React.ComponentProps<typeof Image>) {
   const [imgSrc, setImgSrc] = useState<string | undefined>(src as string);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const loadDone = () => {
+    setTimeout(() => {
+      if (!src) {
+        setImgSrc(NOT_IMAGE);
+      }
+    }, 500);
     setIsLoaded(true);
   };
 
   const handleError = () => {
+    setHasError(true);
     setImgSrc(NOT_IMAGE);
-    setIsLoaded(true);
   };
 
   return (
@@ -57,18 +63,25 @@ export function GridTileImage({
         />
       )}
 
-      <Image
-        src={imgSrc || (src as string) || NOT_IMAGE}
-        alt={alt ?? ""}
-        onError={handleError}
-        onLoad={loadDone}
-        {...props}
-        className={clsx(
-          "duration-300 truncate h-full transition group-hover:scale-105 w-full object-cover ease-in-out",
-          isLoaded ? "opacity-100" : "opacity-0",
-          className
-        )}
-      />
+      {imgSrc ? (
+        <Image
+          src={imgSrc}
+          alt={alt ?? ""}
+          placeholder="blur"
+          blurDataURL={NOT_IMAGE}
+          onError={handleError}
+          onLoad={loadDone}
+          {...props}
+          className={clsx(
+            "duration-700 truncate h-full transition group-hover:scale-105 w-full object-cover ease-in-out",
+            hasError ? "bg-contain!" : "",
+            isLoaded ? "opacity-100" : "opacity-0",
+            className
+          )}
+        />
+      ) : (
+        <div className="h-full w-full" />
+      )}
 
       {label ? (
         <Label

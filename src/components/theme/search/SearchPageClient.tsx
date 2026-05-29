@@ -88,7 +88,7 @@ export default function SearchPageClient({
       <MobileSearchBar />
 
       {/* Breadcrumb */}
-      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-3 mt-3">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-3 mt-5">
         <nav className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
           <Link href="/" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
             Home

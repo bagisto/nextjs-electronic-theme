@@ -4,12 +4,26 @@ import { isObject } from "@/utils/type-guards";
 import { getThemeCustomization } from "@/utils/bagisto-client";
 import InstaGramIcon from "@components/common/icons/InstaGramIcon";
 import TwitterIcon from "@components/common/icons/TwitterIcon";
+import FacebookIcon from "@components/common/icons/FacebookIcon";
+import WhatsAppIcon from "@components/common/icons/WhatsAppIcon";
 import Subscribe from "./Subscribe";
 import FooterMenu from "./FooterMenu";
 import ServiceContent from "./ServiceContent";
-import { ThemeCustomizationTranslationEdge } from "@/types/theme/theme-customization";
-import FacebookIcon from "@components/common/icons/FacebookIcon";
+import { ThemeCustomizationTranslationEdge, ThemeOptions } from "@/types/theme/theme-customization";
+
 const { COMPANY_NAME, SITE_NAME } = process.env;
+
+const SOCIAL_ICON_MAP: Record<string, React.ReactNode> = {
+  instagram: <InstaGramIcon />,
+  facebook: <FacebookIcon />,
+  twitter: <TwitterIcon />,
+  whatsapp: <WhatsAppIcon />,
+};
+
+function getSocialIcon(title: string): React.ReactNode {
+  const key = title.toLowerCase();
+  return SOCIAL_ICON_MAP[key] ?? null;
+}
 
 export default async function Footer() {
   const currentYear = new Date().getFullYear();
@@ -18,6 +32,18 @@ export default async function Footer() {
   const copyrightName = COMPANY_NAME || SITE_NAME || "";
   const services = menu?.services_content?.themeCustomizations?.edges?.[0]?.node;
 
+  // Parse social links from the "SocialLinks" node in footer_links
+  const socialLinksNode = menu?.footer_links?.themeCustomizations?.edges?.find(
+    (edge) => edge.node.name === "SocialLinks"
+  )?.node;
+  const socialLinksRaw = socialLinksNode?.translations?.edges?.[0]?.node?.options;
+  const socialLinksOptions = typeof socialLinksRaw === "string"
+    ? JSON.parse(socialLinksRaw)
+    : socialLinksRaw;
+  const socialLinks: ThemeOptions[] = [
+    ...(socialLinksOptions?.column_1 ?? []),
+    ...(socialLinksOptions?.column_2 ?? []),
+  ];
 
   return (
     <>
@@ -61,33 +87,23 @@ export default async function Footer() {
                 Premium products with exceptional quality. Your satisfaction is our priority.
               </p>
               <div className="flex gap-3 mt-1">
-                <Link
-                  href={"#"}
-                  aria-label="Visit on Facebook"
-                  title="Facebook"
-                  target="_blank"
-                  className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-neutral-900 transition-all duration-200"
-                >
-                  <FacebookIcon />
-                </Link>
-                <Link
-                  href={"#"}
-                  aria-label="Visit on Instagram"
-                  title="Instagram"
-                  target="_blank"
-                  className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-neutral-900 transition-all duration-200"
-                >
-                  <InstaGramIcon />
-                </Link>
-                <Link
-                  href={"#"}
-                  aria-label="Visit on Twitter"
-                  title="Twitter"
-                  target="_blank"
-                  className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-neutral-900 transition-all duration-200"
-                >
-                  <TwitterIcon />
-                </Link>
+                {socialLinks.map((social) => {
+                  const icon = getSocialIcon(social.title);
+                  if (!icon) return null;
+                  return (
+                    <Link
+                      key={social.title}
+                      href={social.url}
+                      aria-label={`Visit on ${social.title}`}
+                      title={social.title}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-500 hover:text-white hover:bg-neutral-300 dark:hover:bg-neutral-700 dark:hover:text-neutral-900 transition-all duration-200"
+                    >
+                      {icon}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 

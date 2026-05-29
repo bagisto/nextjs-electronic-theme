@@ -175,7 +175,7 @@ export default async function ProductPage({
         type="application/ld+json"
       />
 
-      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-10">
+      <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-10 mt-5">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400 mb-8">
           <Link href="/" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
