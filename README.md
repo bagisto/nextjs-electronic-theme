@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://bagisto.com/en/headless-ecommerce/">Website</a> | <a href="https://bagisto.com/en/bagisto-headless-ecommerce-installation-guide/">Documentation</a> | <a href="https://forums.bagisto.com/">Forums</a> | <a href="https://www.facebook.com/groups/bagisto/">Community</a>
+    <a href="https://bagisto.com/en/headless-ecommerce/">Website</a> | <a href="https://bagisto.com/en/bagisto-headless-ecommerce-installation-guide/">Documentation</a> | <a href="https://forums.ba[...]
 </p>
 
 <p align="center">
@@ -13,7 +13,7 @@
 
 ## Bagisto Headless Electronic Theme
 
-A **headless electronic eCommerce theme** built with **Next.js** and powered by **Bagisto**, designed specifically for electronics and gadget retailers. This theme delivers exceptional performance and a modern shopping experience optimized for tech products.
+A **headless electronic eCommerce theme** built with **Next.js** and powered by **Bagisto**, designed specifically for electronics and gadget retailers. This theme delivers exceptional performance[...]
 
 Through layered caching and optimized rendering strategies, it consistently achieves a **100/100 Core Web Vitals score**, delivering lightning-fast performance and seamless shopping experiences.
 
@@ -57,10 +57,12 @@ Before you begin, ensure you have the following installed:
 
     After installing Bagisto, install the [Bagisto Headless Extension](https://github.com/bagisto/bagisto-api) to expose the required APIs for your frontend.
 
-3) **Get your storefront up and running in one command:**
+3) **Clone the repository and install dependencies:**
    
    ```bash
-   npx -y @bagisto-headless/create your-storefront
+   git clone https://github.com/bagisto/nextjs-electronic-theme.git
+   cd nextjs-electronic-theme
+   pnpm install
    ```
    
 4) **Configure `.env.local` in the Next.js Project**
@@ -183,4 +185,4 @@ Bagisto Headless eCommerce framework that will always remain free under the [MIT
 
 ## Security Vulnerabilities
 
-If you believe you have found a security issue in the Electronics Theme, please do not use the issue tracker and do not post it publicly. Instead, all security issues must be sent to [support@bagisto.com](mailto:support@bagisto.com).
+If you believe you have found a security issue in the Electronics Theme, please do not use the issue tracker and do not post it publicly. Instead, all security issues must be sent to [support@bagisto.[...]
