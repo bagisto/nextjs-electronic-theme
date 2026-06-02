@@ -42,6 +42,7 @@ export const CREATE_ADD_PRODUCT_IN_CART = gql`
               productId
               name
                price
+               basePrice
                baseImage
               sku
               quantity

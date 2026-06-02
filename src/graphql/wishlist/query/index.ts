@@ -1,1 +1,1 @@
-export { GET_ALL_WISHLIST } from "./GetAllWishList";
+export { GET_ALL_WISHLIST, GET_WISHLIST_PAGINATION } from "./GetAllWishList";

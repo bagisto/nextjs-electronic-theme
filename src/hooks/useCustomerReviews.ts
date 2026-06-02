@@ -1,17 +1,33 @@
-import { useQuery } from "@apollo/client";
+import { GET_CUSTOMER_REVIEWS, GET_CUSTOMER_REVIEWS_PAGINATION } from "@/graphql/customer/queries/GetCustomerReviews";
 import { useAppSelector } from "@/store/hooks";
-import { GET_CUSTOMER_REVIEWS } from "@/graphql/customer/queries/GetCustomerReviews";
+import { useCursorPagination } from "./useCursorPagination";
 
-export const useCustomerReviews = () => {
+interface UseCustomerReviewsOptions {
+    pageSize?: number;
+    page?: number;
+    after?: string | null;
+    before?: string | null;
+}
+
+export const useCustomerReviews = (options: UseCustomerReviewsOptions = {}) => {
     const { user } = useAppSelector((state) => state.user);
     const isLoggedIn = !!user?.email;
 
-    const { data: reviewsData, loading, error, refetch } = useQuery(GET_CUSTOMER_REVIEWS, {
-        variables: { first: 10 },
+    const { pageSize = 10, page = 0, after = null, before = null } = options;
+
+    const { edges, pageInfo, totalCount, loading, error, refetch } = useCursorPagination({
+        listQuery: GET_CUSTOMER_REVIEWS,
+        cursorQuery: GET_CUSTOMER_REVIEWS_PAGINATION,
+        connectionKey: "customerReviews",
         skip: !isLoggedIn,
+        paginate: true,
+        pageSize,
+        page,
+        after,
+        before,
     });
 
-    const reviews = reviewsData?.customerReviews?.edges?.map(
+    const reviews = edges.map(
         (edge: { node: any }) => ({
             id: edge.node.createdAt,
             productName: edge.node.product?.name || edge.node.name,
@@ -28,11 +44,12 @@ export const useCustomerReviews = () => {
             verified: true,
             status: edge.node.status,
         })
-    ) || [];
+    );
 
     return {
         reviews,
-        totalCount: reviewsData?.customerReviews?.totalCount || 0,
+        totalCount,
+        pageInfo,
         loading,
         error,
         refetch,

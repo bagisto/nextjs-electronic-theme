@@ -1,9 +1,6 @@
-"use client";
-
 import { FC, JSX } from "react";
 import { OptionDataTypes } from "@/types/types";
 import { ThemeCustomizationTranslationNode } from "@/types/theme/theme-customization";
-import { usePathname } from "next/navigation";
 import { safeParse } from "@utils/helper";
 import VectorIcon from "@components/common/icons/VectorIcon";
 import TruckIcon from "@components/common/icons/TruckIcon";
@@ -22,16 +19,6 @@ export interface ServiceContenRenderTypes {
 }
 
 const ServiceContent: FC<ServiceContentDataTypes> = ({ serviceData }) => {
-  const pathname = usePathname();
-
-  if (
-    pathname === "/customer/login" ||
-    pathname === "/customer/register" ||
-    pathname === "/customer/forget-password"
-  ) {
-    return null;
-  }
-
   return (
     <div className="mx-auto my-16 mt-16 sm:mt-0 w-full lg:my-12 md:my-20 md:max-w-4xl px-4 py-8">
       {serviceData?.slice(0, 1)?.map((service, index: number) => {

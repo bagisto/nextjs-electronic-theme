@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { MinusIcon, PlusIcon } from "@/components/common/icons/CartIcons";
 import {
   GET_BOOKING_SLOTS,
   GET_RENTAL_BOOKING_SLOTS,
@@ -419,8 +419,31 @@ export function BookingProductSelector({
             </div>
 
             <div className="block">
-              <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+              <span className="inline-flex items-center gap-2 text-xs font-medium text-neutral-700 dark:text-neutral-300">
                 Available Slots
+                <svg
+                  className={`h-3.5 w-3.5 shrink-0 animate-spin text-green-500 transition-opacity ${
+                    rentalLoading ? "opacity-100" : "opacity-0"
+                  }`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden={!rentalLoading}
+                  aria-label="Loading slots"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
               </span>
               <RentalHourlySlots
                 className="mt-1"
@@ -604,8 +627,31 @@ function DatePlusSlotPicker({
       </div>
 
       <div className="block">
-        <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+        <span className="inline-flex items-center gap-2 text-xs font-medium text-neutral-700 dark:text-neutral-300">
           Available Slots
+          <svg
+            className={`h-3.5 w-3.5 shrink-0 animate-spin text-green-500 transition-opacity ${
+              loading ? "opacity-100" : "opacity-0"
+            }`}
+            viewBox="0 0 24 24"
+            fill="none"
+            aria-hidden={!loading}
+            aria-label="Loading slots"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
+          </svg>
         </span>
         <CustomDropdown
           className="mt-1"

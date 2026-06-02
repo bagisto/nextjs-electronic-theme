@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { NextImage } from "@/components/common/NextImage";
+import ProductPrice from "@/components/theme/ui/ProductPrice";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useWishlist } from "@/hooks/useWishlist";
 import { TrashIcon } from "@components/common/icons/TrashIcon";
 import WishlistSkeleton from "@/components/common/skeleton/WishlistSkeleton";
 import { InlineSpinner } from "@/components/common/PageLoader";
 import { productRequiresOptions } from "@/utils/addToCartValidation";
+import Pagination from "@/components/catalog/Pagination";
+import { WISHLIST_ITEMS_PER_PAGE } from "@/utils/constants";
 
 interface WishlistItemProps {
     item: {
@@ -21,6 +24,7 @@ interface WishlistItemProps {
             name: string;
             urlKey: string;
             price: string;
+            minimumPrice?: string;
             specialPrice?: string;
             baseImageUrl: string;
             brand?: string;
@@ -44,8 +48,11 @@ function WishlistItem({ item, onRemove, onAddToCart, isAddingToCart, isRemoving 
         setQuantity(quantity + 1);
     };
 
-    const regularPrice = parseFloat(product.price);
-    const salePrice = product.specialPrice ? parseFloat(product.specialPrice) : null;
+    const isRangePrice =
+        product.type === "configurable" ||
+        product.type === "grouped" ||
+        product.type === "bundle";
+    const displayPrice = isRangePrice ? product.minimumPrice ?? "0" : product.price;
     const isSaleable = product.isSaleable === undefined || product.isSaleable; // Default to true if undefined
 
     return (
@@ -86,16 +93,12 @@ function WishlistItem({ item, onRemove, onAddToCart, isAddingToCart, isRemoving 
                     </h3>
                 </Link>
 
-                <div className="flex items-center gap-2 mt-1">
-                    <span className="text-lg font-bold text-neutral-900 dark:text-white">
-                        ${salePrice ? salePrice.toFixed(2) : regularPrice.toFixed(2)}
-                    </span>
-                    {salePrice && (
-                        <span className="text-sm text-neutral-400 line-through">
-                            ${regularPrice.toFixed(2)}
-                        </span>
-                    )}
-                </div>
+                <ProductPrice
+                    type={product.type}
+                    price={displayPrice}
+                    specialPrice={product.specialPrice}
+                    className="mt-1"
+                />
 
                 <div className="flex flex-wrap items-center gap-3 mt-3">
                     {isSaleable && (
@@ -143,18 +146,37 @@ function WishlistItem({ item, onRemove, onAddToCart, isAddingToCart, isRemoving 
 }
 
 interface WishlistContentProps {
-    items?: any[];
     isLoading?: boolean;
 }
 
-export default function WishlistContent({ items, isLoading }: WishlistContentProps) {
+export default function WishlistContent({ isLoading }: WishlistContentProps) {
     const router = useRouter();
-    const { removeFromWishlist, moveItemToCart, movingToCart, loading: wishlistLoading } = useWishlist();
+    const searchParams = useSearchParams();
+
+    const currentPage = searchParams.get("page") ? parseInt(searchParams.get("page")!) - 1 : 0;
+    const after = searchParams.get("cursor");
+    const before = searchParams.get("before");
+
+    const {
+        wishlistItems,
+        totalCount,
+        pageInfo,
+        removeFromWishlist,
+        removeAllFromWishlist,
+        moveItemToCart,
+        movingToCart,
+        loading: wishlistLoading,
+    } = useWishlist({
+        paginate: true,
+        pageSize: WISHLIST_ITEMS_PER_PAGE,
+        page: currentPage,
+        after,
+        before,
+    });
+
     const [addingId, setAddingId] = useState<string | null>(null);
     const [removingId, setRemovingId] = useState<string | null>(null);
     const [isDeletingAll, setIsDeletingAll] = useState(false);
-
-    const wishlistItems = items || [];
 
     const isLoadingData = isLoading ?? wishlistLoading;
 
@@ -176,9 +198,7 @@ export default function WishlistContent({ items, isLoading }: WishlistContentPro
         if (isDeletingAll) return;
         setIsDeletingAll(true);
         try {
-            for (const item of wishlistItems) {
-                await removeFromWishlist(item.id);
-            }
+            await removeAllFromWishlist();
         } finally {
             setIsDeletingAll(false);
         }
@@ -252,6 +272,18 @@ export default function WishlistContent({ items, isLoading }: WishlistContentPro
                     />
                 ))}
             </div>
+
+            {totalCount > WISHLIST_ITEMS_PER_PAGE && (
+                <div className="mt-8">
+                    <Pagination
+                        itemsPerPage={WISHLIST_ITEMS_PER_PAGE}
+                        itemsTotal={totalCount}
+                        currentPage={currentPage}
+                        nextCursor={pageInfo?.endCursor}
+                        prevCursor={pageInfo?.startCursor}
+                    />
+                </div>
+            )}
         </div>
     );
 }

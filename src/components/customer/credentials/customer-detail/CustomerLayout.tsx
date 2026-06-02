@@ -31,7 +31,6 @@ export interface CustomerLayoutProps {
         email: string;
         avatar?: string;
     };
-    wishlistItems?: any[];
     initialTab?: string;
 }
 
@@ -48,7 +47,7 @@ export interface CommonLayoutProps {
 /**
  * MAIN LAYOUT COMPONENT
  */
-export default function CustomerLayout({ customerData, wishlistItems, initialTab = "profile" }: CustomerLayoutProps) {
+export default function CustomerLayout({ customerData, initialTab = "profile" }: CustomerLayoutProps) {
     const isMobile = useMediaQuery("(max-width: 1024px)");
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams.get("tab");
@@ -77,6 +76,9 @@ export default function CustomerLayout({ customerData, wishlistItems, initialTab
         setActiveTab(tabId);
         const currentParams = new URLSearchParams(searchParams.toString());
         currentParams.set("tab", tabId);
+        currentParams.delete("page");
+        currentParams.delete("cursor");
+        currentParams.delete("before");
         router.replace(`?${currentParams.toString()}`, { scroll: false });
         if (typeof window !== "undefined") {
             window.scrollTo({ top: 0, behavior: "smooth" });
@@ -111,10 +113,10 @@ export default function CustomerLayout({ customerData, wishlistItems, initialTab
         switch (activeTab) {
             case "profile": return <ProfileTab />;
             case "addresses": return <AddressesTab />;
-            case "wishlist": return <WishlistContent items={wishlistItems} />;
+            case "wishlist": return <WishlistContent />;
             case "orders": return <OrdersTab />;
             case "reviews": return <ReviewsTab />;
-            default: return <WishlistContent items={wishlistItems} />;
+            default: return <WishlistContent />;
         }
     };
 

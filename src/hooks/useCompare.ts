@@ -1,27 +1,48 @@
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useCustomToast } from "./useToast";
 import { useAppSelector } from "@/store/hooks";
-import { GET_COMPARE_ITEMS } from "@/graphql/catalog/queries/CompareItems";
-import { CREATE_COMPARE_ITEM, DELETE_COMPARE_ITEM } from "@/graphql/catalog/mutations/CompareItems";
+import { GET_COMPARE_ITEMS, GET_COMPARE_ITEMS_PAGINATION } from "@/graphql/catalog/queries/CompareItems";
+import { CREATE_COMPARE_ITEM, DELETE_COMPARE_ITEM, DELETE_ALL_COMPARE_ITEMS } from "@/graphql/catalog/mutations/CompareItems";
+import { useCursorPagination } from "./useCursorPagination";
 
-export const useCompare = () => {
+interface UseCompareOptions {
+    /** Enable cursor pagination (off by default so callers like product cards get the full list). */
+    paginate?: boolean;
+    pageSize?: number;
+    page?: number;
+    after?: string | null;
+    before?: string | null;
+}
+
+export const useCompare = (options: UseCompareOptions = {}) => {
     const { showToast } = useCustomToast();
     const { user } = useAppSelector((state) => state.user);
     const isLoggedIn = !!user?.email;
 
-    const { data: compareData, loading, error, refetch } = useQuery(GET_COMPARE_ITEMS, {
+    const { paginate = false, pageSize = 10, page = 0, after = null, before = null } = options;
+
+    const { edges, pageInfo, totalCount, loading, error, refetch } = useCursorPagination({
+        listQuery: GET_COMPARE_ITEMS,
+        cursorQuery: GET_COMPARE_ITEMS_PAGINATION,
+        connectionKey: "compareItems",
         skip: !isLoggedIn,
+        paginate,
+        pageSize,
+        page,
+        after,
+        before,
     });
 
     const [createCompareMutation, { loading: creating }] = useMutation(CREATE_COMPARE_ITEM);
     const [deleteCompareMutation, { loading: deleting }] = useMutation(DELETE_COMPARE_ITEM);
+    const [deleteAllCompareMutation, { loading: deletingAll }] = useMutation(DELETE_ALL_COMPARE_ITEMS);
 
-    const compareItems = compareData?.compareItems?.edges?.map(
+    const compareItems = edges.map(
         ({ node }: { node: { id: string; product: any } }) => ({
             id: node.id,
             product: node.product
         })
-    ) || [];
+    );
 
     const isInCompare = (productId: number | string): boolean => {
         if (!isLoggedIn || !compareItems.length) return false;
@@ -127,7 +148,7 @@ export const useCompare = () => {
         }
 
         const compareItemId = getCompareItemId(productId);
-        
+
         if (compareItemId) {
             await removeFromCompare(compareItemId);
         } else {
@@ -135,16 +156,39 @@ export const useCompare = () => {
         }
     };
 
+    // Removes every compare item across all pages in a single mutation.
+    const removeAllFromCompare = async () => {
+        if (!isLoggedIn) return;
+
+        const result = await deleteAllCompareMutation();
+        const response = result.data?.createDeleteAllCompareItems?.deleteAllCompareItems;
+
+        if (response) {
+            showToast(response.message || "Comparison list cleared successfully", "success");
+            await refetch();
+        } else if (result.errors?.length) {
+            showToast(result.errors[0].message || "Failed to clear comparison list", "danger");
+            throw new Error(result.errors[0].message);
+        } else {
+            showToast("Failed to clear comparison list", "danger");
+            throw new Error("Failed to clear comparison list");
+        }
+    };
+
     return {
         compareItems,
+        totalCount,
+        pageInfo,
         loading,
         error,
         refetch,
         addToCompare,
         removeFromCompare,
+        removeAllFromCompare,
         toggleCompare,
         isInCompare,
         creating,
         deleting,
+        deletingAll,
     };
 };

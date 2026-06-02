@@ -8,6 +8,7 @@ import { getCookie } from "@utils/useCookie";
 import { useGuestCartToken } from "./useGuestCartToken";
 import { IS_GUEST } from "@/utils/constants";
 import { getCartToken } from "@/utils/getCartToken";
+import { getApolloErrorMessage } from "@/utils/getApolloErrorMessage";
 import { CREATE_ADD_PRODUCT_IN_CART } from "@/graphql/cart/mutations/AddProductToCart";
 import { REMOVE_CART_ITEM } from "@/graphql/cart/mutations/RemoveCartItem";
 import { UPDATE_CART_ITEM } from "@/graphql/cart/mutations/UpdateCartItems";
@@ -117,7 +118,7 @@ export const useAddProduct = () => {
       dispatch(addItem(responseData));
       showToast("Product added to cart successfully", "success");
     } catch (err: any) {
-      showToast(err?.message ?? "Error", "danger");
+      showToast(getApolloErrorMessage(err, "Error adding to cart"), "danger");
     }
   }, [addProductMutation, createGuestToken, showToast, dispatch]);
 
@@ -155,7 +156,7 @@ export const useAddProduct = () => {
         showToast("Something went wrong", "warning");
       }
     } catch (error: any) {
-      showToast(error?.message as string, "danger");
+      showToast(getApolloErrorMessage(error), "danger");
     }
   }, [removeCartItemMutation, resetGuestToken, showToast, dispatch]);
 
@@ -226,7 +227,7 @@ export const useAddProduct = () => {
         showToast("Something went wrong!", "warning");
       }
     } catch (error: any) {
-      showToast(error?.message as string, "danger");
+      showToast(getApolloErrorMessage(error), "danger");
     }
   }, [updateCartItemMutation, showToast, dispatch]);
 

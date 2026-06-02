@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bagistoFetch } from "@/utils/bagisto-client";
-import { isBagistoError } from "@/utils/type-guards";
+import { isObject } from "@/utils/type-guards";
 import { getAuthToken } from "@/utils/helper";
 
 import {
@@ -35,7 +35,11 @@ import {
   GET_CUSTOMER_ORDERS,
 } from "@/graphql/customer/queries";
 
-import { GET_CUSTOMER_ADDRESSES } from "@/graphql/customer/queries/GetCustomerAddresses";
+import { GET_CUSTOMER_ADDRESSES, GET_CUSTOMER_ADDRESSES_PAGINATION } from "@/graphql/customer/queries/GetCustomerAddresses";
+
+import { GET_CUSTOMER_ORDERS_PAGINATION } from "@/graphql/customer/queries/GetCustomerOrders";
+
+import { GET_CUSTOMER_REVIEWS_PAGINATION } from "@/graphql/customer/queries/GetCustomerReviews";
 
 import { GET_CUSTOMER_ORDER_ID_INVOICES } from "@/graphql/customer/queries/GetCustomerOrderInvoices";
 
@@ -60,17 +64,19 @@ import {
   TOGGLE_WISHLIST,
   CREATE_WISHLIST,
   DELETE_WISHLIST,
+  DELETE_ALL_WISHLISTS,
   MOVE_WISHLIST_TO_CART,
 } from "@/graphql/wishlist/mutations";
 
-import { GET_ALL_WISHLIST } from "@/graphql/wishlist/query/GetAllWishList";
+import { GET_ALL_WISHLIST, GET_WISHLIST_PAGINATION } from "@/graphql/wishlist/query/GetAllWishList";
 
 // Compare operations
-import { GET_COMPARE_ITEMS } from "@/graphql/catalog/queries/CompareItems";
+import { GET_COMPARE_ITEMS, GET_COMPARE_ITEMS_PAGINATION } from "@/graphql/catalog/queries/CompareItems";
 
 import {
   CREATE_COMPARE_ITEM,
   DELETE_COMPARE_ITEM,
+  DELETE_ALL_COMPARE_ITEMS,
 } from "@/graphql/catalog/mutations/CompareItems";
 
 // Review operations
@@ -321,6 +327,14 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
       first: { type: "number", required: false },
     },
   },
+  GetCustomerAddressesPagination: {
+    name: "GetCustomerAddressesPagination",
+    query: GET_CUSTOMER_ADDRESSES_PAGINATION,
+    operationType: "query",
+    variableSchema: {
+      first: { type: "number", required: false },
+    },
+  },
   CreateCustomerAddress: {
     name: "CreateCustomerAddress",
     query: CREATE_CUSTOMER_ADDRESS,
@@ -334,6 +348,14 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
   GetCustomerOrders: {
     name: "GetCustomerOrders",
     query: GET_CUSTOMER_ORDERS,
+    operationType: "query",
+    variableSchema: {
+      first: { type: "number", required: false },
+    },
+  },
+  GetCustomerOrdersPagination: {
+    name: "GetCustomerOrdersPagination",
+    query: GET_CUSTOMER_ORDERS_PAGINATION,
     operationType: "query",
     variableSchema: {
       first: { type: "number", required: false },
@@ -387,6 +409,14 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
       first: { type: "number", required: false },
     },
   },
+  CustomerReviewsPagination: {
+    name: "CustomerReviewsPagination",
+    query: GET_CUSTOMER_REVIEWS_PAGINATION,
+    operationType: "query",
+    variableSchema: {
+      first: { type: "number", required: false },
+    },
+  },
   CustomerLogin: {
     name: "CustomerLogin",
     query: CUSTOMER_LOGIN,
@@ -424,6 +454,14 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     query: GET_ALL_WISHLIST,
     operationType: "query",
   },
+  GetWishlistsPagination: {
+    name: "GetWishlistsPagination",
+    query: GET_WISHLIST_PAGINATION,
+    operationType: "query",
+    variableSchema: {
+      first: { type: "number", required: false },
+    },
+  },
   ToggleWishlist: {
     name: "ToggleWishlist",
     query: TOGGLE_WISHLIST,
@@ -440,6 +478,11 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
   DeleteWishlist: {
     name: "DeleteWishlist",
     query: DELETE_WISHLIST,
+    operationType: "mutation",
+  },
+  DeleteAllWishlists: {
+    name: "DeleteAllWishlists",
+    query: DELETE_ALL_WISHLISTS,
     operationType: "mutation",
   },
   MoveWishlistToCart: {
@@ -464,6 +507,14 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     query: GET_COMPARE_ITEMS,
     operationType: "query",
   },
+  CompareItemsPagination: {
+    name: "CompareItemsPagination",
+    query: GET_COMPARE_ITEMS_PAGINATION,
+    operationType: "query",
+    variableSchema: {
+      first: { type: "number", required: false },
+    },
+  },
   CreateCompareItem: {
     name: "CreateCompareItem",
     query: CREATE_COMPARE_ITEM,
@@ -479,6 +530,11 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     variableSchema: {
       id: { type: "string", required: true },
     },
+  },
+  DeleteAllCompareItems: {
+    name: "DeleteAllCompareItems",
+    query: DELETE_ALL_COMPARE_ITEMS,
+    operationType: "mutation",
   },
 
   // Review Operations
@@ -540,6 +596,27 @@ function validateVariables(
   return { valid: errors.length === 0, errors };
 }
 
+
+function extractGraphQLErrorMessage(error: unknown): string {
+  if (typeof error === "string") return error;
+
+  if (isObject(error)) {
+    const candidate =
+      (typeof error.message === "string" && error.message) ||
+      (isObject(error.cause) && typeof error.cause.message === "string"
+        ? error.cause.message
+        : "") ||
+      (isObject(error.error) && typeof error.error.message === "string"
+        ? error.error.message
+        : "") ||
+      (typeof error.error === "string" ? error.error : "");
+
+    if (candidate) return candidate;
+  }
+
+  return "Something went wrong, please try again later.";
+}
+
 /**
  * Execute a GraphQL operation through the centralized handler
  */
@@ -591,23 +668,14 @@ export async function executeGraphQLOperation(
 
     return NextResponse.json(response.body);
   } catch (error) {
-
-    if (isBagistoError(error)) {
-      return NextResponse.json(
-        {
-          data: { [operationName]: null },
-          error: error.cause ?? error,
-        },
-        { status: 200 },
-      );
-    }
+    const message = extractGraphQLErrorMessage(error);
 
     return NextResponse.json(
       {
-        message: "Network error",
-        error: error instanceof Error ? error.message : "Unknown error",
+        data: { [operationName]: null },
+        errors: [{ message }],
       },
-      { status: 500 },
+      { status: 200 },
     );
   }
 }

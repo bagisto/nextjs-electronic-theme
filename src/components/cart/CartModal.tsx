@@ -138,9 +138,8 @@ export default function CartModal({
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                               const baseImage: any = safeParse(item?.node?.baseImage);
-                              const canChangeQty = item?.node?.canChangeQty !== false;
                               const isBookingNeedsReselect =
-                                item?.node?.type === "booking" && !canChangeQty;
+                                item?.node?.type === "booking";
 
                               return (
                                 <li key={i} className="flex w-full flex-col">
@@ -180,11 +179,21 @@ export default function CartModal({
                                     </Link>
 
                                     <div className="flex h-16 flex-col justify-between">
-                                      <Price
-                                        amount={item?.node?.price}
-                                        className="flex justify-end space-y-2 text-right font-archivo text-base font-medium"
-                                        currencyCode={"USD"}
-                                      />
+                                      <div className="flex items-center justify-end gap-2">
+                                        <Price
+                                          amount={item?.node?.price}
+                                          className="text-right font-archivo text-base font-medium"
+                                          currencyCode={"USD"}
+                                        />
+                                        {item?.node?.basePrice &&
+                                          item?.node?.basePrice !== item?.node?.price && (
+                                            <Price
+                                              amount={item?.node?.basePrice}
+                                              className="text-right font-archivo text-sm text-neutral-400 line-through"
+                                              currencyCode={"USD"}
+                                            />
+                                          )}
+                                      </div>
                                       <div className="flex items-center gap-x-2">
                                         <DeleteItemButton item={item} />
                                         {isBookingNeedsReselect ? (
@@ -192,13 +201,6 @@ export default function CartModal({
                                             <span className="text-sm text-neutral-600 dark:text-neutral-400">
                                               Qty {item?.node?.quantity}
                                             </span>
-                                            <Link
-                                              href={merchandiseUrl}
-                                              onClick={onClose}
-                                              className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 underline-offset-2 hover:underline"
-                                            >
-                                              Edit booking
-                                            </Link>
                                           </div>
                                         ) : (
                                           <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
@@ -316,9 +318,8 @@ export default function CartModal({
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                               const baseImage: any = safeParse(item?.node?.baseImage);
-                              const canChangeQty = item?.node?.canChangeQty !== false;
                               const isBookingNeedsReselect =
-                                item?.node?.type === "booking" && !canChangeQty;
+                                item?.node?.type === "booking";
 
                               return (
                                 <li key={i} className="flex w-full flex-col">
@@ -358,11 +359,21 @@ export default function CartModal({
                                     </Link>
 
                                     <div className="flex h-16 flex-col justify-between">
-                                      <Price
-                                        amount={item?.node?.price}
-                                        className="flex justify-end space-y-2 text-right font-archivo text-base font-medium"
-                                        currencyCode={"USD"}
-                                      />
+                                      <div className="flex items-center justify-end gap-2">
+                                        <Price
+                                          amount={item?.node?.price}
+                                          className="text-right font-archivo text-base font-medium"
+                                          currencyCode={"USD"}
+                                        />
+                                        {item?.node?.basePrice &&
+                                          item?.node?.basePrice !== item?.node?.price && (
+                                            <Price
+                                              amount={item?.node?.basePrice}
+                                              className="text-right font-archivo text-sm text-neutral-400 line-through"
+                                              currencyCode={"USD"}
+                                            />
+                                          )}
+                                      </div>
                                       <div className="flex items-center gap-x-2">
                                         <DeleteItemButton item={item} />
                                         {isBookingNeedsReselect ? (
@@ -370,13 +381,6 @@ export default function CartModal({
                                             <span className="text-sm text-neutral-600 dark:text-neutral-400">
                                               Qty {item?.node?.quantity}
                                             </span>
-                                            <Link
-                                              href={merchandiseUrl}
-                                              onClick={onClose}
-                                              className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 underline-offset-2 hover:underline"
-                                            >
-                                              Edit booking
-                                            </Link>
                                           </div>
                                         ) : (
                                           <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">

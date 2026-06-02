@@ -185,7 +185,7 @@ export function ProductDescription({
       </p>
 
       {/* Product Title - Large bold H1, 2-line wrap */}
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white leading-tight mb-3 line-clamp-2">
+      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-900 dark:text-white mb-3 line-clamp-2">
         {product?.name}
       </h1>
 

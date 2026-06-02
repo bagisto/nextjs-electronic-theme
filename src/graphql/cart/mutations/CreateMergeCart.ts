@@ -23,6 +23,7 @@ export const CREATE_MERGE_CART = gql`
               productId
               name
                price
+               basePrice
                baseImage
               sku
               quantity

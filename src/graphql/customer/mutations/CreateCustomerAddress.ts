@@ -16,7 +16,6 @@ export const CREATE_CUSTOMER_ADDRESS = gql`
         address1
         address2
         postcode
-        useForShipping
         defaultAddress
       }
     }

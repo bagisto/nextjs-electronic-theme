@@ -12,7 +12,7 @@ export function ProductsSection({ title, description, products }: ProductsSectio
 
   return (
     <div className="flex flex-col gap-y-10 pt-8 sm:pt-12 lg:pt-20 w-full max-w-screen-2xl mx-auto px-4 xss:px-7.5">
-      <div className="flex flex-col gap-y-4 font-archivo text-center">
+      <div className="flex flex-col gap-y-4 font-archivo text-start">
         <Heading size={{ mobile: "text-xl", laptop: "text-4xl" }}>{title}</Heading>
         <Subheading>{description}</Subheading>
       </div>

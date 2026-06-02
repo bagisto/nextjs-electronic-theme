@@ -64,7 +64,6 @@ export default function SearchPageClient({
   filterAttributes,
   searchValue,
   categoryName = "All Products",
-  categoryBanner = COMMON_IMG,
   categoryDescription = "",
 }: SearchPageClientProps) {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -101,19 +100,21 @@ export default function SearchPageClient({
       </div>
 
       {/* Category Banner */}
-      {categoryBanner && (
+     
         <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 mb-4">
-          <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden">
-            <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800">
-              <Image
+          {!categoryDescription?.toLowerCase().includes("<img") && (
+            <div className="relative w-full h-48 md:h-64 lg:h-80 rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-neutral-200 dark:bg-neutral-800">
+                <Image
                 src={COMMON_IMG}
-                alt={categoryName}
-                fill
-                className="object-cover"
-              />
+                  alt={categoryName}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          </div>
+          )}
           {categoryDescription && (
             <div className="mt-4">
               <div
@@ -123,7 +124,6 @@ export default function SearchPageClient({
             </div>
           )}
         </div>
-      )}
 
       {/* Section Header - Modern Toolbar */}
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6">

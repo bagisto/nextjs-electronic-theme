@@ -1,18 +1,35 @@
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useCustomToast } from "./useToast";
 import { useAppSelector } from "@/store/hooks";
-import { GET_CUSTOMER_ADDRESSES } from "@/graphql/customer/queries/GetCustomerAddresses";
+import { GET_CUSTOMER_ADDRESSES, GET_CUSTOMER_ADDRESSES_PAGINATION } from "@/graphql/customer/queries/GetCustomerAddresses";
 import { CREATE_CUSTOMER_ADDRESS } from "@/graphql/customer/mutations/CreateCustomerAddress";
 import { DELETE_CUSTOMER_ADDRESS } from "@/graphql/customer/mutations/DeleteCustomerAddress";
+import { useCursorPagination } from "./useCursorPagination";
 
-export const useAddress = () => {
+interface UseAddressOptions {
+    pageSize?: number;
+    page?: number;
+    after?: string | null;
+    before?: string | null;
+}
+
+export const useAddress = (options: UseAddressOptions = {}) => {
     const { showToast } = useCustomToast();
     const { user } = useAppSelector((state) => state.user);
     const isLoggedIn = !!user?.email;
 
-    const { data: addressData, loading, error, refetch } = useQuery(GET_CUSTOMER_ADDRESSES, {
-        variables: { first: 10 },
+    const { pageSize = 10, page = 0, after = null, before = null } = options;
+
+    const { edges, pageInfo, totalCount, loading, error, refetch } = useCursorPagination({
+        listQuery: GET_CUSTOMER_ADDRESSES,
+        cursorQuery: GET_CUSTOMER_ADDRESSES_PAGINATION,
+        connectionKey: "getCustomerAddresses",
         skip: !isLoggedIn,
+        paginate: true,
+        pageSize,
+        page,
+        after,
+        before,
         fetchPolicy: "cache-and-network",
     });
 
@@ -46,21 +63,19 @@ export const useAddress = () => {
         }
     });
 
-    const addresses = addressData?.getCustomerAddresses?.edges?.map(
-        (edge: { node: any }) => edge.node
-    ) || [];
+    const addresses = edges.map((edge: { node: any }) => edge.node);
 
     const createAddress = async (input: any, addressId?: string) => {
         if (!isLoggedIn) {
             showToast("Please login to add addresses", "warning");
             return;
         }
-
+        const { useForShipping: _useForShipping, ...addressInput } = input ?? {};
         try {
             await createAddressMutation({
                 variables: {
                     input: {
-                        ...input,
+                        ...addressInput,
                         addressId: addressId ? parseInt(addressId) : undefined,
                     }
                 }
@@ -91,7 +106,8 @@ export const useAddress = () => {
 
     return {
         addresses,
-        totalCount: addressData?.getCustomerAddresses?.totalCount || 0,
+        totalCount,
+        pageInfo,
         loading,
         error,
         refetch,

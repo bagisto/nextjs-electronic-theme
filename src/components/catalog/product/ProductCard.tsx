@@ -5,7 +5,7 @@ import { useState } from "react";
 import Grid from "@/components/theme/ui/grid/Grid";
 import AddToCartButton from "@/components/theme/ui/AddToCartButton";
 import { NextImage } from "@/components/common/NextImage";
-import { Price } from "@/components/theme/ui/Price";
+import ProductPrice from "@/components/theme/ui/ProductPrice";
 import WishlistIcon from "@/components/common/icons/WishlistIcon";
 import CompareIcon from "@/components/common/icons/CompareIcon";
 import RatingStarIcon from "@/components/common/icons/RatingStarIcon";
@@ -101,10 +101,6 @@ export default function ProductCard({
       setIsComparePending(false);
     }
   };
-  const hasDiscount =
-    product?.compareAtPrice &&
-    parseFloat(product.compareAtPrice) > parseFloat(price);
-
   return (
     <Grid.Item key={product.id} className="animate-fadeIn flex flex-col">
       <div
@@ -231,48 +227,14 @@ export default function ProductCard({
           </span>
         </div>
 
-        <div className="flex items-center gap-2 mt-1.5">
-          {(product?.type === "configurable" ||
-            product?.type === "grouped" ||
-            product?.type === "bundle") && (
-            <span className="text-xs text-neutral-400 dark:text-neutral-500">
-              {product?.type === "configurable" ? "From" : "Starting at"}
-            </span>
-          )}
-          {product?.type === "simple" && specialPrice ? (
-            <>
-              <Price
-                amount={specialPrice}
-                className="text-base font-bold text-neutral-900 dark:text-white"
-                currencyCode={currency}
-              />
-              <Price
-                amount={price}
-                className="text-sm text-neutral-400 dark:text-neutral-500 line-through"
-                currencyCode={currency}
-              />
-            </>
-          ) : hasDiscount ? (
-            <>
-              <Price
-                amount={price}
-                className="text-base font-bold text-neutral-900 dark:text-white"
-                currencyCode={currency}
-              />
-              <Price
-                amount={product?.compareAtPrice || price}
-                className="text-sm text-neutral-400 dark:text-neutral-500 line-through"
-                currencyCode={currency}
-              />
-            </>
-          ) : (
-            <Price
-              amount={price}
-              className="text-base font-bold text-neutral-900 dark:text-white"
-              currencyCode={currency}
-            />
-          )}
-        </div>
+        <ProductPrice
+          type={product?.type}
+          currency={currency}
+          price={price}
+          specialPrice={specialPrice}
+          compareAtPrice={product?.compareAtPrice}
+          className="mt-1.5"
+        />
 
         <div className="mt-3 md:hidden">
           <AddToCartButton

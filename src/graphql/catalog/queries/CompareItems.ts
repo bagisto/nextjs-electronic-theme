@@ -1,8 +1,13 @@
 import { gql } from "@apollo/client";
 
 export const GET_COMPARE_ITEMS = gql`
-  query CompareItems {
-    compareItems {
+  query CompareItems(
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+  ) {
+    compareItems(first: $first, last: $last, after: $after, before: $before) {
       edges {
         node {
           id
@@ -13,6 +18,7 @@ export const GET_COMPARE_ITEMS = gql`
             urlKey
             shortDescription
             price
+            minimumPrice
             specialPrice
             baseImageUrl
             reviews {
@@ -25,7 +31,24 @@ export const GET_COMPARE_ITEMS = gql`
           }
         }
       }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
       totalCount
+    }
+  }
+`;
+
+// Lightweight query used to resolve the cursor for an arbitrary page jump.
+export const GET_COMPARE_ITEMS_PAGINATION = gql`
+  query CompareItemsPagination($first: Int) {
+    compareItems(first: $first) {
+      pageInfo {
+        endCursor
+      }
     }
   }
 `;

@@ -3,12 +3,10 @@
 import { Suspense } from "react";
 import CustomerLayout from "@components/customer/credentials/customer-detail/CustomerLayout";
 import { useAppSelector } from "@/store/hooks";
-import { useWishlist } from "@/hooks/useWishlist";
 import { useSearchParams } from "next/navigation";
 
 function CustomerDetailContent() {
   const { user } = useAppSelector((state) => state.user);
-  const { wishlistItems } = useWishlist();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "profile";
 
@@ -21,7 +19,6 @@ function CustomerDetailContent() {
   return (
     <CustomerLayout
       customerData={customerData}
-      wishlistItems={wishlistItems}
       initialTab={initialTab}
     />
   );

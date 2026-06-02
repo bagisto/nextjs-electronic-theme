@@ -22,6 +22,7 @@ export const GET_CART_ITEM = gql`
               productId
               name
               price
+              basePrice
               baseImage
               sku
               quantity

@@ -4,17 +4,32 @@ import { useState } from "react";
 import { useCompare } from "@/hooks/useCompare";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ChevronRightIcon, HomeIcon, ShoppingCartIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { StarIcon } from "@heroicons/react/24/solid";
 import { useAddProduct } from "@/hooks/useAddToCart";
 import { productRequiresOptions } from "@/utils/addToCartValidation";
 import { InlineSpinner } from "@/components/common/PageLoader";
+import Pagination from "@/components/catalog/Pagination";
+import ProductPrice from "@/components/theme/ui/ProductPrice";
+import { COMPARE_ITEMS_PER_PAGE } from "@/utils/constants";
 
 export default function CompareClient() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { onAddToCart } = useAddProduct();
-    const { compareItems, loading, removeFromCompare } = useCompare();
+
+    const currentPage = searchParams.get("page") ? parseInt(searchParams.get("page")!) - 1 : 0;
+    const after = searchParams.get("cursor");
+    const before = searchParams.get("before");
+
+    const { compareItems, totalCount, pageInfo, loading, removeFromCompare, removeAllFromCompare } = useCompare({
+        paginate: true,
+        pageSize: COMPARE_ITEMS_PER_PAGE,
+        page: currentPage,
+        after,
+        before,
+    });
     const [removingId, setRemovingId] = useState<string | null>(null);
     const [addingToCartId, setAddingToCartId] = useState<string | null>(null);
     const [isDeletingAll, setIsDeletingAll] = useState(false);
@@ -48,9 +63,7 @@ export default function CompareClient() {
         if (isDeletingAll) return;
         setIsDeletingAll(true);
         try {
-            for (const item of compareItems) {
-                await removeFromCompare(item.id);
-            }
+            await removeAllFromCompare();
         } finally {
             setIsDeletingAll(false);
         }
@@ -114,14 +127,21 @@ export default function CompareClient() {
                                 </th>
                                 {compareItems.map((item: any) => {
                                     const { id, product } = item;
-                                    const { 
-                                        name, 
-                                        baseImageUrl, 
-                                        price, 
-                                        specialPrice, 
-                                        urlKey 
+                                    const {
+                                        name,
+                                        baseImageUrl,
+                                        type,
+                                        price,
+                                        minimumPrice,
+                                        specialPrice,
+                                        urlKey
                                     } = product || {};
-                                    
+                                    const isRangePrice =
+                                        type === "configurable" ||
+                                        type === "grouped" ||
+                                        type === "bundle";
+                                    const displayPrice = isRangePrice ? minimumPrice ?? "0" : price;
+
                                     return (
                                         <th key={id} className="min-w-[352px] md:min-w-[368px] p-4 md:p-6 border-b border-neutral-100 dark:border-neutral-800 relative align-top bg-white dark:bg-neutral-950">
                                             <div className="product-card text-left w-[320px] relative">
@@ -173,20 +193,15 @@ export default function CompareClient() {
                                                 </div>
                                                 
                                                 <Link href={`/product/${urlKey}`} className="block group">
-                                                    <h3 className="text-sm md:text-base font-bold text-neutral-900 dark:text-white line-clamp-2 mb-2 leading-tight h-10 md:h-12 group-hover:text-primary transition-colors">
+                                                    <h3 className="text-sm md:text-base font-bold text-neutral-900 dark:text-white line-clamp-2 mb-2 h-10 md:h-12 group-hover:text-primary transition-colors">
                                                         {name}
                                                     </h3>
                                                 </Link>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-base md:text-lg font-bold text-neutral-900 dark:text-white">
-                                                        ${specialPrice || price}
-                                                    </span>
-                                                    {specialPrice && (
-                                                        <span className="text-xs md:text-sm text-neutral-400 line-through">
-                                                            ${price}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                                <ProductPrice
+                                                    type={type}
+                                                    price={displayPrice}
+                                                    specialPrice={specialPrice}
+                                                />
                                             </div>
                                         </th>
                                     );
@@ -243,6 +258,18 @@ export default function CompareClient() {
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            )}
+
+            {totalCount > COMPARE_ITEMS_PER_PAGE && (
+                <div className="mt-8">
+                    <Pagination
+                        itemsPerPage={COMPARE_ITEMS_PER_PAGE}
+                        itemsTotal={totalCount}
+                        currentPage={currentPage}
+                        nextCursor={pageInfo?.endCursor}
+                        prevCursor={pageInfo?.startCursor}
+                    />
                 </div>
             )}
 

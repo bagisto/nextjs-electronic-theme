@@ -9,6 +9,7 @@ import { generateMetadataForPage } from "@utils/helper";
 import { staticSeo } from "@utils/metadata";
 import { SpeculationRules } from "@components/theme/SpeculationRules";
 import clsx from "clsx";
+import { headers } from "next/headers";
 
 const bagistoImageOrigin = (() => {
   try {
@@ -32,11 +33,13 @@ export async function generateMetadata() {
   return generateMetadataForPage("", staticSeo.default);
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -47,6 +50,7 @@ export default function RootLayout({
           </>
         )}
         <script
+          nonce={nonce}
           type="speculationrules"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({

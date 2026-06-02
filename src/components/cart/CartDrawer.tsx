@@ -10,6 +10,17 @@ import { NOT_IMAGE } from "@/utils/constants";
 import { createUrl, safeParse } from "@/utils/helper";
 import { useCartDetail } from "@/hooks/useCartDetail";
 import { useAddProduct } from "@/hooks/useAddToCart";
+import {
+  CloseIcon,
+  EmptyCartIcon,
+  MinusIcon,
+  PlusIcon,
+  ArrowRightIcon,
+  TrashIcon,
+  SpinnerIcon,
+  SmallSpinnerIcon,
+} from "@/components/common/icons/CartIcons";
+import { useCustomToast } from "@/hooks/useToast";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -24,6 +35,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const router = useRouter();
   const { getCartDetail, isInitialLoading } = useCartDetail();
   const { onAddToRemove, onUpdateCart } = useAddProduct();
+  const { showToast } = useCustomToast();
   const cartDetail = useAppSelector((state) => state.cartDetail);
   const cart = Array.isArray(cartDetail?.cart?.items?.edges)
     ? cartDetail?.cart?.items?.edges
@@ -124,17 +136,15 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   return (
     <>
       <div
-        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-out cursor-pointer ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-50 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-out cursor-pointer ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         onClick={handleBackdropClick}
         aria-hidden="true"
       />
 
       <div
-        className={`fixed right-0 top-0 z-50 h-full w-full max-w-[420px] bg-white dark:bg-neutral-900 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed right-0 top-0 z-50 h-full w-full max-w-[420px] bg-white dark:bg-neutral-900 shadow-2xl transition-transform duration-300 ease-out flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         role="dialog"
         aria-modal="true"
         aria-label="Shopping cart"
@@ -146,16 +156,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             className="p-1 rounded-full cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             aria-label="Close cart"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-6 h-6 text-neutral-900 dark:text-white"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <CloseIcon className="w-6 h-6 text-neutral-900 dark:text-white" />
           </button>
         </div>
 
@@ -182,16 +183,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             </ul>
           ) : cart.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1}
-                stroke="currentColor"
-                className="w-16 h-16 text-neutral-300 dark:text-neutral-600 mb-4"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-              </svg>
+              <EmptyCartIcon className="w-16 h-16 text-neutral-300 dark:text-neutral-600 mb-4" />
               <p className="text-xl font-bold text-neutral-900 dark:text-white mb-2">Your cart is empty</p>
               <p className="text-neutral-500 dark:text-neutral-400">Add items to your cart to see them here</p>
             </div>
@@ -212,9 +204,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
 
                 const currencyCode = (cartObj as any)?.currencyCode || "USD";
                 const itemType = item?.node?.type;
-                const canChangeQty = item?.node?.canChangeQty !== false;
-                const isBookingNeedsReselect =
-                  itemType === "booking" && !canChangeQty;
+                const isBookingNeedsReselect = itemType === "booking";
 
                 return (
                   <li key={i} className="flex gap-4 group">
@@ -260,16 +250,30 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       <div className="flex items-center justify-between mt-3">
                         {isBookingNeedsReselect ? (
                           <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-                              Qty {item?.node?.quantity}
-                            </span>
-                            <Link
-                              href={merchandiseUrl}
-                              onClick={onClose}
-                              className="text-sm font-semibold text-green-600 hover:text-green-700 dark:text-green-500 dark:hover:text-green-400 underline-offset-2 hover:underline"
-                            >
-                              Edit booking
-                            </Link>
+                            <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Qty</span>
+                            <div className="flex items-center h-9 px-1 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
+                              <button
+                                onClick={() => showToast("You can't update the quantity here. Please go to the product page to edit your booking.", "warning")}
+                                className="w-7 h-7 flex items-center cursor-pointer justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+                                aria-label="Decrease quantity"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
+                                </svg>
+                              </button>
+                              <span className="w-8 text-center text-sm text-neutral-900 dark:text-white">
+                                {item?.node?.quantity}
+                              </span>
+                              <button
+                                onClick={() => showToast("You can't update the quantity here. Please go to the product page to edit your booking.", "warning")}
+                                className="w-7 h-7 flex items-center cursor-pointer justify-center hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded transition-colors"
+                                aria-label="Increase quantity"
+                              >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
                         ) : (
                           <div className="flex items-center gap-3">
@@ -282,11 +286,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 aria-label="Decrease quantity"
                               >
                                 {isItemLoadingDecrease ? (
-                                  <div className="w-3 h-3 border border-neutral-400 border-t-transparent rounded-full animate-spin" />
+                                  <SmallSpinnerIcon />
                                 ) : (
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M18 12H6" />
-                                  </svg>
+                                  <MinusIcon />
                                 )}
                               </button>
                               <span className="w-8 text-center text-sm text-neutral-900 dark:text-white">
@@ -299,11 +301,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 aria-label="Increase quantity"
                               >
                                 {isItemLoadingIncrease ? (
-                                  <div className="w-3 h-3 border border-neutral-400 border-t-transparent rounded-full animate-spin" />
+                                  <SmallSpinnerIcon />
                                 ) : (
-                                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-                                  </svg>
+                                  <PlusIcon />
                                 )}
                               </button>
                             </div>
@@ -317,14 +317,9 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                           aria-label="Remove item"
                         >
                           {isItemRemoving ? (
-                            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
+                            <SpinnerIcon />
                           ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                            </svg>
+                            <TrashIcon />
                           )}
                         </button>
                       </div>
@@ -354,9 +349,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                 className="w-full h-14 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 cursor-pointer hover:bg-neutral-800 dark:hover:bg-neutral-100 disabled:bg-neutral-300 disabled:cursor-not-allowed font-bold text-lg rounded-2xl transition-all duration-200 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl active:scale-[0.98]"
               >
                 <span>Proceed to Checkout</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                </svg>
+                <ArrowRightIcon />
               </button>
 
               <button

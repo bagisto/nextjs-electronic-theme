@@ -8,7 +8,7 @@ import FacebookIcon from "@components/common/icons/FacebookIcon";
 import WhatsAppIcon from "@components/common/icons/WhatsAppIcon";
 import Subscribe from "./Subscribe";
 import FooterMenu from "./FooterMenu";
-import ServiceContent from "./ServiceContent";
+import ServiceContentWrapper from "./ServiceContentWrapper";
 import { ThemeCustomizationTranslationEdge, ThemeOptions } from "@/types/theme/theme-customization";
 
 const { COMPANY_NAME, SITE_NAME } = process.env;
@@ -51,7 +51,7 @@ export default async function Footer() {
       <div className="mx-auto w-full px-4 md:px-6 lg:px-8 py-10 md:py-12 bg-white dark:bg-neutral-950 border-t border-neutral-100 dark:border-neutral-800">
         <div className="max-w-screen-2xl mx-auto">
           {isObject(services) && services?.translations?.edges && (
-            <ServiceContent
+            <ServiceContentWrapper
               name={services?.name}
               serviceData={services?.translations?.edges?.map((edge: ThemeCustomizationTranslationEdge) => edge.node)}
             />

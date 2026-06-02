@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
 import { useAddress } from "@/hooks/useAddress";
 import { MapPinIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import Pagination from "@/components/catalog/Pagination";
+import { ADDRESSES_ITEMS_PER_PAGE } from "@/utils/constants";
 
 interface AddressFormData {
   firstName: string;
@@ -16,15 +19,28 @@ interface AddressFormData {
   state: string;
   country: string;
   postcode: string;
-  useForShipping: boolean;
+  defaultAddress: boolean;
 }
 
 export default function AddressesTab() {
-  const { addresses, loading, createAddress, deleteAddress, creating } =
-    useAddress();
+  const searchParams = useSearchParams();
+
+  const currentPage = searchParams.get("page") ? parseInt(searchParams.get("page")!) - 1 : 0;
+  const after = searchParams.get("cursor");
+  const before = searchParams.get("before");
+
+  const { addresses, totalCount, pageInfo, loading, createAddress, deleteAddress, creating } =
+    useAddress({
+      pageSize: ADDRESSES_ITEMS_PER_PAGE,
+      page: currentPage,
+      after,
+      before,
+    });
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<any>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null);
 
   const {
     register,
@@ -45,7 +61,7 @@ export default function AddressesTab() {
       state: "",
       country: "US",
       postcode: "",
-      useForShipping: true,
+      defaultAddress: false,
     },
   });
 
@@ -61,10 +77,7 @@ export default function AddressesTab() {
     setValue("state", address.state || "");
     setValue("country", address.country || "US");
     setValue("postcode", address.postcode || "");
-    setValue(
-      "useForShipping",
-      address.useForShipping === true || address.useForShipping === true,
-    );
+    setValue("defaultAddress", address.defaultAddress === true || address.isDefault === true);
     setShowForm(true);
   };
 
@@ -73,6 +86,28 @@ export default function AddressesTab() {
     setDeletingId(addressId);
     await deleteAddress(addressId);
     setDeletingId(null);
+  };
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSetDefault = async (address: any) => {
+    const addressId = address.id?.split("/").pop() || address.id;
+    setSettingDefaultId(addressId);
+    await createAddress(
+      {
+        firstName: address.firstName,
+        lastName: address.lastName,
+        email: address.email,
+        phone: address.phone,
+        address1: address.address,
+        address2: address.address2 || "",
+        city: address.city,
+        state: address.state,
+        country: address.country,
+        postcode: address.postcode,
+        defaultAddress: true,
+      },
+      addressId,
+    );
+    setSettingDefaultId(null);
   };
 
   const onSubmit = async (data: AddressFormData) => {
@@ -87,7 +122,7 @@ export default function AddressesTab() {
       state: data.state,
       country: data.country,
       postcode: data.postcode,
-      useForShipping: data.useForShipping ? true : false,
+      defaultAddress: data.defaultAddress ? true : false,
     };
 
     let addressId: string | undefined;
@@ -153,11 +188,11 @@ export default function AddressesTab() {
               <div className="flex justify-between items-center mb-6">
                 <MapPinIcon className="w-6 h-6 text-neutral-900 dark:text-white" />
                 <div className="flex items-center gap-3">
-                  {(address.isDefault || address.useForShipping) && (
+                  {(address.defaultAddress || address.isDefault ) && (
                     <span className="bg-neutral-900 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">
                       Default
                     </span>
-                  )}
+                  ) }
                   <button
                     onClick={() => handleEditClick(address)}
                     className="p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
@@ -192,6 +227,18 @@ export default function AddressesTab() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {totalCount > ADDRESSES_ITEMS_PER_PAGE && (
+        <div className="mt-10">
+          <Pagination
+            itemsPerPage={ADDRESSES_ITEMS_PER_PAGE}
+            itemsTotal={totalCount}
+            currentPage={currentPage}
+            nextCursor={pageInfo?.endCursor}
+            prevCursor={pageInfo?.startCursor}
+          />
         </div>
       )}
 
@@ -390,15 +437,15 @@ export default function AddressesTab() {
               <div className="flex items-center gap-2 pt-4">
                 <input
                   type="checkbox"
-                  id="useForShipping"
-                  {...register("useForShipping")}
+                  id="defaultAddress"
+                  {...register("defaultAddress")}
                   className="w-4 h-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
                 />
                 <label
-                  htmlFor="useForShipping"
+                  htmlFor="defaultAddress"
                   className="text-sm text-neutral-700 dark:text-neutral-300"
                 >
-                  Use this address for shipping
+                  Set as default address
                 </label>
               </div>
 

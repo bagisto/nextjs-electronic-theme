@@ -29,7 +29,7 @@ const Label = ({
           }`}
       >
         <p
-          className={`line-clamp-1 md:line-clamp-2 font-semibold leading-tight tracking-tight ${clsx(
+          className={`line-clamp-1 md:line-clamp-2 font-semibold ${clsx(
             page === "category"
               ? "text-sm md:text-base lg:text-lg"
               : "text-xs md:text-sm"

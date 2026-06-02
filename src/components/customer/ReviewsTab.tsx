@@ -3,9 +3,23 @@
 import { NextImage } from "@/components/common/NextImage";
 import { useCustomerReviews } from "@/hooks/useCustomerReviews";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import Pagination from "@/components/catalog/Pagination";
+import { REVIEWS_ITEMS_PER_PAGE } from "@/utils/constants";
 
 export default function ReviewsTab() {
-    const { reviews, loading, error } = useCustomerReviews();
+    const searchParams = useSearchParams();
+
+    const currentPage = searchParams.get("page") ? parseInt(searchParams.get("page")!) - 1 : 0;
+    const after = searchParams.get("cursor");
+    const before = searchParams.get("before");
+
+    const { reviews, totalCount, pageInfo, loading, error } = useCustomerReviews({
+        pageSize: REVIEWS_ITEMS_PER_PAGE,
+        page: currentPage,
+        after,
+        before,
+    });
 
 
     const renderStars = (rating: number) => {
@@ -127,6 +141,18 @@ export default function ReviewsTab() {
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {totalCount > REVIEWS_ITEMS_PER_PAGE && (
+                <div className="mt-8">
+                    <Pagination
+                        itemsPerPage={REVIEWS_ITEMS_PER_PAGE}
+                        itemsTotal={totalCount}
+                        currentPage={currentPage}
+                        nextCursor={pageInfo?.endCursor}
+                        prevCursor={pageInfo?.startCursor}
+                    />
                 </div>
             )}
         </div>

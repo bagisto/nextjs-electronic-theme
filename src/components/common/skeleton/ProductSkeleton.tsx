@@ -2,11 +2,15 @@
 
 import { useScrollToTop } from "@/hooks/useScrollTo";
 
-export const ProductPageSkeleton = () => {
+function ScrollToTop() {
   useScrollToTop();
+  return null;
+}
 
+export const ProductPageSkeleton = () => {
   return (
     <div className="min-h-screen py-8">
+      <ScrollToTop />
       <div className="container mx-auto">
         <ProductDetailSkeleton />
         <RelatedProductSkeleton />

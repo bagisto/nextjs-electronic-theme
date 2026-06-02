@@ -93,7 +93,7 @@ export default function CartItemAccordion({
                         </div>
 
                         <div className="flex flex-1 flex-col text-base">
-                          <span className="leading-tight text-neutral-900 line-clamp-1 dark:text-white">
+                          <span className="text-neutral-900 line-clamp-1 dark:text-white">
                             {item?.node?.name}
                           </span>
                           <span className="font-normal text-black dark:text-white">
@@ -107,11 +107,21 @@ export default function CartItemAccordion({
                         </div>
                       </Link>
                       <div className="flex h-16 flex-col justify-between text-black/[60%] dark:!text-neutral-300">
-                        <Price
-                          className="flex justify-end space-y-2 text-right text-sm"
-                          amount={item?.node?.price}
-                          currencyCode={"USD"}
-                        />
+                        <div className="flex items-center justify-end gap-2">
+                          <Price
+                            className="text-right text-sm"
+                            amount={item?.node?.price}
+                            currencyCode={"USD"}
+                          />
+                          {item?.node?.basePrice &&
+                            item?.node?.basePrice !== item?.node?.price && (
+                              <Price
+                                className="text-right text-xs text-neutral-400 line-through"
+                                amount={item?.node?.basePrice}
+                                currencyCode={"USD"}
+                              />
+                            )}
+                        </div>
                       </div>
                     </div>
                   </li>

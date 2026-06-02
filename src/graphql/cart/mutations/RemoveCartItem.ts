@@ -25,6 +25,7 @@ export const REMOVE_CART_ITEM = gql`
               productId
               name
                price
+               basePrice
                baseImage
               sku
               quantity

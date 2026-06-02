@@ -1,4 +1,3 @@
-"use client";
 import React, { FC } from "react";
 import ReviewSection from "../review/ReviewSection";
 import ReviewDetail from "../review/ReviewDetail";

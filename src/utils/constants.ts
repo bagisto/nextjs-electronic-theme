@@ -80,21 +80,22 @@ export const configHeader = [
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "X-Frame-Options", value: "DENY" },
       { key: "X-Content-Type-Options", value: "nosniff" },
-      { key: "X-XSS-Protection", value: "1; mode=block" },
       {
         key: "Permissions-Policy",
-        value:
-          "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+        value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+      },
+      {
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
       },
     ],
   },
-  // Cache dynamic pages - shorter cache for frequently updated content
   {
     source: "/search/:path*",
     headers: [
       {
         key: "Cache-Control",
-        value: "public, s-maxage=3600, stale-while-revalidate=86400",
+        value: "private, no-cache, must-revalidate",
       },
     ],
   },
@@ -103,7 +104,7 @@ export const configHeader = [
     headers: [
       {
         key: "Cache-Control",
-        value: "public, s-maxage=3600, stale-while-revalidate=86400",
+        value: "private, no-cache, must-revalidate",
       },
       {
         key: "Vary",
@@ -258,6 +259,12 @@ export const IS_VALID_PHONE = /^(\+?[0-9]{1,3}[-\s]?)?[0-9]{10}$/;
 
 
 export const ITEMS_PER_PAGE = 15;
+
+export const WISHLIST_ITEMS_PER_PAGE = 8;
+export const ORDERS_ITEMS_PER_PAGE = 8;
+export const REVIEWS_ITEMS_PER_PAGE = 8;
+export const ADDRESSES_ITEMS_PER_PAGE = 6;
+export const COMPARE_ITEMS_PER_PAGE = 4;
 
 
 export const COUNTRIES = [

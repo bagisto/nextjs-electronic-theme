@@ -37,3 +37,14 @@ export const DELETE_COMPARE_ITEM = gql`
     }
   }
 `;
+
+export const DELETE_ALL_COMPARE_ITEMS = gql`
+  mutation DeleteAllCompareItems {
+    createDeleteAllCompareItems(input: {}) {
+      deleteAllCompareItems {
+        message
+        deletedCount
+      }
+    }
+  }
+`;

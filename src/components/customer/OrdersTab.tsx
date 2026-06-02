@@ -2,19 +2,28 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import OrderDetailsView from "./OrderDetailsView";
 import { NextImage } from "../common/NextImage";
 import { useOrders } from "@/hooks/useOrders";
+import Pagination from "@/components/catalog/Pagination";
+import { ORDERS_ITEMS_PER_PAGE } from "@/utils/constants";
 
 export default function OrdersTab() {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const { useGetOrders, isLoggedIn } = useOrders();
+    const searchParams = useSearchParams();
 
-    const { data: ordersData, loading } = useGetOrders(10);
+    const currentPage = searchParams.get("page") ? parseInt(searchParams.get("page")!) - 1 : 0;
+    const after = searchParams.get("cursor");
+    const before = searchParams.get("before");
 
-    const orders = ordersData?.customerOrders?.edges?.map(
-        (edge: { node: any }) => edge.node
-    ) || [];
+    const { orders, totalCount, pageInfo, loading } = useGetOrders({
+        pageSize: ORDERS_ITEMS_PER_PAGE,
+        page: currentPage,
+        after,
+        before,
+    });
 
     const formatDate = (dateString: string) => {
         if (!dateString) return "N/A";
@@ -149,6 +158,18 @@ export default function OrdersTab() {
                             </div>
                         </div>
                     ))}
+                </div>
+            )}
+
+            {totalCount > ORDERS_ITEMS_PER_PAGE && (
+                <div className="mt-8">
+                    <Pagination
+                        itemsPerPage={ORDERS_ITEMS_PER_PAGE}
+                        itemsTotal={totalCount}
+                        currentPage={currentPage}
+                        nextCursor={pageInfo?.endCursor}
+                        prevCursor={pageInfo?.startCursor}
+                    />
                 </div>
             )}
         </div>
