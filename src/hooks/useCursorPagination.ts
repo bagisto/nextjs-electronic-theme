@@ -1,5 +1,6 @@
 import { useQuery } from "@apollo/client";
 import type { DocumentNode, WatchQueryFetchPolicy } from "@apollo/client";
+import { FULL_LIST_SIZE } from "@/utils/constants";
 
 export interface CursorPaginationOptions {
     /** Main list query (must accept $first/$last/$after/$before and return pageInfo + totalCount). */
@@ -60,7 +61,7 @@ export function useCursorPagination(options: CursorPaginationOptions) {
         ? before
             ? { last: pageSize, before }
             : { first: pageSize, after: resolvedAfter }
-        : {};
+        : { first: FULL_LIST_SIZE };
 
     // Wait for the cursor lookup to resolve before fetching the target page,
     // otherwise we'd briefly request page 1 with a null cursor.

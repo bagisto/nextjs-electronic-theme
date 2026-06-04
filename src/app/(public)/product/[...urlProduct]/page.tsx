@@ -12,7 +12,7 @@ import {
   PRODUCT_TYPE,
 } from "@/utils/constants";
 import ProductGallery from "@/components/catalog/product/ProductGallery";
-import { GET_PRODUCT_BY_URL_KEY, graphqlRequest } from "@/graphql";
+import { GET_PRODUCT_BY_URL_KEY, GET_PRODUCTS, graphqlRequest } from "@/graphql";
 import {
   GET_APPOINTMENT_BOOKING_DETAILS,
   GET_TABLE_BOOKING_DETAILS,
@@ -32,6 +32,45 @@ import { ProductTabsWrapper } from "@/components/catalog/product/ProductTabsWrap
 
 const productCache = new LRUCache<ProductNode>(100, 10);
 export const dynamic = "force-static";
+export const revalidate = 86400;
+export const dynamicParams = true;
+const PRERENDER_LIMIT = Number(process.env.PRODUCT_PRERENDER_LIMIT ?? 24);
+
+interface ProductListResponse {
+  products?: {
+    edges?: Array<{ node?: { urlKey?: string | null } | null } | null>;
+  } | null;
+}
+
+export async function generateStaticParams(): Promise<
+  Array<{ urlProduct: string[] }>
+> {
+  if (!Number.isFinite(PRERENDER_LIMIT) || PRERENDER_LIMIT <= 0) {
+    return [];
+  }
+
+  try {
+    const data = await graphqlRequest<ProductListResponse>(
+      GET_PRODUCTS,
+      { first: PRERENDER_LIMIT },
+      { tags: ["products"], life: "hours" }
+    );
+
+    const edges = data?.products?.edges ?? [];
+    return edges
+      .map((edge) => edge?.node?.urlKey)
+      .filter((urlKey): urlKey is string => Boolean(urlKey))
+      .map((urlKey) => ({ urlProduct: [urlKey] }));
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(
+        "generateStaticParams (products) failed; falling back to on-demand:",
+        error.message
+      );
+    }
+    return [];
+  }
+}
 
 export interface SingleProductResponse {
   product: ProductNode;

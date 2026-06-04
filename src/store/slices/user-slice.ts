@@ -19,6 +19,10 @@ const userSlice = createSlice({
             state.user = action.payload;
             state.isAuthenticated = true;
         },
+        mergeUser: (state, action: PayloadAction<Partial<BagistoUser>>) => {
+            state.user = { ...(state.user ?? {}), ...action.payload } as BagistoUser;
+            state.isAuthenticated = true;
+        },
         clearUser: (state) => {
             state.user = null;
             state.isAuthenticated = false;
@@ -26,5 +30,5 @@ const userSlice = createSlice({
     },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, mergeUser, clearUser } = userSlice.actions;
 export default userSlice.reducer;

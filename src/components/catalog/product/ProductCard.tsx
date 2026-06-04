@@ -51,53 +51,30 @@ export default function ProductCard({
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlistPending, setIsWishlistPending] = useState(false);
   const [isComparePending, setIsComparePending] = useState(false);
-  const { isInWishlist, toggleWishlist } = useWishlist();
-  const { toggleCompare, isInCompare } = useCompare();
+  const { isInWishlist, toggleWishlist } = useWishlist({ skipList: true });
+  const { toggleCompare, isInCompare } = useCompare({ skipList: true });
 
-  const serverInWishlist = isInWishlist(product.id);
-  const serverInCompare = isInCompare(product.id);
-
-  // Optimistic local state: null means "follow server state"
-  const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(
-    null,
-  );
-  const [optimisticCompare, setOptimisticCompare] = useState<boolean | null>(
-    null,
-  );
-
-  const inWishlist =
-    optimisticWishlist !== null ? optimisticWishlist : serverInWishlist;
-  const inCompare =
-    optimisticCompare !== null ? optimisticCompare : serverInCompare;
+  const inWishlist = isInWishlist(product.id);
+  const inCompare = isInCompare(product.id);
 
   const handleWishlistClick = async () => {
     if (isWishlistPending) return;
-    const next = !inWishlist;
-    setOptimisticWishlist(next);
     setIsWishlistPending(true);
     try {
       await toggleWishlist(product.id);
     } catch {
-      // revert on error
-      setOptimisticWishlist(!next);
     } finally {
-      setOptimisticWishlist(null);
       setIsWishlistPending(false);
     }
   };
 
   const handleCompareClick = async () => {
     if (isComparePending) return;
-    const next = !inCompare;
-    setOptimisticCompare(next);
     setIsComparePending(true);
     try {
       await toggleCompare(product.id);
     } catch {
-      // revert on error
-      setOptimisticCompare(!next);
     } finally {
-      setOptimisticCompare(null);
       setIsComparePending(false);
     }
   };

@@ -1,12 +1,21 @@
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { useCustomToast } from "./useToast";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import {
+    addWishlistId,
+    removeWishlistId,
+    setWishlistIds,
+} from "@/store/slices/wishlist-slice";
+import { normalizeProductId } from "@/utils/productId";
 import { GET_ALL_WISHLIST, GET_WISHLIST_PAGINATION } from "@/graphql/wishlist/query/GetAllWishList";
+import { GET_PRODUCT_WISHLIST_COMPARE_STATE } from "@/graphql/catalog/queries/Product";
 import { CREATE_WISHLIST } from "@/graphql/wishlist/mutations/CreateWishlist";
 import { DELETE_WISHLIST } from "@/graphql/wishlist/mutations/DeleteWishlist";
+import { TOGGLE_WISHLIST } from "@/graphql/wishlist/mutations/ToggleWishlist";
 import { DELETE_ALL_WISHLISTS } from "@/graphql/wishlist/mutations/DeleteAllWishlists";
 import { MOVE_WISHLIST_TO_CART } from "@/graphql/wishlist/mutations/MoveToCart";
 import { useCartDetail } from "./useCartDetail";
+import { FULL_LIST_SIZE } from "@/utils/constants";
 
 interface UseWishlistOptions {
     /** Enable cursor-based pagination for the wishlist listing. */
@@ -19,40 +28,42 @@ interface UseWishlistOptions {
     after?: string | null;
     /** Backward cursor (the `before`/`startCursor` URL param). */
     before?: string | null;
+    skipList?: boolean;
 }
 
 export const useWishlist = (options: UseWishlistOptions = {}) => {
     const { showToast } = useCustomToast();
     const { user } = useAppSelector((state) => state.user);
+    const wishlistIds = useAppSelector((state) => state.wishlist.ids);
+    const dispatch = useAppDispatch();
     const { getCartDetail } = useCartDetail();
     const isLoggedIn = !!user?.email;
 
-    const { paginate = false, pageSize = 10, page = 0, after = null, before = null } = options;
+    const { paginate = false, pageSize = 10, page = 0, after = null, before = null, skipList = false } = options;
 
     // For an arbitrary (non-adjacent) page jump the URL carries neither cursor,
     // so we first resolve the end cursor of all preceding items, then fetch the
     // target page. Mirrors the search page's two-step pagination pattern.
     const needsCursorLookup = paginate && page > 0 && !after && !before;
     const { data: prelimData, loading: prelimLoading } = useQuery(GET_WISHLIST_PAGINATION, {
-        skip: !isLoggedIn || !needsCursorLookup,
+        skip: !isLoggedIn || !needsCursorLookup || skipList,
         variables: { first: page * pageSize },
     });
     const resolvedAfter = needsCursorLookup
         ? (prelimData?.wishlists?.pageInfo?.endCursor ?? null)
         : after;
-
     const variables = paginate
         ? before
             ? { last: pageSize, before }
             : { first: pageSize, after: resolvedAfter }
-        : {};
+        : { first: FULL_LIST_SIZE };
 
     // Wait for the cursor lookup to resolve before fetching the target page,
     // otherwise we'd briefly request page 1 with a null cursor.
     const waitingForCursor = needsCursorLookup && resolvedAfter === null && prelimLoading;
 
     const { data: wishlistData, loading: listLoading, error, refetch } = useQuery(GET_ALL_WISHLIST, {
-        skip: !isLoggedIn || waitingForCursor,
+        skip: !isLoggedIn || waitingForCursor || skipList,
         variables,
     });
 
@@ -60,6 +71,10 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
 
     const [createWishlistMutation, { loading: creating }] = useMutation(CREATE_WISHLIST);
     const [deleteWishlistMutation, { loading: deleting }] = useMutation(DELETE_WISHLIST);
+    const [toggleWishlistMutation, { loading: toggling }] = useMutation(TOGGLE_WISHLIST);
+    const [fetchProductState] = useLazyQuery(GET_PRODUCT_WISHLIST_COMPARE_STATE, {
+        fetchPolicy: "network-only",
+    });
     const [deleteAllWishlistsMutation, { loading: deletingAll }] = useMutation(DELETE_ALL_WISHLISTS);
 
     const [moveWishlistToCartMutation, { loading: movingToCart }] = useMutation(MOVE_WISHLIST_TO_CART, {
@@ -83,43 +98,8 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
     const pageInfo = wishlistData?.wishlists?.pageInfo ?? null;
 
     const isInWishlist = (productId: number | string): boolean => {
-        if (!isLoggedIn || !wishlistItems.length) return false;
-        
-        let id = productId;
-        if (typeof id === 'string' && isNaN(Number(id))) {
-            if (id.includes('/')) {
-                id = id.split('/').pop() || id;
-            }
-        }
-        
-        const normalizedId = parseInt(id.toString());
-        return wishlistItems.some((item: any) => {
-            const itemProductId = typeof item.product.id === 'string' 
-                ? parseInt(item.product.id.split('/').pop() || item.product.id)
-                : item.product.id;
-            return itemProductId === normalizedId;
-        });
-    };
-
-    const getWishlistItemId = (productId: number | string): string | null => {
-        if (!isLoggedIn || !wishlistItems.length) return null;
-        
-        let id = productId;
-        if (typeof id === 'string' && isNaN(Number(id))) {
-            if (id.includes('/')) {
-                id = id.split('/').pop() || id;
-            }
-        }
-        
-        const normalizedId = parseInt(id.toString());
-        const item = wishlistItems.find((item: any) => {
-            const itemProductId = typeof item.product.id === 'string' 
-                ? parseInt(item.product.id.split('/').pop() || item.product.id)
-                : item.product.id;
-            return itemProductId === normalizedId;
-        });
-        
-        return item ? item.id : null;
+        if (!isLoggedIn) return false;
+        return wishlistIds.includes(normalizeProductId(productId));
     };
 
     const addToWishlist = async (productId: number | string) => {
@@ -128,18 +108,13 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
             return;
         }
 
-        let id = productId;
-        if (typeof id === 'string' && isNaN(Number(id))) {
-            if (id.includes('/')) {
-                id = id.split('/').pop() || id;
-            }
-        }
-
+        const numericId = normalizeProductId(productId);
         const result = await createWishlistMutation({
-            variables: { input: { productId: parseInt(id.toString()) } }
+            variables: { input: { productId: numericId } }
         });
 
         if (result.data?.createWishlist?.wishlist) {
+            dispatch(addWishlistId(numericId));
             showToast("Item added to wishlist successfully", "success");
             refetch();
         } else if (result.errors?.length) {
@@ -151,19 +126,25 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
         }
     };
 
-    const removeFromWishlist = async (id: string) => {
+    const removeFromWishlist = async (id: string, productId?: number | string) => {
         if (!isLoggedIn) return;
+
+        const syncRemoved = () => {
+            if (productId != null) dispatch(removeWishlistId(normalizeProductId(productId)));
+        };
 
         const result = await deleteWishlistMutation({
             variables: { input: { id } }
         });
 
         if (result.data?.deleteWishlist?.wishlist) {
-            showToast("Item removed from wishlist successfully", "success");
+            syncRemoved();
+            showToast("Item removed from wishlist successfully", "warning");
             refetch();
         } else if (result.errors?.length) {
             const message = result.errors[0].message;
             if (message === "Item Successfully Removed From Wishlist") {
+                syncRemoved();
                 showToast(message, "warning");
                 refetch();
             } else {
@@ -176,19 +157,64 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
         }
     };
 
-    const toggleWishlist = async (productId: number | string) => {
+    const toggleWishlist = async (
+        productId: number | string,
+        options: { skipRefetch?: boolean; refetchState?: () => Promise<any> } = {}
+    ) => {
         if (!isLoggedIn) {
             showToast("Please login to manage wishlist", "warning");
             return;
         }
 
-        const wishlistItemId = getWishlistItemId(productId);
-        
-        if (wishlistItemId) {
-            await removeFromWishlist(wishlistItemId);
-        } else {
-            await addToWishlist(productId);
+        const numericId = normalizeProductId(productId);
+
+        const wasIn = wishlistIds.includes(numericId);
+        dispatch(wasIn ? removeWishlistId(numericId) : addWishlistId(numericId));
+
+        let result;
+        try {
+            result = await toggleWishlistMutation({
+                variables: { input: { productId: numericId } },
+                errorPolicy: "all"
+            });
+        } catch (err) {
+            dispatch(wasIn ? addWishlistId(numericId) : removeWishlistId(numericId));
+            throw err;
         }
+
+        const refreshProductState = async () => {
+            if (options.refetchState) {
+                try {
+                    await options.refetchState();
+                } catch (e) {
+                    console.error("Failed to refetch product state directly:", e);
+                    await fetchProductState({ variables: { id: numericId.toString() } });
+                }
+            } else {
+                await fetchProductState({ variables: { id: numericId.toString() } });
+            }
+        };
+
+        const isRemoved = result.errors?.some(err => err.message === "Item Successfully Removed From Wishlist");
+        const isAdded = !!(result.data?.toggleWishlist?.wishlist || result.data?.ToggleWishlist?.wishlist);
+
+        if (isRemoved || isAdded) {
+            dispatch(isAdded ? addWishlistId(numericId) : removeWishlistId(numericId));
+            if (isRemoved) {
+                showToast("Item Successfully Removed From Wishlist", "warning");
+            } else {
+                showToast("Item added to wishlist successfully", "success");
+            }
+
+            await refreshProductState();
+            if (!options.skipRefetch) refetch();
+            return { isAdded, isRemoved };
+        }
+
+        dispatch(wasIn ? addWishlistId(numericId) : removeWishlistId(numericId));
+        const errMsg = result.errors?.[0]?.message || "Failed to update wishlist";
+        showToast(errMsg, "danger");
+        throw new Error(errMsg);
     };
 
     const getWishlistId = (productId: string) => {
@@ -204,7 +230,8 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
         const response = result.data?.createDeleteAllWishlists?.deleteAllWishlists;
 
         if (response) {
-            showToast(response.message || "Wishlist cleared successfully", "success");
+            dispatch(setWishlistIds([]));
+            showToast(response.message || "Wishlist cleared successfully", "warning");
             await refetch();
         } else if (result.errors?.length) {
             showToast(result.errors[0].message || "Failed to clear wishlist", "danger");
@@ -215,7 +242,11 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
         }
     };
 
-    const moveItemToCart = async (wishlistItemId: number | string, quantity: number) => {
+    const moveItemToCart = async (
+        wishlistItemId: number | string,
+        quantity: number,
+        productId?: number | string
+    ) => {
         if (!isLoggedIn) return;
         try {
             await moveWishlistToCartMutation({
@@ -226,6 +257,7 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
                     }
                 }
             });
+            if (productId != null) dispatch(removeWishlistId(normalizeProductId(productId)));
         } catch (e) {
             console.error(e, "error");
         }
@@ -240,7 +272,7 @@ export const useWishlist = (options: UseWishlistOptions = {}) => {
         creating,
         deleting,
         deletingAll,
-        toggling: creating || deleting,
+        toggling,
         addToWishlist,
         removeFromWishlist,
         removeAllFromWishlist,

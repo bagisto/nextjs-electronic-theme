@@ -34,11 +34,11 @@ export default function CompareClient() {
     const [addingToCartId, setAddingToCartId] = useState<string | null>(null);
     const [isDeletingAll, setIsDeletingAll] = useState(false);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id: string, productId?: string) => {
         if (removingId) return;
         setRemovingId(id);
         try {
-            await removeFromCompare(id);
+            await removeFromCompare(id, { productId });
         } finally {
             setRemovingId(null);
         }
@@ -159,7 +159,7 @@ export default function CompareClient() {
                                                         onClick={(e) => {
                                                             e.preventDefault();
                                                             e.stopPropagation();
-                                                            handleRemove(id);
+                                                            handleRemove(id, product?.id);
                                                         }}
                                                         disabled={removingId === id || isDeletingAll}
                                                         aria-busy={removingId === id || isDeletingAll}

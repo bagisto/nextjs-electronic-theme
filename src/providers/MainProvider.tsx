@@ -13,10 +13,12 @@ const MainProvider = ({ children }: { children: ReactNode }) => {
   return (
     <SessionProvider>
       <Provider store={store}>
-        <SessionSync />
         <GlobalContextProvider>
           <ToastProvider>
-            <ApolloWrapper>{children}</ApolloWrapper>
+            <ApolloWrapper>
+              <SessionSync />
+              {children}
+            </ApolloWrapper>
           </ToastProvider>
         </GlobalContextProvider>
       </Provider>

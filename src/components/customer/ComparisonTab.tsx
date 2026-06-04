@@ -10,11 +10,11 @@ export default function ComparisonTab() {
     const { compareItems, loading, removeFromCompare  } = useCompare();
     const [removingId, setRemovingId] = useState<string | null>(null);
 
-    const handleRemove = async (id: string) => {
+    const handleRemove = async (id: string, productId?: string) => {
         if (removingId) return;
         setRemovingId(id);
         try {
-            await removeFromCompare(id);
+            await removeFromCompare(id, { productId });
         } finally {
             setRemovingId(null);
         }
@@ -92,7 +92,7 @@ export default function ComparisonTab() {
                                             </div>
                                             <button
                                                 className={`text-xs text-red-500 hover:text-red-700 underline inline-flex items-center gap-1.5 ${removingId === item.id ? "cursor-wait opacity-70" : "cursor-pointer"}`}
-                                                onClick={() => handleRemove(item.id)}
+                                                onClick={() => handleRemove(item.id, item.product?.id)}
                                                 disabled={removingId === item.id}
                                                 aria-busy={removingId === item.id}
                                             >

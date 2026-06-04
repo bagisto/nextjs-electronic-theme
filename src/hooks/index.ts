@@ -10,6 +10,7 @@ export { useGuestCartToken } from './useGuestCartToken';
 export { useMediaQuery } from './useMediaQueryHook';
 export { useMergeCart } from './useMergeCart';
 export { useProductReview } from './useProductReview';
+export { useProductWishlistCompareState } from './useProductWishlistCompareState';
 export { useScrollTo, useScrollToTop } from './useScrollTo';
 export { useCustomToast } from './useToast';
 export { getVariantInfo } from './useVariantInfo';

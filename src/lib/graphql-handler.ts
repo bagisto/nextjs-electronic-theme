@@ -79,6 +79,8 @@ import {
   DELETE_ALL_COMPARE_ITEMS,
 } from "@/graphql/catalog/mutations/CompareItems";
 
+import { GET_PRODUCT_WISHLIST_COMPARE_STATE } from "@/graphql/catalog/queries/Product";
+
 // Review operations
 import { CREATE_PRODUCT_REVIEW } from "@/graphql/catalog/mutations/ProductReview";
 
@@ -494,6 +496,15 @@ const ALLOWED_OPERATIONS: Record<string, OperationDefinition> = {
     name: "MoveToCart",
     query: MOVE_WISHLIST_TO_CART,
     operationType: "mutation",
+  },
+
+  GetProductWishlistCompareState: {
+    name: "GetProductWishlistCompareState",
+    query: GET_PRODUCT_WISHLIST_COMPARE_STATE,
+    operationType: "query",
+    variableSchema: {
+      id: { type: "string", required: true },
+    },
   },
 
   // Compare Operations - with aliases

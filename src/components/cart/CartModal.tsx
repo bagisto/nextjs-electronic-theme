@@ -8,7 +8,8 @@ import {
   DrawerHeader,
 } from "@heroui/drawer";
 import { useDisclosure } from "@heroui/react";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { useCustomToast } from "@/hooks/useToast";
 import { DEFAULT_OPTION } from "@/utils/constants";
 import { useAppSelector } from "@/store/hooks";
 import OpenCart from "./OpenCart";
@@ -44,6 +45,7 @@ export default function CartModal({
   onClose?: () => void;
 }) {
   const { isLoading } = useCartDetail();
+  const { showToast } = useCustomToast();
   const cartDetail = useAppSelector((state) => state.cartDetail);
   const { billingAddress } = useAddressesFromApi();
   const cart = Array.isArray(cartDetail?.cart?.items?.edges)
@@ -166,7 +168,7 @@ export default function CartModal({
                                         />
                                       </div>
 
-                                      <div className="flex flex-1 flex-col text-base">
+                                      <div className="flex flex-1 flex-col text-base max-w-[140px]">
                                         <span className="line-clamp-1 font-archivo text-base font-medium">
                                           {item?.node?.name}
                                         </span>
@@ -197,10 +199,38 @@ export default function CartModal({
                                       <div className="flex items-center gap-x-2">
                                         <DeleteItemButton item={item} />
                                         {isBookingNeedsReselect ? (
-                                          <div className="ml-auto flex items-center gap-2">
-                                            <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                                              Qty {item?.node?.quantity}
-                                            </span>
+                                          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
+                                            <button
+                                              type="button"
+                                              aria-label="Reduce item quantity"
+                                              onClick={() =>
+                                                showToast(
+                                                  "You can't update the quantity here. Please go to the product page to edit your booking.",
+                                                  "warning"
+                                                )
+                                              }
+                                              className="flex h-full min-w-[36px] max-w-[36px] flex-none cursor-pointer items-center justify-center rounded-full px-2 transition-all duration-200 hover:opacity-80"
+                                            >
+                                              <MinusIcon className="h-4 w-4 dark:text-neutral-100" />
+                                            </button>
+                                            <p className="w-6 text-center">
+                                              <span className="w-full text-sm">
+                                                {item?.node?.quantity}
+                                              </span>
+                                            </p>
+                                            <button
+                                              type="button"
+                                              aria-label="Increase item quantity"
+                                              onClick={() =>
+                                                showToast(
+                                                  "You can't update the quantity here. Please go to the product page to edit your booking.",
+                                                  "warning"
+                                                )
+                                              }
+                                              className="flex h-full min-w-[36px] max-w-[36px] flex-none cursor-pointer items-center justify-center rounded-full px-2 transition-all duration-200 hover:opacity-80"
+                                            >
+                                              <PlusIcon className="h-4 w-4 dark:text-neutral-100" />
+                                            </button>
                                           </div>
                                         ) : (
                                           <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
@@ -346,7 +376,7 @@ export default function CartModal({
                                         />
                                       </div>
 
-                                      <div className="flex flex-1 flex-col text-base">
+                                      <div className="flex flex-1 flex-col text-base max-w-[140px]">
                                         <span className="line-clamp-1 font-archivo text-base font-medium">
                                           {item?.node?.name}
                                         </span>
@@ -377,10 +407,38 @@ export default function CartModal({
                                       <div className="flex items-center gap-x-2">
                                         <DeleteItemButton item={item} />
                                         {isBookingNeedsReselect ? (
-                                          <div className="ml-auto flex items-center gap-2">
-                                            <span className="text-sm text-neutral-600 dark:text-neutral-400">
-                                              Qty {item?.node?.quantity}
-                                            </span>
+                                          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
+                                            <button
+                                              type="button"
+                                              aria-label="Reduce item quantity"
+                                              onClick={() =>
+                                                showToast(
+                                                  "You can't update the quantity here. Please go to the product page to edit your booking.",
+                                                  "warning"
+                                                )
+                                              }
+                                              className="flex h-full min-w-[36px] max-w-[36px] flex-none cursor-pointer items-center justify-center rounded-full px-2 transition-all duration-200 hover:opacity-80"
+                                            >
+                                              <MinusIcon className="h-4 w-4 dark:text-neutral-100" />
+                                            </button>
+                                            <p className="w-6 text-center">
+                                              <span className="w-full text-sm">
+                                                {item?.node?.quantity}
+                                              </span>
+                                            </p>
+                                            <button
+                                              type="button"
+                                              aria-label="Increase item quantity"
+                                              onClick={() =>
+                                                showToast(
+                                                  "You can't update the quantity here. Please go to the product page to edit your booking.",
+                                                  "warning"
+                                                )
+                                              }
+                                              className="flex h-full min-w-[36px] max-w-[36px] flex-none cursor-pointer items-center justify-center rounded-full px-2 transition-all duration-200 hover:opacity-80"
+                                            >
+                                              <PlusIcon className="h-4 w-4 dark:text-neutral-100" />
+                                            </button>
                                           </div>
                                         ) : (
                                           <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">

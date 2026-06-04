@@ -157,6 +157,23 @@ export const GET_PRODUCT_SWATCH_REVIEW = gql`
 
 
 /**
+ * Fetch the current user's wishlist/compare state for a single product.
+ * Lightweight, user-scoped query (runs through the authenticated Apollo client)
+ * used by the PDP instead of scanning the full wishlist/compare lists.
+ * `isInWishlist`/`isInCompare` come back as "0"/"1" strings — "0" means false.
+ * @param id - Product ID
+ */
+export const GET_PRODUCT_WISHLIST_COMPARE_STATE = gql`
+  query GetProductWishlistCompareState($id: ID!) {
+    product(id: $id) {
+      id
+      isInWishlist
+      isInCompare
+    }
+  }
+`;
+
+/**
  * Fetch pagination info for products
  * Lightweight query for pagination controls
  */

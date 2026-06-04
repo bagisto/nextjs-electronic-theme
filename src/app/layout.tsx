@@ -1,4 +1,3 @@
-import { Archivo } from "next/font/google";
 import "./globals.css";
 import {
   MainProvider,
@@ -8,8 +7,6 @@ import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { generateMetadataForPage } from "@utils/helper";
 import { staticSeo } from "@utils/metadata";
 import { SpeculationRules } from "@components/theme/SpeculationRules";
-import clsx from "clsx";
-import { headers } from "next/headers";
 
 const bagistoImageOrigin = (() => {
   try {
@@ -21,25 +18,15 @@ const bagistoImageOrigin = (() => {
   }
 })();
 
-export const archivo = Archivo({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-archivo",
-  display: "optional",
-  preload: true,
-});
-
 export async function generateMetadata() {
   return generateMetadataForPage("", staticSeo.default);
 }
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const nonce = (await headers()).get("x-nonce") ?? undefined;
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -50,7 +37,6 @@ export default async function RootLayout({
           </>
         )}
         <script
-          nonce={nonce}
           type="speculationrules"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
@@ -78,10 +64,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className={clsx(
-        "min-h-screen font-archivo text-foreground bg-white dark:bg-neutral-950 antialiased",
-        archivo.variable
-      )}>
+      <body className="min-h-screen font-archivo text-foreground bg-white dark:bg-neutral-950 antialiased">
         <main className="bg-white dark:bg-neutral-950">
           <ThemeProvider>
             <ErrorBoundary>

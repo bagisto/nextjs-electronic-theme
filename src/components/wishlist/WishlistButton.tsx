@@ -1,19 +1,16 @@
 "use client";
 
-import { useWishlist } from "@/hooks/useWishlist";
+import { useAppSelector } from "@/store/hooks";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function WishlistButton() {
-    const { totalCount, wishlistItems } = useWishlist();
+    const count = useAppSelector((state) => state.wishlist.ids.length);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
-
-    const count = totalCount || wishlistItems.length || 0;
 
     if (!mounted) {
         return (

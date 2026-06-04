@@ -26,6 +26,16 @@ export const DEFAULT_CURRENCY_CODE = "DEFAULT_CURRENCY_CODE";
 export const IS_AUTO_CURRENCY_SET = "IS_AUTO_CURRENCY_SET";
 export const EMAIL = "email";
 export const ORDER_DETAILS = "order-details";
+export const WISHLIST_IDS = "wishlist_ids";
+export const COMPARE_IDS = "compare_ids";
+
+/**
+ * Build a localStorage key scoped to a specific user, so membership cached for
+ * one customer is never read for another on a shared device. Falls back to the
+ * bare key when no user is known.
+ */
+export const userScopedKey = (key: string, email?: string | null) =>
+  email ? `${key}_${email}` : key;
 
 export const CACHED_KEYS = {
   MEGA_MENU: "MEGA_MENU",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { setUser } from "@/store/slices/user-slice";
@@ -62,30 +62,34 @@ export const useCustomerProfile = (): UseCustomerProfileReturn => {
     const isLoggedIn = !!user?.email;
     const dispatch = useAppDispatch();
 
-    const { loading: isLoading, refetch } = useQuery(GET_CUSTOMER_PROFILE, {
+    const { data: profileQueryData, loading: isLoading, error: profileError, refetch } = useQuery(GET_CUSTOMER_PROFILE, {
         skip: !isLoggedIn,
         fetchPolicy: "cache-and-network",
-        onCompleted: (data) => {
-            const profileData = data?.readCustomerProfile;
-            if (profileData) {
-                setProfile(profileData);
-                // Update Redux state with full profile data
-                dispatch(setUser({ ...user, ...profileData }));
-                setFormData({
-                    firstName: profileData?.firstName || "",
-                    lastName: profileData?.lastName || "",
-                    email: profileData?.email || "",
-                    dateOfBirth: profileData?.dateOfBirth || "",
-                    gender: profileData?.gender || "",
-                    phone: profileData?.phone || "",
-                });
-            }
-        },
-        onError: (err) => {
-            console.error("Error fetching customer profile:", err);
+    });
+
+    useEffect(() => {
+        const profileData = profileQueryData?.readCustomerProfile;
+        if (!profileData) return;
+        setProfile(profileData);
+        // Update Redux state with full profile data
+        dispatch(setUser({ ...user, ...profileData }));
+        setFormData({
+            firstName: profileData?.firstName || "",
+            lastName: profileData?.lastName || "",
+            email: profileData?.email || "",
+            dateOfBirth: profileData?.dateOfBirth || "",
+            gender: profileData?.gender || "",
+            phone: profileData?.phone || "",
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [profileQueryData, dispatch]);
+
+    useEffect(() => {
+        if (profileError) {
+            console.error("Error fetching customer profile:", profileError);
             setError("Failed to load profile data");
         }
-    });
+    }, [profileError]);
 
     const [updateProfileMutation, { loading: isSaving }] = useMutation(UPDATE_CUSTOMER_PROFILE, {
         onCompleted: (response) => {

@@ -30,7 +30,7 @@ interface WishlistItemProps {
             brand?: string;
         };
     };
-    onRemove?: (id: string) => void;
+    onRemove?: (id: string, productId?: string) => void;
     onAddToCart?: (item: WishlistItemProps["item"], quantity: number) => void;
     isAddingToCart?: boolean;
     isRemoving?: boolean;
@@ -59,7 +59,7 @@ function WishlistItem({ item, onRemove, onAddToCart, isAddingToCart, isRemoving 
         <div className="wishlist-item group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 flex flex-col sm:flex-row gap-4 sm:items-start transition-all duration-200 hover:shadow-lg">
 
             <button
-                onClick={() => onRemove?.(item.id)}
+                onClick={() => onRemove?.(item.id, item.product?.id)}
                 disabled={isRemoving}
                 aria-busy={isRemoving}
                 className={`absolute top-4 right-4 z-10 p-2 rounded-full border dark:border-neutral-700 text-red-500 border-red-500 bg-red-50 transition-colors dark:bg-neutral-800 ${isRemoving ? "cursor-wait opacity-60" : "cursor-pointer"}`}
@@ -184,11 +184,11 @@ export default function WishlistContent({ isLoading }: WishlistContentProps) {
         return <WishlistSkeleton />;
     }
 
-    const handleRemoveFromWishlist = async (id: string) => {
+    const handleRemoveFromWishlist = async (id: string, productId?: string) => {
         if (removingId) return;
         setRemovingId(id);
         try {
-            await removeFromWishlist(id);
+            await removeFromWishlist(id, productId);
         } finally {
             setRemovingId(null);
         }
@@ -213,7 +213,7 @@ export default function WishlistContent({ isLoading }: WishlistContentProps) {
         const moveWishlistToCart = Number(item.id.split("/").pop());
         setAddingId(item.id);
         try {
-            await moveItemToCart(moveWishlistToCart, Number(quantity));
+            await moveItemToCart(moveWishlistToCart, Number(quantity), product?.id);
         } finally {
             setAddingId(null);
         }

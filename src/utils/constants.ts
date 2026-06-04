@@ -52,6 +52,7 @@ export const STOREFRONT_KEY = process.env.NEXT_PUBLIC_BAGISTO_STOREFRONT_KEY || 
 // -----Pagination--------//
 export const PAGE = "page";
 export const LIMIT = "limit";
+export const FULL_LIST_SIZE = 100;
 export const LOADING = "loading";
 export const QUERY = "q";
 export const SORT = "sort";
@@ -80,22 +81,21 @@ export const configHeader = [
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "X-Frame-Options", value: "DENY" },
       { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-XSS-Protection", value: "1; mode=block" },
       {
         key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
-      },
-      {
-        key: "Strict-Transport-Security",
-        value: "max-age=63072000; includeSubDomains; preload",
+        value:
+          "camera=(), microphone=(), geolocation=(), browsing-topics=()",
       },
     ],
   },
+  // Cache dynamic pages - shorter cache for frequently updated content
   {
     source: "/search/:path*",
     headers: [
       {
         key: "Cache-Control",
-        value: "private, no-cache, must-revalidate",
+        value: "public, s-maxage=3600, stale-while-revalidate=86400",
       },
     ],
   },
@@ -104,7 +104,7 @@ export const configHeader = [
     headers: [
       {
         key: "Cache-Control",
-        value: "private, no-cache, must-revalidate",
+        value: "public, s-maxage=3600, stale-while-revalidate=86400",
       },
       {
         key: "Vary",

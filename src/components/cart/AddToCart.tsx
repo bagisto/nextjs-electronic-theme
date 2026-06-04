@@ -13,6 +13,7 @@ import { useCustomToast } from "@/hooks/useToast";
 import { safeParse } from "@utils/helper";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCompare } from "@/hooks/useCompare";
+import { useProductWishlistCompareState } from "@/hooks/useProductWishlistCompareState";
 import { Loading } from "@components/common/skeleton/Loading";
 import { GroupedProductSelector } from "@/components/catalog/product/GroupedProductSelector";
 import { BundleProductSelector } from "@/components/catalog/product/BundleProductSelector";
@@ -125,12 +126,9 @@ export function AddToCart({
 }) {
   const isSaleable = productSwatchReview?.isSaleable || "";
   const { onAddToCart, isCartLoading } = useAddProduct();
-  const { isInWishlist, toggleWishlist, toggling } = useWishlist();
-  const { toggleCompare, isInCompare, creating } = useCompare();
+  const { toggleWishlist, toggling, isInWishlist } = useWishlist({ skipList: true });
+  const { toggleCompare, creating, isInCompare } = useCompare({ skipList: true });
   const { showToast } = useCustomToast();
-
-  const [optimisticWishlist, setOptimisticWishlist] = useState<boolean | null>(null);
-  const [optimisticCompare, setOptimisticCompare] = useState<boolean | null>(null);
 
   const [selectedLinks, setSelectedLinks] = useState<number[]>([]);
   const [ticketQtys, setTicketQtys] = useState<Record<string, number>>({});
@@ -203,6 +201,16 @@ export function AddToCart({
     JSON.stringify(index),
   );
   const buttonStatus = !!selectedVariantId;
+
+  const cleanedProductId = String(productId).split("/").pop() ?? "";
+  const targetId =
+    type === "configurable"
+      ? selectedVariantId
+        ? String(selectedVariantId)
+        : ""
+      : cleanedProductId;
+
+  const { refetch: refetchProductState } = useProductWishlistCompareState(targetId);
 
   const downloadableLinks =
     directDownloadableLinks || productSwatchReview?.downloadableLinks || null;
@@ -541,10 +549,7 @@ export function AddToCart({
 
       <div className="flex items-center gap-6 border-t border-b border-neutral-200 dark:border-neutral-700 py-4 mb-6">
         {(() => {
-          const cleanedProductId = String(productId).split("/").pop() ?? "";
-          const targetId = type === "configurable" ? String(selectedVariantId) : cleanedProductId;
-          const serverWishlisted = isInWishlist(targetId);
-          const isWishlisted = optimisticWishlist !== null ? optimisticWishlist : serverWishlisted;
+          const isWishlisted = isInWishlist(targetId);
           const isDisabled = type === "configurable" && !buttonStatus;
 
           return (
@@ -552,14 +557,9 @@ export function AddToCart({
               onClick={async (e) => {
                 e.preventDefault();
                 if (isDisabled || toggling) return;
-                const next = !isWishlisted;
-                setOptimisticWishlist(next);
                 try {
-                  await toggleWishlist(targetId);
+                  await toggleWishlist(targetId, { skipRefetch: true, refetchState: refetchProductState });
                 } catch {
-                  setOptimisticWishlist(!next);
-                } finally {
-                  setOptimisticWishlist(null);
                 }
               }}
               disabled={isDisabled || toggling}
@@ -589,10 +589,7 @@ export function AddToCart({
         })()}
 
         {(() => {
-          const cleanedProductId = String(productId).split("/").pop() ?? "";
-          const targetId = type === "configurable" ? String(selectedVariantId) : cleanedProductId;
-          const serverCompared = isInCompare(targetId);
-          const isCompared = optimisticCompare !== null ? optimisticCompare : serverCompared;
+          const isCompared = isInCompare(targetId);
           const isDisabled = type === "configurable" && !buttonStatus;
 
           return (
@@ -600,14 +597,10 @@ export function AddToCart({
               onClick={async (e) => {
                 e.preventDefault();
                 if (isDisabled || creating) return;
-                const next = !isCompared;
-                setOptimisticCompare(next);
                 try {
-                  await toggleCompare(targetId);
+                  await toggleCompare(targetId, { skipRefetch: true });
+                  await refetchProductState();
                 } catch {
-                  setOptimisticCompare(!next);
-                } finally {
-                  setOptimisticCompare(null);
                 }
               }}
               disabled={isDisabled || creating}
