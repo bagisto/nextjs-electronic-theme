@@ -1,6 +1,17 @@
 "use client";
 import { useState } from "react";
-import { ArrowLeftIcon, CreditCardIcon, ShoppingBagIcon, PrinterIcon } from "@heroicons/react/24/outline";
+import {
+    ArrowLeftIcon,
+    CreditCardIcon,
+    ShoppingBagIcon,
+    PrinterIcon,
+    CalendarDaysIcon,
+    TrashIcon,
+    UserIcon,
+    DocumentTextIcon,
+    TruckIcon,
+    ShieldCheckIcon,
+} from "@heroicons/react/24/outline";
 import { useOrders } from "@/hooks/useOrders";
 import OrderDetailsSkeleton, { OrderDetailInvoicesSkeleton } from "../common/skeleton/OrderDetailsSkeleton";
 
@@ -21,6 +32,14 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
     const { data: invoicesData, loading: invoicesLoading } = useGetOrderInvoices(orderId, activeTab === "invoices");
     const order = orderData?.customerOrder;
 
+    const getStatusColor = (status: string) => {
+        const s = (status || "").toLowerCase();
+        if (["completed", "complete", "processing", "paid"].includes(s)) return "bg-green-500";
+        if (["pending", "pending_payment", "on_hold"].includes(s)) return "bg-amber-500";
+        if (["canceled", "cancelled", "closed", "fraud"].includes(s)) return "bg-red-500";
+        return "bg-neutral-400";
+    };
+
     if (loading) {
         return <OrderDetailsSkeleton />;
     }
@@ -33,7 +52,7 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
                 <p className="text-neutral-500 dark:text-neutral-400 mb-6">We couldn&apos;t retrieve the details for this order.</p>
                 <button
                     onClick={onBack}
-                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-xl font-semibold hover:bg-green-700 transition-colors cursor-pointer"
                 >
                     <ArrowLeftIcon className="w-4 h-4" /> Back to Orders
                 </button>
@@ -79,65 +98,66 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
             ` }} />
             {/* Header section with back button and order ID */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
-                <div className="flex items-center gap-4">
+                <div className="flex items-start gap-4">
                     <button
                         onClick={onBack}
-                        className="p-2.5 rounded-xl cursor-pointer border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors shadow-sm"
+                        className="p-2.5 rounded-xl cursor-pointer border border-neutral-200 dark:border-neutral-800 hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 transition-colors shadow-sm"
                         title="Back to Orders"
                     >
                         <ArrowLeftIcon className="w-5 h-5" />
                     </button>
                     <div>
-                        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
-                            Order #{order.incrementId}
-                        </h2>
+                        <div className="flex items-center gap-3 flex-wrap">
+                            <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                                Order #{order.incrementId}
+                            </h2>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold capitalize">
+                                <span className={`w-1.5 h-1.5 rounded-full ${getStatusColor(order.status)}`} />
+                                {order.status}
+                            </span>
+                        </div>
+                        <p className="flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400 mt-1.5">
+                            <CalendarDaysIcon className="w-4 h-4" />
+                            Placed on {new Date(order.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })} at {new Date(order.createdAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}
+                        </p>
                     </div>
                 </div>
                 <div className="flex items-center gap-4 print:hidden">
-                    <button className="px-6 py-2 border border-neutral-900 dark:border-white rounded-full text-sm font-medium hover:bg-neutral-900 hover:text-white dark:hover:bg-white dark:hover:text-neutral-900 transition-all">
+                    <button className="inline-flex items-center gap-2 px-5 py-2 border border-red-300 dark:border-red-900/60 text-red-600 dark:text-red-400 rounded-full text-sm font-medium hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer">
                         Cancel Order
+                        <TrashIcon className="w-4 h-4" />
                     </button>
                 </div>
             </div>
 
             {/* Tab Navigation */}
-            <div className="flex items-center border-b border-neutral-100 dark:border-neutral-800 mb-8 bg-neutral-50/50 dark:bg-neutral-900/-50 rounded-t-xl px-2 print:hidden">
+            <div className="flex items-center gap-8 border-b border-neutral-100 dark:border-neutral-800 mb-8 print:hidden">
                 <button
                     onClick={() => setActiveTab("information")}
-                    className={`px-8 py-4 cursor-pointer text-sm font-bold transition-all relative ${activeTab === "information"
-                        ? "text-neutral-900 dark:text-white"
-                        : "text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                    className={`flex items-center gap-2 py-4 -mb-px border-b-2 cursor-pointer text-sm font-bold transition-all ${activeTab === "information"
+                        ? "text-green-600 dark:text-green-400 border-green-500"
+                        : "text-neutral-400 border-transparent hover:text-neutral-600 dark:hover:text-neutral-300"
                         }`}
                 >
+                    <UserIcon className="w-4 h-4" />
                     Information
-                    {activeTab === "information" && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-900 dark:bg-white" />
-                    )}
                 </button>
                 <button
                     onClick={() => setActiveTab("invoices")}
-                    className={`px-8 py-4 cursor-pointer text-sm font-bold transition-all relative ${activeTab === "invoices"
-                        ? "text-neutral-900 dark:text-white"
-                        : "text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                    className={`flex items-center gap-2 py-4 -mb-px border-b-2 cursor-pointer text-sm font-bold transition-all ${activeTab === "invoices"
+                        ? "text-green-600 dark:text-green-400 border-green-500"
+                        : "text-neutral-400 border-transparent hover:text-neutral-600 dark:hover:text-neutral-300"
                         }`}
                 >
+                    <DocumentTextIcon className="w-4 h-4" />
                     Invoices
-                    {activeTab === "invoices" && (
-                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-900 dark:bg-white" />
-                    )}
                 </button>
             </div>
 
             {/* Tab Content */}
             {/* Tab Content Header */}
-            <div className="mb-6">
-                {activeTab === "information" ? (
-                    <div className="flex flex-col gap-1">
-                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
-                            Placed on: {new Date(order.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                        </p>
-                    </div>
-                ) : invoicesLoading ? (
+            <div className={activeTab === "invoices" ? "mb-6" : ""}>
+                {activeTab === "information" ? null : invoicesLoading ? (
                     <OrderDetailInvoicesSkeleton />
                 ) : (
                     <div className="space-y-4">
@@ -169,58 +189,77 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
             </div>
 
             <div id="printable-area">
-                {/* Consistent Order Content (Table and Totals) */}
+                {/* Order Items */}
                 <div className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 overflow-hidden mb-8 print:border-neutral-100 print:rounded-none">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="bg-neutral-50 dark:bg-neutral-800/50 print:bg-neutral-100">
-                                <th className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">SKU</th>
-                                <th className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Name</th>
-                                <th className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider">Price</th>
-                                <th className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider text-center">Qty</th>
-                                <th className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white uppercase tracking-wider text-right">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
-                            {order.items?.edges?.map((edge: any) => {
-                                const item = edge.node;
-                                return (
-                                    <tr key={item.id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/20 transition-colors">
-                                        <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">{item.sku}</td>
-                                        <td className="px-6 py-4 text-sm font-medium text-neutral-900 dark:text-white">{item.name}</td>
-                                        <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-400">${parseFloat(item.price).toFixed(2)}</td>
-                                        <td className="px-6 py-4 text-sm text-neutral-600 dark:text-neutral-400 text-center">{item.qtyOrdered}</td>
-                                        <td className="px-6 py-4 text-sm font-bold text-neutral-900 dark:text-white text-right">${parseFloat(item.total).toFixed(2)}</td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                    <div className="p-4 border-b border-neutral-100 dark:border-neutral-800">
+                        <h3 className="text-lg font-bold text-neutral-900 dark:text-white">Order Items</h3>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse min-w-[560px]">
+                            <thead>
+                                <tr className="text-[11px] uppercase tracking-wider text-neutral-400 dark:text-neutral-500 border-b border-neutral-100 dark:border-neutral-800">
+                                    <th className="px-5 sm:px-6 py-3 font-semibold">Product</th>
+                                    <th className="px-3 py-3 font-semibold">Price</th>
+                                    <th className="px-3 py-3 font-semibold text-center">Qty</th>
+                                    <th className="px-5 sm:px-6 py-3 font-semibold text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                                {order.items?.edges?.map((edge: any) => {
+                                    const item = edge.node;
+                                    return (
+                                        <tr key={item.id} className="hover:bg-neutral-50/50 dark:hover:bg-neutral-800/20 transition-colors">
+                                            <td className="px-5 sm:px-6 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex shrink-0 items-center justify-center w-11 h-11 rounded-lg bg-neutral-50 dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700 text-neutral-400">
+                                                        <ShoppingBagIcon className="w-5 h-5" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-semibold text-neutral-900 dark:text-white">{item.name}</p>
+                                                        <p className="text-xs text-neutral-400 dark:text-neutral-500 mt-0.5">SKU: {item.sku}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-3 py-4 text-sm text-neutral-600 dark:text-neutral-400 whitespace-nowrap">${parseFloat(item.price).toFixed(2)}</td>
+                                            <td className="px-3 py-4 text-sm text-neutral-600 dark:text-neutral-400 text-center">{item.qtyOrdered}</td>
+                                            <td className="px-5 sm:px-6 py-4 text-sm font-bold text-green-600 dark:text-green-400 text-right whitespace-nowrap">${parseFloat(item.total).toFixed(2)}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div className="flex justify-end mb-12 totals-container">
-                    <div className="w-full max-w-xs space-y-3 totals-box">
-                        <div className="flex justify-between items-center text-sm total-row">
-                            <span className="text-neutral-500 dark:text-neutral-400">Subtotal</span>
-                            <span className="font-semibold text-neutral-900 dark:text-white">${parseFloat(order.subTotal).toFixed(2)}</span>
-                        </div>
-                        {order.shippingAmount && (
+                    {/* Totals */}
+                    <div className="border-t border-neutral-100 dark:border-neutral-800 px-5 sm:px-6 py-5">
+                        <div className="ml-auto w-full sm:max-w-sm space-y-3 totals-box">
                             <div className="flex justify-between items-center text-sm total-row">
-                                <span className="text-neutral-500 dark:text-neutral-400">Shipping & Handling</span>
-                                <span className="font-semibold text-neutral-900 dark:text-white">${parseFloat(order.shippingAmount).toFixed(2)}</span>
+                                <span className="text-neutral-500 dark:text-neutral-400">Subtotal</span>
+                                <span className="font-semibold text-neutral-900 dark:text-white">${parseFloat(order.subTotal).toFixed(2)}</span>
                             </div>
-                        )}
-                        <div className="flex justify-between items-center pt-3 border-t border-neutral-100 dark:border-neutral-800 grand-total">
-                            <span className="text-base font-bold text-neutral-900 dark:text-white uppercase">Grand Total</span>
-                            <span className="text-xl font-bold text-neutral-900 dark:text-white">${parseFloat(order.grandTotal).toFixed(2)}</span>
+                            {order.shippingAmount && (
+                                <div className="flex justify-between items-center text-sm total-row">
+                                    <span className="text-neutral-500 dark:text-neutral-400">Shipping &amp; Handling</span>
+                                    <span className="font-semibold text-neutral-900 dark:text-white">${parseFloat(order.shippingAmount).toFixed(2)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between items-center rounded-xl bg-green-50 dark:bg-green-900/20 px-4 py-3 grand-total">
+                                <span className="text-base font-bold text-neutral-900 dark:text-white">Grand Total</span>
+                                <span className="text-xl font-bold text-green-600 dark:text-green-400">${parseFloat(order.grandTotal).toFixed(2)}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Common Address/Method Section */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12 pt-8 border-t border-neutral-100 dark:border-neutral-800 print-grid print-pt-0">
-                    <div>
-                        <h3 className="text-sm font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-6">Billing Address</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pb-12 pt-8 border-t border-neutral-100 dark:border-neutral-800 print-grid print-pt-0">
+                    <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                                <UserIcon className="w-4 h-4" />
+                            </div>
+                            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">Billing Address</h3>
+                        </div>
                         {billingAddress ? (
                             <div className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
                                 <p className="font-bold text-neutral-900 dark:text-white text-base mb-1">{billingAddress.companyName}</p>
@@ -229,15 +268,20 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
                                 <p>{billingAddress.city}</p>
                                 <p>{billingAddress.state}</p>
                                 <p>{billingAddress.country} ({billingAddress.postcode})</p>
-                                <p className="mt-4 pt-4 border-t border-neutral-50 dark:border-neutral-800/50">Contact : {billingAddress.phone}</p>
+                                <p className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800/50">Contact : <span className="text-green-600 dark:text-green-400">{billingAddress.phone}</span></p>
                             </div>
                         ) : (
                             <p className="text-sm text-neutral-400 italic">No billing address</p>
                         )}
                     </div>
 
-                    <div>
-                        <h3 className="text-sm font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-6">Shipping Address</h3>
+                    <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                                <UserIcon className="w-4 h-4" />
+                            </div>
+                            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">Shipping Address</h3>
+                        </div>
                         {shippingAddress ? (
                             <div className="space-y-1 text-sm text-neutral-600 dark:text-neutral-400">
                                 <p className="font-bold text-neutral-900 dark:text-white text-base mb-1">{shippingAddress.companyName}</p>
@@ -246,25 +290,47 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
                                 <p>{shippingAddress.city}</p>
                                 <p>{shippingAddress.state}</p>
                                 <p>{shippingAddress.country} ({shippingAddress.postcode})</p>
-                                <p className="mt-4 pt-4 border-t border-neutral-50 dark:border-neutral-800/50">Contact : {shippingAddress.phone}</p>
+                                <p className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800/50">Contact : <span className="text-green-600 dark:text-green-400">{shippingAddress.phone}</span></p>
                             </div>
                         ) : (
                             <p className="text-sm text-neutral-400 italic">No shipping address</p>
                         )}
                     </div>
 
-                    <div>
-                        <h3 className="text-sm font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-6">Shipping Method</h3>
+                    <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                                <TruckIcon className="w-4 h-4" />
+                            </div>
+                            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">Shipping Method</h3>
+                        </div>
                         <p className="text-sm font-medium text-neutral-900 dark:text-white">
                             {order.shippingTitle || 'N/A'}
                         </p>
+                        {order.shippingTitle && (
+                            <span className="inline-block mt-3 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold">
+                                Standard Delivery
+                            </span>
+                        )}
                     </div>
 
-                    <div>
-                        <h3 className="text-sm font-bold text-neutral-400 dark:text-neutral-500 uppercase tracking-widest mb-6">Payment Method</h3>
+                    <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-5">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                                <CreditCardIcon className="w-4 h-4" />
+                            </div>
+                            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">Payment Method</h3>
+                        </div>
                         <p className="text-sm font-medium text-neutral-900 dark:text-white">
                             {order.payment?.methodTitle || 'N/A'}
                         </p>
+                        <div className="flex items-start gap-2 mt-3 rounded-lg bg-green-50 dark:bg-green-900/20 p-3">
+                            <ShieldCheckIcon className="w-4 h-4 shrink-0 text-green-600 dark:text-green-400 mt-0.5" />
+                            <div>
+                                <p className="text-xs font-semibold text-neutral-900 dark:text-white">Secure Payment</p>
+                                <p className="text-[11px] text-neutral-500 dark:text-neutral-400">Your payment is safe and encrypted</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,7 +4,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { useAddress } from "@/hooks/useAddress";
-import { MapPinIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { MapPinIcon, PencilSquareIcon, TrashIcon, ShieldCheckIcon } from "@heroicons/react/24/outline";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+} from "@heroui/react";
 import Pagination from "@/components/catalog/Pagination";
 import { ADDRESSES_ITEMS_PER_PAGE } from "@/utils/constants";
 
@@ -152,7 +158,7 @@ export default function AddressesTab() {
           </h2>
         </div>
         <div className="flex items-center justify-center p-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
         </div>
       </div>
     );
@@ -160,13 +166,18 @@ export default function AddressesTab() {
 
   return (
     <div className="addresses-tab">
-      <div className="flex justify-between items-center mb-10">
-        <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
-          My Addresses
-        </h2>
+      <div className="flex flex-col xs:flex-row xs:justify-between xs:items-center gap-3 mb-8 sm:mb-10">
+        <div>
+          <h2 className="text-2xl font-bold text-neutral-900 dark:text-white">
+            My Addresses
+          </h2>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
+            Manage your saved addresses
+          </p>
+        </div>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-neutral-900 dark:bg-white cursor-pointer text-white dark:text-neutral-900 px-6 py-2.5 rounded-lg font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors shadow-sm"
+          className="bg-green-500 cursor-pointer text-white px-5 py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors shadow-sm whitespace-nowrap self-start xs:self-auto"
         >
           + Add New Address
         </button>
@@ -179,54 +190,91 @@ export default function AddressesTab() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {addresses.map((address: any) => (
-            <div
-              key={address.id}
-              className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 p-6 flex flex-col h-full hover:border-neutral-300 dark:hover:border-neutral-700 transition-all hover:shadow-sm"
-            >
-              <div className="flex justify-between items-center mb-6">
-                <MapPinIcon className="w-6 h-6 text-neutral-900 dark:text-white" />
-                <div className="flex items-center gap-3">
-                  {(address.defaultAddress || address.isDefault ) && (
-                    <span className="bg-neutral-900 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full">
-                      Default
-                    </span>
-                  ) }
-                  <button
-                    onClick={() => handleEditClick(address)}
-                    className="p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
-                    title="Edit Address"
-                  >
-                    <PencilSquareIcon className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteClick(address)}
-                    disabled={deletingId !== null}
-                    className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer disabled:opacity-50"
-                    title="Delete Address"
-                  >
-                    <TrashIcon className="w-5 h-5 text-neutral-600 dark:text-neutral-400 hover:text-red-500" />
-                  </button>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {addresses.map((address: any) => {
+            const isDefault = address.defaultAddress || address.isDefault;
+            const typeLabel =
+              address.addressType &&
+              address.addressType.toLowerCase() !== "customer"
+                ? address.addressType
+                : null;
+            return (
+              <div
+                key={address.id}
+                className={`bg-white dark:bg-neutral-900 rounded-xl border p-5 sm:p-6 flex flex-col h-full transition-all hover:shadow-md ${
+                  isDefault
+                    ? "border-green-500 ring-1 ring-green-500/40"
+                    : "border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
+                }`}
+              >
+                <div className="flex justify-between items-start gap-2 mb-5">
+                  <div className="flex shrink-0 items-center justify-center w-10 h-10 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+                    <MapPinIcon className="w-5 h-5" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {isDefault && (
+                      <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-full">
+                        Default
+                      </span>
+                    )}
+                    <button
+                      onClick={() => handleEditClick(address)}
+                      className="p-2 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:border-green-500 hover:text-green-600 dark:hover:text-green-400 text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer"
+                      title="Edit Address"
+                    >
+                      <PencilSquareIcon className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteClick(address)}
+                      disabled={deletingId !== null}
+                      className="p-2 rounded-lg border border-neutral-200 dark:border-neutral-700 hover:border-red-400 hover:text-red-500 text-neutral-600 dark:text-neutral-400 transition-colors cursor-pointer disabled:opacity-50"
+                      title="Delete Address"
+                    >
+                      <TrashIcon className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-4 flex-grow">
-                <div>
-                  <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
-                    {address.firstName} {address.lastName}
-                  </h3>
-                </div>
-                
-                <div className="text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed font-normal">
-                  <p>{address.address}</p>
-                  <p>
-                    {address.city}, {address.state} {address.postcode} | {address.phone}
-                  </p>
+                <div className="space-y-2 flex-grow">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-base font-bold text-neutral-900 dark:text-white leading-tight">
+                      {address.firstName} {address.lastName}
+                    </h3>
+                    {typeLabel && (
+                      <span className="bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-[10px] capitalize font-medium px-2 py-0.5 rounded-full">
+                        {typeLabel}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed font-normal break-words">
+                    <p>{address.address}</p>
+                    <p>
+                      {address.city}, {address.state} {address.postcode} |{" "}
+                      {address.phone}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+      )}
+
+      {addresses.length > 0 && (
+        <div className="mt-6 flex items-start gap-3 rounded-xl border border-neutral-100 dark:border-neutral-800 bg-neutral-50/60 dark:bg-neutral-900/40 p-4 sm:p-5">
+          <div className="flex shrink-0 items-center justify-center w-9 h-9 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400">
+            <ShieldCheckIcon className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-neutral-900 dark:text-white">
+              Your addresses are secure
+            </p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+              We use industry-standard encryption to protect your personal
+              information.
+            </p>
+          </div>
         </div>
       )}
 
@@ -242,36 +290,36 @@ export default function AddressesTab() {
         </div>
       )}
 
-      {/* Add Address Modal */}
-      {showForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white dark:bg-neutral-900 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto m-4">
-            <div className="flex justify-between items-center p-6 border-b border-neutral-200 dark:border-neutral-800">
-              <h3 className="text-xl font-bold text-neutral-900 dark:text-white">
+      {/* Add / Edit Address Modal */}
+      <Modal
+        isOpen={showForm}
+        onOpenChange={(open) => {
+          if (!open) handleClose();
+        }}
+        size="2xl"
+        scrollBehavior="inside"
+        placement="center"
+        classNames={{
+          backdrop: "bg-black/50",
+          base: "mx-2 my-2 sm:mx-4 max-h-[90dvh] sm:max-h-[90vh]",
+        }}
+      >
+        <ModalContent className="p-4">
+          <ModalHeader className="flex justify-between items-start gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
                 {editingAddress ? "Edit Address" : "Add New Address"}
-              </h3>
-              <button
-                onClick={handleClose}
-                className="text-neutral-400 hover:text-neutral-600 cursor-pointer dark:hover:text-neutral-300"
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+              </h2>
+              <p className="text-sm font-normal text-neutral-500 dark:text-neutral-400 mt-1">
+                Enter your shipping and contact details below.
+              </p>
             </div>
+          
+          </ModalHeader>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ModalBody className="pb-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     First Name *
@@ -280,7 +328,7 @@ export default function AddressesTab() {
                     {...register("firstName", {
                       required: "First name is required",
                     })}
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                   {errors.firstName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -296,7 +344,7 @@ export default function AddressesTab() {
                     {...register("lastName", {
                       required: "Last name is required",
                     })}
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                   {errors.lastName && (
                     <p className="text-red-500 text-sm mt-1">
@@ -319,7 +367,7 @@ export default function AddressesTab() {
                       message: "Invalid email address",
                     },
                   })}
-                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">
@@ -334,7 +382,7 @@ export default function AddressesTab() {
                 </label>
                 <input
                   {...register("phone", { required: "Phone is required" })}
-                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 />
                 {errors.phone && (
                   <p className="text-red-500 text-sm mt-1">
@@ -349,7 +397,7 @@ export default function AddressesTab() {
                 </label>
                 <input
                   {...register("address1", { required: "Address is required" })}
-                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 />
                 {errors.address1 && (
                   <p className="text-red-500 text-sm mt-1">
@@ -364,18 +412,18 @@ export default function AddressesTab() {
                 </label>
                 <input
                   {...register("address2")}
-                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                  className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     City *
                   </label>
                   <input
                     {...register("city", { required: "City is required" })}
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                   {errors.city && (
                     <p className="text-red-500 text-sm mt-1">
@@ -389,7 +437,7 @@ export default function AddressesTab() {
                   </label>
                   <input
                     {...register("state", { required: "State is required" })}
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                   {errors.state && (
                     <p className="text-red-500 text-sm mt-1">
@@ -399,7 +447,7 @@ export default function AddressesTab() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                     Country *
@@ -408,7 +456,7 @@ export default function AddressesTab() {
                     {...register("country", {
                       required: "Country is required",
                     })}
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                   {errors.country && (
                     <p className="text-red-500 text-sm mt-1">
@@ -424,7 +472,7 @@ export default function AddressesTab() {
                     {...register("postcode", {
                       required: "Postcode is required",
                     })}
-                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-neutral-900 dark:focus:ring-white"
+                    className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                   />
                   {errors.postcode && (
                     <p className="text-red-500 text-sm mt-1">
@@ -439,7 +487,7 @@ export default function AddressesTab() {
                   type="checkbox"
                   id="defaultAddress"
                   {...register("defaultAddress")}
-                  className="w-4 h-4 rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900"
+                  className="w-4 h-4 rounded border-neutral-300 text-green-600 accent-green-600 focus:ring-green-500"
                 />
                 <label
                   htmlFor="defaultAddress"
@@ -449,18 +497,18 @@ export default function AddressesTab() {
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 px-4 py-2 border cursor-pointer border-neutral-300 dark:border-neutral-700 rounded-lg text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                  className="w-full sm:flex-1 px-4 py-2.5 border cursor-pointer border-green-500 text-green-600 dark:text-green-400 rounded-lg text-sm font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="flex-1 px-4 py-2 bg-neutral-900 cursor-pointer dark:bg-white text-white dark:text-neutral-900 rounded-lg text-sm font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors disabled:opacity-50"
+                  className="w-full sm:flex-1 px-4 py-2.5 bg-green-500 cursor-pointer text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
                   {creating
                     ? "Saving..."
@@ -470,9 +518,9 @@ export default function AddressesTab() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-      )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

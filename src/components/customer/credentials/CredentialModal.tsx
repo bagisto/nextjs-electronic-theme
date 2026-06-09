@@ -107,7 +107,7 @@ export default function CredentialModal({
     if (profile && user) {
       dispatch(setUser({ ...user, image: profile.image }));
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [customerProfileData]);
 
   // Login handler

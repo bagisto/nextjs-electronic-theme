@@ -16,6 +16,17 @@ export const GET_CUSTOMER_ORDERS = gql`
           incrementId
           status
           grandTotal
+          payment {
+            methodTitle
+          }
+          items {
+            edges {
+              node {
+                id
+                qtyOrdered
+              }
+            }
+          }
         }
       }
       pageInfo {

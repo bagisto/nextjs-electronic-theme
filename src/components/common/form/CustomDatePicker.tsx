@@ -96,9 +96,9 @@ export default function CustomDatePicker({
 
   useEffect(() => {
     if (open && selected) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setViewYear(selected.getFullYear());
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setViewMonth(selected.getMonth());
     }
   }, [open]);

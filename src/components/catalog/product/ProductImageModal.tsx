@@ -22,7 +22,7 @@ export default function ProductImageModal({
 
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+       
       setCurrentIndex(initialIndex);
       document.body.style.overflow = "hidden";
     } else {

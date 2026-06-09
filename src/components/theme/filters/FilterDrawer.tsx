@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useTransition } from "react";
+import { useState, useMemo, useTransition, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { createUrl } from "@/utils/helper";
 import { PAGE, QUERY } from "@/utils/constants";
@@ -119,6 +119,17 @@ export default function FilterDrawer({ filterAttributes, isOpen, onClose }: Filt
       setTempFilters({});
     });
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   const toggleSection = (code: string) => {
     setExpandedSections((prev) => ({ ...prev, [code]: !prev[code] }));

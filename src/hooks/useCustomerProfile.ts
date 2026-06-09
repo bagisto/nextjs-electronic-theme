@@ -71,7 +71,6 @@ export const useCustomerProfile = (): UseCustomerProfileReturn => {
         const profileData = profileQueryData?.readCustomerProfile;
         if (!profileData) return;
         setProfile(profileData);
-        // Update Redux state with full profile data
         dispatch(setUser({ ...user, ...profileData }));
         setFormData({
             firstName: profileData?.firstName || "",
@@ -81,7 +80,7 @@ export const useCustomerProfile = (): UseCustomerProfileReturn => {
             gender: profileData?.gender || "",
             phone: profileData?.phone || "",
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [profileQueryData, dispatch]);
 
     useEffect(() => {
@@ -96,7 +95,6 @@ export const useCustomerProfile = (): UseCustomerProfileReturn => {
             const updatedProfile = response?.createCustomerProfileUpdate?.customerProfileUpdate;
             if (updatedProfile) {
                 setProfile(updatedProfile);
-                // Update Redux user state with the new profile data
                 dispatch(setUser({ ...user, ...updatedProfile }));
                 showToast("Profile updated successfully!", "success");
             } else {
@@ -148,10 +146,16 @@ export const useCustomerProfile = (): UseCustomerProfileReturn => {
                 firstName: data.firstName,
                 lastName: data.lastName,
                 email: data.email,
-                dateOfBirth: data.dateOfBirth,
-                gender: data.gender,
-                phone: data.phone,
             };
+            if (data.dateOfBirth?.trim()) {
+                input.dateOfBirth = data.dateOfBirth;
+            }
+            if (data.gender?.trim()) {
+                input.gender = data.gender;
+            }
+            if (data.phone?.trim()) {
+                input.phone = data.phone;
+            }
             if (data.image) {
                 input.image = data.image;
             }

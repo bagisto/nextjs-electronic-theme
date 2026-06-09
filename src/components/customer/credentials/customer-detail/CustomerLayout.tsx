@@ -8,7 +8,7 @@ import OrdersTab from "../../OrdersTab";
 import ReviewsTab from "../../ReviewsTab";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { clearUser } from "@/store/slices/user-slice";
 import { clearCart } from "@/store/slices/cart-slice";
 import { logoutAction } from "@utils/actions";
@@ -24,6 +24,7 @@ import {
 import { useMediaQuery } from "@/hooks/useMediaQueryHook";
 import { MobileCustomerLayout } from "./MobileCustomerLayout";
 import { DesktopCustomerLayout } from "./DesktopCustomerLayout";
+import { useCustomerProfile } from "@/hooks/useCustomerProfile";
 
 export interface CustomerLayoutProps {
     customerData?: {
@@ -42,6 +43,8 @@ export interface CommonLayoutProps {
     handleLogout: () => void;
     isLoggingOut: boolean;
     renderTabContent: () => React.ReactNode;
+    onAvatarUpload: (imageBase64: string) => Promise<boolean>;
+    isUploadingAvatar: boolean;
 }
 
 /**
@@ -58,18 +61,21 @@ export default function CustomerLayout({ customerData, initialTab = "profile" }:
     const { showToast } = useCustomToast();
     const { resetGuestToken } = useGuestCartToken();
 
-    const customer = customerData || {
-        name: "John Doe",
-        email: "john.doe@example.com",
-        avatar: "/images/customer-avatar.jpg",
+    const { profile, updateProfileImage, isUploadingImage } = useCustomerProfile();
+    const user = useAppSelector((state) => state.user.user);
+
+    const customer = {
+        name: profile?.firstName ? `${profile.firstName} ${profile.lastName}` : (customerData?.name || user?.name || "Guest User"),
+        email: profile?.email || customerData?.email || user?.email || "",
+        avatar: profile?.image || customerData?.avatar || user?.image || undefined,
     };
 
     const navigationItems = [
-        { id: "profile", label: "Profile", icon: <UserIcon className="w-6 h-6" /> },
-        { id: "addresses", label: "Addresses", icon: <MapPinIcon className="w-6 h-6" /> },
-        { id: "wishlist", label: "Wishlist", icon: <HeartIcon className="w-6 h-6" /> },
-        { id: "orders", label: "Orders", icon: <ShoppingBagIcon className="w-6 h-6" /> },
-        { id: "reviews", label: "Reviews", icon: <StarIcon className="w-6 h-6" /> },
+        { id: "profile", label: "Profile", icon: <UserIcon className="w-5 h-5" /> },
+        { id: "addresses", label: "Addresses", icon: <MapPinIcon className="w-5 h-5" /> },
+        { id: "wishlist", label: "Wishlist", icon: <HeartIcon className="w-5 h-5" /> },
+        { id: "orders", label: "Orders", icon: <ShoppingBagIcon className="w-5 h-5" /> },
+        { id: "reviews", label: "Reviews", icon: <StarIcon className="w-5 h-5" /> },
     ];
 
     const handleTabChange = (tabId: string) => {
@@ -127,7 +133,9 @@ export default function CustomerLayout({ customerData, initialTab = "profile" }:
         handleTabChange,
         handleLogout,
         isLoggingOut,
-        renderTabContent
+        renderTabContent,
+        onAvatarUpload: updateProfileImage,
+        isUploadingAvatar: isUploadingImage,
     };
 
     return (

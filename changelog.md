@@ -6,6 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [0.2.0] - 2026-06-09
+
+### Added
+
+- Added support for booking, grouped, and bundle product types.
+- Added quantity controls for booking and event ticket products.
+- Added optimistic updates for wishlist and compare actions.
+- Added user-specific wishlist and compare management.
+- Added pagination across customer and catalog pages.
+- Added a Content Security Policy for improved security.
+- Added dynamic social links to the footer.
+- Added error handling and boundaries across the application.
+
+### Changed
+
+- Upgraded to the latest Next.js and React versions.
+- Redesigned the customer profile, addresses, and orders pages.
+- Redesigned the authentication forms with better responsive and dark mode support.
+- Improved the overall state management for cart, wishlist, and compare.
+- Improved performance with static prerendering and self-hosted fonts.
+- Updated the documentation and installation instructions.
+
+### Fixed
+
+- Resolved various UI and responsiveness issues.
+- Improved error messages and notifications.
+
 ## [0.1.0] - 2026-05-26
 
 ### Added

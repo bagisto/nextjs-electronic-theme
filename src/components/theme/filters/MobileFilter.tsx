@@ -41,7 +41,7 @@ export default function MobileFilter({
         const values = searchParams.get(attr.code)?.split(",") || [];
         initialFilters[attr.code] = new Set(values.filter(Boolean));
       });
-      //eslint-disable-next-line  
+       
       setTempFilters(initialFilters);
     }
   }, [isOpen, filterAttributes, searchParams]);

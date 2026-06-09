@@ -11,10 +11,6 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400,
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "nextjs.bagisto.com",
-      },
       ...(process.env.NEXT_PUBLIC_BAGISTO_ENDPOINT
         ? (() => {
           try {

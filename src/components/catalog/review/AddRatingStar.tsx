@@ -19,7 +19,7 @@ export const AddRatingStar = ({
 
     useEffect(() => {
         if (value !== undefined) {
-              // eslint-disable-next-line react-hooks/set-state-in-effect
+               
             setInternalValue(value);
         }
     }, [value]);
