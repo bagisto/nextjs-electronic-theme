@@ -33,7 +33,7 @@ Check the [Documentation](https://headless-doc.bagisto.com/) to quickly set up y
 
 **Bagisto API:** v1.0.3
 
-![Bagisto Headless Electronic Theme — Home](./public/images/readme/home.png)
+![Bagisto Headless Electronic Theme — Home](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-home.png?raw=true)
 
 ---
 
@@ -50,7 +50,7 @@ Check the [Documentation](https://headless-doc.bagisto.com/) to quickly set up y
 - Advanced filtering and search for tech products.
 - Support for multiple product types (simple, configurable, bundled, downloadable).
 
-![Bagisto Headless Electronic Theme — Performance](./public/images/readme/performance.png)
+![Bagisto Headless Electronic Theme — Performance](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-performance.png?raw=true)
 
 ---
 
@@ -58,7 +58,7 @@ Check the [Documentation](https://headless-doc.bagisto.com/) to quickly set up y
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** 18+ and **pnpm**
+- **Node.js** 18+ and **npm**
 - Check Bagisto [backend requirement detail](https://devdocs.bagisto.com/2.3/introduction/requirements.html#server-configuration)
 
 ---
@@ -78,7 +78,7 @@ Before you begin, ensure you have the following installed:
    ```bash
    git clone https://github.com/bagisto/nextjs-electronic-theme.git
    cd nextjs-electronic-theme
-   pnpm install
+   npm install
    ```
 
 4. **Configure `.env.local` in the Next.js Project**
@@ -149,7 +149,7 @@ Browse a comprehensive range of electronic products with built-in pagination and
 
 Bagisto Headless Commerce APIs support multiple product types, including simple, configurable, bundled, and downloadable products, ensuring flexibility for different business needs.
 
-![Bagisto Headless Electronic Theme — Product Page](./public/images/readme/product.png)
+![Bagisto Headless Electronic Theme — Product Page](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-product.png?raw=true)
 
 ---
 
@@ -159,7 +159,7 @@ Products are organized into hierarchical categories, making it easy for customer
 
 The theme also ensures SEO-friendly category URLs with meta titles, descriptions, and breadcrumbs for improved discoverability.
 
-![Bagisto Headless Electronic Theme — Category Page](./public/images/readme/category.png)
+![Bagisto Headless Electronic Theme — Category Page](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-category.png?raw=true)
 
 ---
 
@@ -169,7 +169,48 @@ The checkout process is fully functional, featuring complete cart management whe
 
 Both guest and logged-in users can proceed through checkout, selecting shipping addresses and preferred payment methods. Once the order is placed, it is instantly synchronized with the Bagisto backend for smooth order processing and management.
 
-![Bagisto Headless Electronic Theme — Cart & Checkout](./public/images/readme/checkout.png)
+![Bagisto Headless Electronic Theme — Cart & Checkout](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-cart-checkout.png?raw=true)
+
+---
+
+## Customer Panel
+
+Registered customers get a dedicated account dashboard to manage their entire shopping experience. The panel offers a responsive layout for both desktop and mobile, with all customer data securely synchronized with the Bagisto backend.
+
+
+### Profile
+
+Customers can view and update their personal details — name, email, contact information, and password — directly from the profile page, keeping their account secure and up to date.
+
+![Bagisto Headless Electronic Theme — Customer Profile](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-customer-profile.png?raw=true)
+
+### Orders
+
+The orders section displays a complete history of placed orders with cursor-based pagination. Customers can drill into any order to view its items, status, and download the associated invoices.
+
+![Bagisto Headless Electronic Theme — Customer Orders](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-customer-order.png?raw=true)
+
+### Addresses
+
+Customers can manage multiple shipping and billing addresses — adding, editing, or removing entries — which are then available for quick selection during checkout.
+
+
+### Reviews
+
+From the reviews section, customers can track all the product reviews and ratings they have submitted, helping them keep record of their feedback.
+
+
+### Wishlist
+
+Customers can save their favorite products to a wishlist for later, then move items to the cart whenever they are ready to buy. Wishlist state is managed globally with Redux for a seamless experience across the store.
+
+![Bagisto Headless Electronic Theme — Wishlist](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-customer-wishlist.png?raw=true)
+
+### Compare
+
+The compare feature lets customers place products side by side to evaluate their specifications and features, making it easier to choose the right electronics. Compare state is also managed globally with Redux for consistency across pages.
+
+![Bagisto Headless Electronic Theme — Compare](https://github.com/bagisto/temp-media/blob/master/bagisto-headless-electronic-theme/bagisto-headless-electronic-theme-customer-compare.png?raw=true)
 
 ---
 
