@@ -14,6 +14,7 @@ export function NextImage({
   height,
   sizes = "100vw",
   priority = false,
+  quality = 75,
 }: NextImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -40,6 +41,7 @@ export function NextImage({
         width={width}
         height={height}
         sizes={sizes}
+        quality={quality}
         priority={priority}
         loading={priority ? "eager" : "lazy"}
         onLoad={() => setIsLoaded(true)}

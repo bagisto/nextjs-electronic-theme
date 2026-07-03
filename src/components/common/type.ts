@@ -6,6 +6,7 @@ export interface NextImageProps {
   height: number;
   sizes?: string;
   priority?: boolean;
+  quality?: number;
 }
 
 

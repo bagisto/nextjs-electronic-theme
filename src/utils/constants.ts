@@ -145,17 +145,16 @@ export const configHeader = [
     headers: [
       {
         key: "Cache-Control",
-        value: "public, max-age=31536000, immutable",
+        value: "public, max-age=86400, stale-while-revalidate=31536000",
       },
     ],
   },
-  // Public folder assets - long cache
   {
     source: "/image/:path*",
     headers: [
       {
         key: "Cache-Control",
-        value: "public, max-age=31536000, immutable",
+        value: "public, max-age=86400, stale-while-revalidate=31536000",
       },
     ],
   },

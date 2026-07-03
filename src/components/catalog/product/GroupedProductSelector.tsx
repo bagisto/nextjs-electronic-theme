@@ -2,7 +2,7 @@
 
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { baseUrl, getImageUrl, NOT_IMAGE } from "@/utils/constants";
-import Image from "next/image";
+import { NextImage } from "@/components/common/NextImage";
 
 export type GroupedEdge = {
   node: {
@@ -74,12 +74,12 @@ export function GroupedProductSelector({
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {imgSrc && (
                   <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                    <Image
+                    <NextImage
                       src={imgSrc}
                       alt={assoc.name || "product"}
-                      fill
+                      width={56}
+                      height={56}
                       sizes="56px"
-                      className="object-cover"
                     />
                   </div>
                 )}

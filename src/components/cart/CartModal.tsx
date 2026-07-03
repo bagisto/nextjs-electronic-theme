@@ -16,8 +16,7 @@ import OpenCart from "./OpenCart";
 import { Price } from "../theme/ui/Price";
 
 import { useCartDetail } from "@/hooks/useCartDetail";
-import Image from "next/image";
-import { NOT_IMAGE } from "@utils/constants";
+import { NextImage } from "@/components/common/NextImage";
 import { isObject } from "@utils/type-guards";
 import LoadingDots from "@components/common/icons/LoadingDots";
 import { useFormStatus } from "react-dom";
@@ -153,18 +152,14 @@ export default function CartModal({
                                       onClick={onClose}
                                     >
                                       <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                                        <Image
+                                        <NextImage
                                           alt={
                                             item?.node?.baseImage ||
                                             item?.product?.name
                                           }
-                                          className="h-full w-full object-cover"
                                           height={64}
-                                          src={baseImage?.small_image_url || ""}
+                                          src={baseImage?.medium_image_url || baseImage?.small_image_url || ""}
                                           width={74}
-                                          onError={(e) =>
-                                            (e.currentTarget.src = NOT_IMAGE)
-                                          }
                                         />
                                       </div>
 
@@ -361,18 +356,14 @@ export default function CartModal({
                                       onClick={onClose}
                                     >
                                       <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-dark-grey dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                                        <Image
+                                        <NextImage
                                           alt={
                                             item?.node?.baseImage ||
                                             item?.product?.name
                                           }
-                                          className="h-full w-full object-cover"
                                           height={64}
-                                          src={baseImage?.small_image_url || ""}
+                                          src={baseImage?.medium_image_url || baseImage?.small_image_url || ""}
                                           width={74}
-                                          onError={(e) =>
-                                            (e.currentTarget.src = NOT_IMAGE)
-                                          }
                                         />
                                       </div>
 

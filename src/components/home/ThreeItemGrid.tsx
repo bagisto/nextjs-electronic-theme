@@ -2,6 +2,7 @@ import { FC } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import { GridTileImage } from "@/components/theme/ui/grid/Tile";
+import { getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
 
 interface ThreeItemGridProps {
     title: string;
@@ -49,7 +50,7 @@ function ThreeItemGridItem({ product, size, priority }: {
                 }}
             >
                 <GridTileImage
-                    src={product.baseImageUrl}
+                    src={getImageUrl(product.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                     className="object-cover "
                     fill
                     sizes={
@@ -93,7 +94,7 @@ function MobileThreeItemGridItem({ product, size, priority }: {
                 aria-label={`${product?.name}`}
             >
                 <GridTileImage
-                    src={product.baseImageUrl}
+                    src={getImageUrl(product.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                     className="object-cover "
                     fill
                     priority={priority}

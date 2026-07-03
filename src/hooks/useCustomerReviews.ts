@@ -1,6 +1,7 @@
 import { GET_CUSTOMER_REVIEWS, GET_CUSTOMER_REVIEWS_PAGINATION } from "@/graphql/customer/queries/GetCustomerReviews";
 import { useAppSelector } from "@/store/hooks";
 import { useCursorPagination } from "./useCursorPagination";
+import { getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
 
 interface UseCustomerReviewsOptions {
     pageSize?: number;
@@ -31,7 +32,7 @@ export const useCustomerReviews = (options: UseCustomerReviewsOptions = {}) => {
         (edge: { node: any }) => ({
             id: edge.node.createdAt,
             productName: edge.node.product?.name || edge.node.name,
-            productImage: edge.node.product?.baseImageUrl || "/images/product-placeholder.jpg",
+            productImage: getImageUrl(edge.node.product?.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE,
             productUrlKey: edge.node.product?.urlKey || "",
             rating: edge.node.rating,
             date: new Date(edge.node.createdAt).toLocaleDateString("en-US", {

@@ -3,7 +3,8 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createUrl } from "@/utils/helper";
-import Image from "next/image";
+import { getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
+import { NextImage } from "@/components/common/NextImage";
 import Link from "next/link";
 import { graphqlRequest, GET_PRODUCTS } from "@/graphql";
 import { useMediaQuery } from "@/hooks/useMediaQueryHook";
@@ -223,11 +224,12 @@ export default function SearchDrawer({ isOpen, onClose }: SearchDrawerProps) {
                 >
                   <div className="relative w-[72px] h-[72px] flex-shrink-0 rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                     {product.base_image_url ? (
-                      <Image
-                        src={product.base_image_url}
+                      <NextImage
+                        src={getImageUrl(product.base_image_url, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                         alt={product.name}
-                        fill
-                        className="object-cover"
+                        width={72}
+                        height={72}
+                        sizes="72px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">

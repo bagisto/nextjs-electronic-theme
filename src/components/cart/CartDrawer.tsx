@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { NextImage } from "@/components/common/NextImage";
 import Link from "next/link";
 import { useAppSelector } from "@/store/hooks";
 import { Price } from "../theme/ui/Price";
@@ -213,12 +213,12 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       onClick={onClose}
                       className="relative w-[110px] h-[110px] flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-50 dark:bg-neutral-800"
                     >
-                      <Image
+                      <NextImage
                         alt={item?.node?.name || "Product"}
-                        src={baseImage?.small_image_url || NOT_IMAGE}
-                        fill
+                        src={baseImage?.medium_image_url || baseImage?.small_image_url || NOT_IMAGE}
+                        width={110}
+                        height={110}
                         sizes="110px"
-                        className="object-cover"
                       />
                     </Link>
 

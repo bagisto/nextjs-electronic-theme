@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCompare } from "@/hooks/useCompare";
-import Image from "next/image";
+import { NextImage } from "@/components/common/NextImage";
 import { InlineSpinner } from "@/components/common/PageLoader";
+import { getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
 
 export default function ComparisonTab() {
     const { compareItems, loading, removeFromCompare  } = useCompare();
@@ -64,10 +65,9 @@ export default function ComparisonTab() {
                                         <div className="flex flex-col items-center text-center gap-3">
                                             <div className="w-24 h-24 rounded-lg bg-neutral-100 dark:bg-neutral-800 p-2 flex items-center justify-center overflow-hidden">
                                                 {item?.product?.baseImageUrl ? (
-                                                     <Image
-                                                        src={item.product.baseImageUrl}
+                                                     <NextImage
+                                                        src={getImageUrl(item.product.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                                                         alt={item.product.name}
-                                                        className="w-full h-full object-cover"
                                                         width={96}
                                                         height={96}
                                                     />

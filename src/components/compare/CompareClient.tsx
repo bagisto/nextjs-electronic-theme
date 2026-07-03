@@ -12,7 +12,7 @@ import { productRequiresOptions } from "@/utils/addToCartValidation";
 import { InlineSpinner } from "@/components/common/PageLoader";
 import Pagination from "@/components/catalog/Pagination";
 import ProductPrice from "@/components/theme/ui/ProductPrice";
-import { COMPARE_ITEMS_PER_PAGE } from "@/utils/constants";
+import { COMPARE_ITEMS_PER_PAGE, getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
 
 export default function CompareClient() {
     const router = useRouter();
@@ -147,11 +147,12 @@ export default function CompareClient() {
                                             <div className="product-card text-left w-[320px] relative">
                                                 <div className="image-wrapper relative w-[320px] h-[348px] bg-neutral-50 dark:bg-neutral-900 rounded-xl md:rounded-2xl overflow-hidden mb-4 group ring-1 ring-neutral-100 dark:ring-neutral-800 mx-auto">
                                                     <Link href={`/product/${urlKey}`} className="block w-full h-full">
-                                                        <Image 
-                                                            src={baseImageUrl || "/placeholder-product.png"} 
+                                                        <Image
+                                                            src={getImageUrl(baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                                                             alt={name || "Product"}
                                                             fill
                                                             className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                            onError={(e) => (e.currentTarget.src = NOT_IMAGE)}
                                                         />
                                                     </Link>
 

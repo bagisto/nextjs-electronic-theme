@@ -11,7 +11,7 @@ import WishlistSkeleton from "@/components/common/skeleton/WishlistSkeleton";
 import { InlineSpinner } from "@/components/common/PageLoader";
 import { productRequiresOptions } from "@/utils/addToCartValidation";
 import Pagination from "@/components/catalog/Pagination";
-import { WISHLIST_ITEMS_PER_PAGE } from "@/utils/constants";
+import { WISHLIST_ITEMS_PER_PAGE, getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
 
 interface WishlistItemProps {
     item: {
@@ -71,7 +71,7 @@ function WishlistItem({ item, onRemove, onAddToCart, isAddingToCart, isRemoving 
             <div className="w-full sm:w-32 sm:flex-shrink-0 aspect-square rounded-lg cursor-pointer overflow-hidden bg-neutral-100 dark:bg-neutral-800 relative">
                 <Link href={`/product/${product.urlKey}`} className="block w-full h-full">
                     <NextImage
-                        src={product.baseImageUrl}
+                        src={getImageUrl(product.baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                         alt={product.name}
                         width={200}
                         height={200}

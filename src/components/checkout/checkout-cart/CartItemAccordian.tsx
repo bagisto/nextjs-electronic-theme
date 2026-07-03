@@ -4,7 +4,7 @@ import { Price } from "@components/theme/ui/Price";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { createUrl, safeParse, isShippingRequired } from "@utils/helper";
-import Image from "next/image";
+import { NextImage } from "@/components/common/NextImage";
 import Link from "next/link";
 
 type MerchandiseSearchParams = {
@@ -83,12 +83,11 @@ export default function CartItemAccordion({
                         aria-label={`${item?.node?.name}`}
                       >
                         <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                          <Image
-                            className="h-full w-full object-cover"
+                          <NextImage
                             width={64}
                             height={64}
                             alt={item?.node?.baseImage || item?.product?.name}
-                            src={baseImage?.small_image_url || ""}
+                            src={baseImage?.medium_image_url || baseImage?.small_image_url || ""}
                           />
                         </div>
 
