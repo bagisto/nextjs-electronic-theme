@@ -1,11 +1,9 @@
 import { configHeader } from '@/utils/constants';
 import type { NextConfig } from "next";
+import type { RemotePattern } from "next/dist/shared/lib/image-config";
 
-/**
- * Parse NEXT_PUBLIC_BAGISTO_ENDPOINT into a remotePattern entry.
- * Returns an empty array if the URL is missing or invalid.
- */
-function getBagistoRemotePattern(): NextConfig["images"]["remotePatterns"] {
+
+function getBagistoRemotePattern(): RemotePattern[] {
   const endpoint = process.env.NEXT_PUBLIC_BAGISTO_ENDPOINT;
 
   if (!endpoint) {
