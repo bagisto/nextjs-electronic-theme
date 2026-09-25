@@ -3,7 +3,7 @@ import { useScrollTo } from "@/hooks/useScrollTo";
 import { Price } from "@components/theme/ui/Price";
 import { Accordion, AccordionItem } from "@heroui/accordion";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { createUrl, safeParse, isShippingRequired } from "@utils/helper";
+import { createUrl, safeParse, isShippingRequired, getProductSlug } from "@utils/helper";
 import { NextImage } from "@/components/common/NextImage";
 import Link from "next/link";
 
@@ -26,7 +26,7 @@ export default function CartItemAccordion({
 
   return (
     <div className="mobile-heading fixed bottom-0 left-0 z-50 w-full border-t border-neutral-200 bg-white pb-14
-     dark:border-neutral-700 dark:bg-black lg:hidden">
+     dark:border-neutral-700 dark:bg-neutral-950 lg:hidden">
       <Accordion
         selectionMode="multiple"
         className="!px-0"
@@ -70,7 +70,7 @@ export default function CartItemAccordion({
               {cart?.map((item: any, i: number) => {
                 const merchandiseSearchParams = {} as MerchandiseSearchParams;
                 const merchandiseUrl = createUrl(
-                                `/product/${item?.node.productUrlKey}`,
+                                `/product/${getProductSlug(item?.node.productUrlKey)}`,
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                 const baseImage: any = safeParse(item?.node?.baseImage);
@@ -82,7 +82,7 @@ export default function CartItemAccordion({
                         className="z-30 flex flex-row items-center space-x-4"
                         aria-label={`${item?.node?.name}`}
                       >
-                        <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
+                        <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-200 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-800">
                           <NextImage
                             width={64}
                             height={64}
@@ -92,10 +92,10 @@ export default function CartItemAccordion({
                         </div>
 
                         <div className="flex flex-1 flex-col text-base">
-                          <span className="text-neutral-900 line-clamp-1 dark:text-white">
+                          <span className="line-clamp-2 font-archivo text-xs md:text-sm font-semibold text-neutral-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 leading-relaxed transition-colors min-h-[28px] md:min-h-[36px]">
                             {item?.node?.name}
                           </span>
-                          <span className="font-normal text-black dark:text-white">
+                          <span className="font-normal text-neutral-900 dark:text-white">
                             Quantity : {item.node.quantity}
                           </span>
                           {item.name !== DEFAULT_OPTION ? (
@@ -105,7 +105,7 @@ export default function CartItemAccordion({
                           ) : null}
                         </div>
                       </Link>
-                      <div className="flex h-16 flex-col justify-between text-black/[60%] dark:!text-neutral-300">
+                      <div className="flex h-16 flex-col justify-between text-neutral-900/60 dark:!text-neutral-300">
                         <div className="flex items-center justify-end gap-2">
                           <Price
                             className="text-right text-sm"
@@ -129,37 +129,37 @@ export default function CartItemAccordion({
             </ul>
             <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
               <div className="mb-3 flex items-center justify-between pb-1">
-                <p className="text-black[60%] font-archivo text-base font-normal dark:text-white">
+                <p className="font-archivo text-base font-normal text-neutral-600 dark:text-neutral-400">
                   Subtotal
                 </p>
                 <Price
-                  className="text-right text-base text-black dark:text-white"
+                  className="text-right text-base text-neutral-900 dark:text-white"
                   amount={cartItems?.subtotal || "0"}
                   currencyCode={"USD"}
                 />
               </div>
               {shippingRequired && (
                 <div className="mb-3 flex items-center justify-between pb-1 pt-1">
-                  <p className="text-black[60%] font-archivo text-base font-normal dark:text-white">
+                  <p className="font-archivo text-base font-normal text-neutral-600 dark:text-neutral-400">
                     Shipping
                   </p>
                   {cartItems?.shippingAmount ? (
                     <Price
                       amount={cartItems?.shippingAmount || "0"}
-                      className="text-right text-base text-black dark:text-white"
+                      className="text-right text-base text-neutral-900 dark:text-white"
                       currencyCode={"USD"}
                     />
                   ) : (
-                    <p className="text-right text-base">
+                    <p className="text-right text-base text-neutral-500 dark:text-neutral-400">
                       Calculated at Next Step
                     </p>
                   )}
                 </div>
               )}
               <div className="mb-3 flex items-center justify-between pb-1 pt-1">
-                <p className="text-xl font-bold dark:text-white">Total</p>
+                <p className="text-xl font-bold text-neutral-900 dark:text-white">Total</p>
                 <Price
-                  className="text-right text-base text-black dark:text-white"
+                  className="text-right text-base text-neutral-900 dark:text-white"
                   amount={cartItems?.grandTotal || "0"}
                   currencyCode={"USD"}
                 />

@@ -14,6 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useOrders } from "@/hooks/useOrders";
 import OrderDetailsSkeleton, { OrderDetailInvoicesSkeleton } from "../common/skeleton/OrderDetailsSkeleton";
+import { sanitizeCss } from "@/utils/sanitize";
 
 interface OrderDetailsViewProps {
     orderId: string;
@@ -67,7 +68,7 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
     return (
         <div className="order-details-view animate-in fade-in slide-in-from-bottom-4 duration-500">
             <style dangerouslySetInnerHTML={{
-                __html: `
+                __html: sanitizeCss(`
                 @media print {
                     body > * {
                         visibility: hidden;
@@ -95,7 +96,7 @@ export default function OrderDetailsView({ orderId, onBack }: OrderDetailsViewPr
                         print-color-adjust: exact !important;
                     }
                 }
-            ` }} />
+            `) }} />
             {/* Header section with back button and order ID */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
                 <div className="flex items-start gap-4">

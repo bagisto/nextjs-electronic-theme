@@ -77,17 +77,17 @@ export default function ShippingMethod({
           <>
             <div className="mt-4  justify-between hidden sm:flex">
               <div className="flex">
-                <p className="w-auto text-base font-normal text-black/60 dark:text-white/60 sm:w-[192px]">
+                <p className="w-auto text-base font-normal text-neutral-500 dark:text-neutral-400 sm:w-[192px]">
                   Shipping Method
                 </p>
-                <p className="text-base font-normal">{selectedMethodTitle} (${selectedMethodPrice})</p>
+                <p className="text-base font-normal text-neutral-900 dark:text-white">{selectedMethodTitle} (${selectedMethodPrice})</p>
               </div>
               <div className="flex">
                 <button
                   onClick={() => {
                     setIsOpen(!isOpen);
                   }}
-                  className="cursor-pointer text-base font-normal text-black/[60%] underline dark:text-neutral-300"
+                  className="cursor-pointer text-base font-normal text-neutral-500 underline dark:text-neutral-300"
                 >
                   Change
                 </button>
@@ -96,17 +96,17 @@ export default function ShippingMethod({
 
             <div className="mt-4 block sm:hidden flex flex-col justify-between sm:flex-row relative  ">
               <div className="flex justify-between  flex-1 wrap">
-                <p className="w-auto text-base font-normal text-black/60 dark:text-white/60 sm:w-[192px]">
+                <p className="w-auto text-base font-normal text-neutral-500 dark:text-neutral-400 sm:w-[192px]">
                   Shipping Method
                 </p>
-                <p className="text-base font-normal">{selectedMethodTitle} (${selectedMethodPrice})</p>
+                <p className="text-base font-normal text-neutral-900 dark:text-white">{selectedMethodTitle} (${selectedMethodPrice})</p>
               </div>
 
               <button
                 onClick={() => {
                   setIsOpen(!isOpen);
                 }}
-                className="cursor-pointer absolute right-0  text-base font-normal text-black/[60%] underline dark:text-neutral-300"
+                className="cursor-pointer absolute right-0  text-base font-normal text-neutral-500 underline dark:text-neutral-300"
                 style={{ top: "-36px" }}
               >
                 Change
@@ -131,7 +131,7 @@ export default function ShippingMethod({
                       {shippingMethod.map((method: any) => (
                         <CustomRadio
                           key={method?.code}
-                          className="inset-0 my-1 border border-solid border-neutral-300 dark:border-neutral-500"
+                          className="inset-0 my-1 border border-solid border-neutral-300 dark:border-neutral-600"
                           description={"$" + method?.price}
                           value={method?.method}
                         >
@@ -171,7 +171,7 @@ export default function ShippingMethod({
                       {shippingMethod.map((method : any) => (
                         <CustomRadio
                           key={method?.code}
-                          className="inset-0 my-1 border border-solid border-neutral-300 dark:border-neutral-500"
+                          className="inset-0 my-1 border border-solid border-neutral-300 dark:border-neutral-600"
                           description={"$" + method?.price}
                           value={method?.method}
                         >
@@ -205,8 +205,8 @@ const CustomRadio = (props: CustomRadioProps) => {
       classNames={{
         base: cn(
           "inline-flex m-0 bg-transparent hover:bg-transparent items-center",
-          "flex-row items-baseline max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
-          "data-[selected=true]:border-primary"
+          "flex-row items-baseline max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-neutral-300 dark:border-neutral-600",
+          "data-[selected=true]:border-neutral-900 dark:data-[selected=true]:border-white"
         ),
         hiddenInput: "peer absolute h-0 w-0 opacity-0",
       }}

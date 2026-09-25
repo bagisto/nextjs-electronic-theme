@@ -4,7 +4,7 @@ import { Price } from "@components/theme/ui/Price";
 import CartItemAccordion from "./CartItemAccordian";
 import { NOT_IMAGE } from "@utils/constants";
 import Link from "next/link";
-import { createUrl, safeParse, isShippingRequired } from "@utils/helper";
+import { createUrl, safeParse, isShippingRequired, getProductSlug } from "@utils/helper";
 type MerchandiseSearchParams = {
   [key: string]: string;
 };
@@ -20,16 +20,16 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
       <CartItemAccordion cartItems={cartItems} />
       <div className="hidden h-full min-h-[100dvh] flex-col justify-between py-4 pl-4 pr-8 lg:flex">
         <div className="">
-          <h1 className="p-6 font-archivo text-xl font-medium text-black dark:text-neutral-300">
+          <h1 className="p-6 font-archivo text-xl font-medium text-neutral-900 dark:text-neutral-300">
             Order Summary
           </h1>
-          <ul className="m-0 flex max-h-[calc(100dvh-292px)] flex-col gap-y-6 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-500 dark:scrollbar-thumb-neutral-300 lg:h-[calc(100dvh-124px)] lg:overflow-hidden lg:overflow-y-auto">
+          <ul className="m-0 flex max-h-[calc(100dvh-292px)] flex-col gap-y-6 overflow-y-auto px-4 py-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-neutral-400 dark:scrollbar-thumb-neutral-600 lg:h-[calc(100dvh-124px)] lg:overflow-hidden lg:overflow-y-auto">
             {Array.isArray(cart) &&
               cart &&
               cart?.map((item: any, i: number) => {
                 const merchandiseSearchParams = {} as MerchandiseSearchParams;
                 const merchandiseUrl = createUrl(
-                  `/product/${item?.node.productUrlKey}`,
+                  `/product/${getProductSlug(item?.node.productUrlKey)}`,
                   new URLSearchParams(merchandiseSearchParams)
                 );
                 const baseImage: any = safeParse(item?.node?.baseImage);
@@ -42,7 +42,7 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
                         aria-label={`${item?.node?.name}`}
                         href={merchandiseUrl}
                       >
-                        <div className="relative h-[120px] w-[120px] cursor-pointer rounded-2xl bg-neutral-300 xl:h-[162px] xl:w-[194px]">
+                        <div className="relative h-[120px] w-[120px] cursor-pointer rounded-2xl bg-neutral-200 dark:bg-neutral-800 xl:h-[162px] xl:w-[194px]">
                           <GridTileImage
                             alt={item?.node?.baseImage || item?.product?.name}
                             className="h-full w-full object-cover"
@@ -53,7 +53,7 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
                           />
                         </div>
                         <div className="flex flex-1 flex-col text-base">
-                          <h1 className="font-archivo text-lg font-medium">
+                          <h1 className="font-archivo text-xs md:text-sm font-semibold text-neutral-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 line-clamp-2 mb-1 md:mb-2 min-h-[28px] md:min-h-[36px] leading-relaxed transition-colors">
                             {item?.node?.name}
                           </h1>
                           {item.name !== DEFAULT_OPTION ? (
@@ -61,7 +61,7 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
                               {item?.node?.sku}
                             </p>
                           ) : null}
-                          <span className="font-normal text-black dark:text-white">
+                          <span className="font-normal text-neutral-900 dark:text-white">
                             Quantity : {item?.node?.quantity}
                           </span>
                           <div className="block h-16 xl:hidden">
@@ -88,39 +88,39 @@ export default function CheckoutCart({ cartItems, selectedShippingRate: _id }: {
         </div>
         <div className="px-4 py-4 text-sm text-neutral-500 dark:text-neutral-400">
           <div className="mb-3 flex items-center justify-between pb-1">
-            <p className="text-black[60%] font-archivo text-base font-normal">
+            <p className="font-archivo text-base font-normal text-neutral-600 dark:text-neutral-400">
               Subtotal
             </p>
             <Price
               amount={cartItems?.subtotal || "0"}
-              className="text-right text-base text-black dark:text-white"
+              className="text-right text-base text-neutral-900 dark:text-white"
               currencyCode={"USD"}
             />
           </div>
           {shippingRequired && (
             <div className="mb-3 flex items-center justify-between pb-1 pt-1">
-              <p className="text-black[60%] font-archivo text-base font-normal">
+              <p className="font-archivo text-base font-normal text-neutral-600 dark:text-neutral-400">
                 {" "}
                 Shipping
               </p>
               {cartItems?.shippingAmount ? (
                 <Price
                   amount={cartItems?.shippingAmount}
-                  className="text-right text-base text-black dark:text-white"
+                  className="text-right text-base text-neutral-900 dark:text-white"
                   currencyCode={"USD"}
                 />
               ) : (
-                <p className="text-right text-base">Calculated at Next Step</p>
+                <p className="text-right text-base text-neutral-500 dark:text-neutral-400">Calculated at Next Step</p>
               )}
             </div>
           )}
           <div className="my-6 flex items-center justify-between">
-            <p className="font-archivo text-2xl font-normal text-black/[60%] dark:text-white">
+            <p className="font-archivo text-2xl font-normal text-neutral-900/60 dark:text-white">
               Grand Total
             </p>
             <Price
               amount={(cartItems as any)?.grandTotal || "0"}
-              className="text-right font-archivo text-2xl font-normal text-black dark:text-white"
+              className="text-right font-archivo text-2xl font-normal text-neutral-900 dark:text-white"
               currencyCode={"USD"}
             />
           </div>

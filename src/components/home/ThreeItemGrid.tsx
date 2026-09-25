@@ -120,7 +120,7 @@ export const ThreeItemGrid: FC<ThreeItemGridProps> = ({ title, description, prod
         <section className="py-12 md:py-16 bg-white dark:bg-neutral-950">
       <div className="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8">
             <div className="md:max-w-4.5xl mx-auto mb-10 w-auto px-0 text-center md:px-36">
-                <h1 className="mb-4 font-outfit text-xl md:text-4xl font-semibold text-black dark:text-white">
+                <h1 className="mb-4 font-archivo text-xl md:text-4xl font-semibold text-neutral-900 dark:text-white">
                     {title}
                 </h1>
                 <p className="text-sm md:text-base font-normal text-black/60 dark:text-neutral-300">

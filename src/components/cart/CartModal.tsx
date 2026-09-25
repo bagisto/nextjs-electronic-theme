@@ -23,7 +23,7 @@ import { useFormStatus } from "react-dom";
 import { redirectToCheckout } from "@/utils/actions";
 import { EMAIL, getLocalStorage } from "@/store/local-storage";
 import Link from "next/link";
-import { createUrl, isCheckout, safeParse } from "@utils/helper";
+import { createUrl, isCheckout, safeParse, getProductSlug } from "@utils/helper";
 import { useAddressesFromApi } from "@hooks/getAddress";
 import { useMediaQuery } from "@/hooks/useMediaQueryHook";
 import { CloseCart, DeleteItemButton, EditItemQuantityButton } from "@components/common/icons";
@@ -135,7 +135,7 @@ export default function CartModal({
                                 {} as MerchandiseSearchParams;
 
                               const merchandiseUrl = createUrl(
-                                `/product/${item?.node.productUrlKey}`,
+                                `/product/${getProductSlug(item?.node.productUrlKey)}`,
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                               const baseImage: any = safeParse(item?.node?.baseImage);
@@ -164,11 +164,11 @@ export default function CartModal({
                                       </div>
 
                                       <div className="flex flex-1 flex-col text-base max-w-[140px]">
-                                        <span className="line-clamp-1 font-archivo text-base font-medium">
+                                        <span className="line-clamp-2 font-archivo text-xs md:text-sm font-semibold text-neutral-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 leading-relaxed transition-colors min-h-[28px] md:min-h-[36px]">
                                           {item?.node?.name}
                                         </span>
                                         {item.name !== DEFAULT_OPTION ? (
-                                          <p className="text-sm lowercase line-clamp-1 text-black dark:text-neutral-400">
+                                          <p className="text-xs lowercase line-clamp-1 text-neutral-500 dark:text-neutral-400">
                                             {item?.node?.sku}
                                           </p>
                                         ) : null}
@@ -339,7 +339,7 @@ export default function CartModal({
                                 {} as MerchandiseSearchParams;
 
                               const merchandiseUrl = createUrl(
-                                `/product/${item?.node.productUrlKey}`,
+                                `/product/${getProductSlug(item?.node.productUrlKey)}`,
                                 new URLSearchParams(merchandiseSearchParams)
                               );
                               const baseImage: any = safeParse(item?.node?.baseImage);
@@ -368,11 +368,11 @@ export default function CartModal({
                                       </div>
 
                                       <div className="flex flex-1 flex-col text-base max-w-[140px]">
-                                        <span className="line-clamp-1 font-archivo text-base font-medium">
+                                        <span className="line-clamp-2 font-archivo text-xs md:text-sm font-semibold text-neutral-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 leading-relaxed transition-colors min-h-[28px] md:min-h-[36px]">
                                           {item?.node?.name}
                                         </span>
                                         {item.name !== DEFAULT_OPTION ? (
-                                          <p className="text-sm lowercase line-clamp-1 text-black dark:text-neutral-400">
+                                          <p className="text-xs lowercase line-clamp-1 text-neutral-500 dark:text-neutral-400">
                                             {item?.node?.sku}
                                           </p>
                                         ) : null}

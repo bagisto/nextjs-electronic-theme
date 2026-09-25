@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useAppSelector } from "@/store/hooks";
 import { Price } from "../theme/ui/Price";
 import { NOT_IMAGE } from "@/utils/constants";
-import { createUrl, safeParse } from "@/utils/helper";
+import { createUrl, safeParse, getProductSlug } from "@/utils/helper";
 import { useCartDetail } from "@/hooks/useCartDetail";
 import { useAddProduct } from "@/hooks/useAddToCart";
 import {
@@ -192,7 +192,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               {cart.map((item: any, i: number) => {
                 const merchandiseSearchParams = {} as MerchandiseSearchParams;
                 const merchandiseUrl = createUrl(
-                  `/product/${item?.node.productUrlKey}`,
+                  `/product/${getProductSlug(item?.node.productUrlKey)}`,
                   new URLSearchParams(merchandiseSearchParams)
                 );
                 const baseImage: any = safeParse(item?.node?.baseImage);
@@ -222,15 +222,16 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                       />
                     </Link>
 
-                    <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-                      <div>
-                        <Link
-                          href={merchandiseUrl}
-                          onClick={onClose}
-                          className="text-sm cursor-pointer text-neutral-900 dark:text-white line-clamp-2 hover:opacity-80 transition-opacity"
-                        >
-                          {item?.node?.name}
-                        </Link>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+                        <div>
+                          <Link
+                            href={merchandiseUrl}
+                            onClick={onClose}
+                            className="text-xs md:text-sm font-semibold text-neutral-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 line-clamp-2 mb-1 md:mb-2 min-h-[28px] md:min-h-[36px] leading-relaxed transition-colors"
+                          >
+                            {item?.node?.name}
+                          </Link>
+
                         <div className="flex items-center gap-2 mt-1">
                           <Price
                             amount={item?.node?.price}

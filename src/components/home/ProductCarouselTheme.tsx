@@ -18,7 +18,7 @@ const Theme = ({ title, description, products }: ProductsSectionProps) => {
           </div>
         </div>
 
-        <ul className="m-0 grid grid-cols-2 gap-3 md:gap-4 lg:gap-5 p-0 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <ul className="m-0 grid grid-cols-2 gap-3 md:gap-4 lg:gap-5 p-0 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
          {products.map((item, index) => {
                  const imageUrl = getImageUrl(item?.baseImageUrl, baseUrl, NOT_IMAGE);
                   const ProductPrice =

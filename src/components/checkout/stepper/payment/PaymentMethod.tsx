@@ -82,10 +82,10 @@ export default function PaymentMethod({
           <>
             <div className="mt-4  justify-between hidden sm:flex ">
               <div className="flex">
-                <p className="w-auto text-base font-normal text-black/60 dark:text-white/60 sm:w-[192px]">
+                <p className="w-auto text-base font-normal text-neutral-500 dark:text-neutral-400 sm:w-[192px]">
                   Payment Method
                 </p>
-                <p className="text-base font-normal">
+                <p className="text-base font-normal text-neutral-900 dark:text-white">
                   {selectedMethodLabelPrior as string}
                 </p>
               </div>
@@ -94,17 +94,17 @@ export default function PaymentMethod({
                 onClick={() => {
                   setIsOpen(false);
                 }}
-                className="cursor-pointer text-base font-normal text-black/60 underline dark:text-neutral-300"
+                className="cursor-pointer text-base font-normal text-neutral-500 underline dark:text-neutral-300"
               >
                 Change
               </button>
             </div>
             <div className="mt-4 flex sm:hidden justify-between relative">
               <div className="flex justify-between justify-between  flex-1 wrap">
-                <p className="w-auto text-base font-normal text-black/60 dark:text-white/60 sm:w-[192px]">
+                <p className="w-auto text-base font-normal text-neutral-500 dark:text-neutral-400 sm:w-[192px]">
                   Payment Method
                 </p>
-                <p className="text-base font-normal">
+                <p className="text-base font-normal text-neutral-900 dark:text-white">
                   {selectedMethodLabelPrior as string}
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function PaymentMethod({
                 onClick={() => {
                   setIsOpen(false);
                 }}
-                className="cursor-pointer absolute right-0 text-base font-normal text-black/60 underline dark:text-neutral-300"
+                className="cursor-pointer absolute right-0 text-base font-normal text-neutral-500 underline dark:text-neutral-300"
                 style={{ top: "-36px" }}
               >
                 Change
@@ -136,7 +136,7 @@ export default function PaymentMethod({
                     {methods?.map((method: any) => (
                       <CustomRadio
                         key={method?.method}
-                        className="my-1 border border-solid border-neutral-300 dark:border-neutral-500"
+                        className="my-1 border border-solid border-neutral-300 dark:border-neutral-600"
                         description={method?.description}
                         value={method?.method}
                       >
@@ -174,7 +174,7 @@ export default function PaymentMethod({
                   {methods?.map((method: any) => (
                     <CustomRadio
                       key={method?.method}
-                      className="my-1 border border-solid border-neutral-300 dark:border-neutral-500"
+                      className="my-1 border border-solid border-neutral-300 dark:border-neutral-600"
                       description={method?.description}
                       value={method?.method}
                     >
@@ -209,8 +209,8 @@ const CustomRadio = (props: CustomRadioProps) => {
       classNames={{
         base: cn(
           "inline-flex m-0 bg-transparent hover:bg-transparent items-center",
-          "flex-row items-baseline max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-transparent",
-          "data-[selected=true]:border-primary",
+          "flex-row items-baseline max-w-full cursor-pointer rounded-lg gap-4 p-4 border-2 border-neutral-300 dark:border-neutral-600",
+          "data-[selected=true]:border-neutral-900 dark:data-[selected=true]:border-white"
         ),
         hiddenInput: "peer absolute h-0 w-0 opacity-0",
       }}
@@ -219,3 +219,4 @@ const CustomRadio = (props: CustomRadioProps) => {
     </Radio>
   );
 };
+

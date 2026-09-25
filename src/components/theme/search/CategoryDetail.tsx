@@ -2,6 +2,7 @@ import { FC } from "react";
 import type { FunctionComponent } from "react";
 import clsx from "clsx";
 import Link from "next/link";
+import { sanitizeHtml } from "@/utils/sanitize";
 
 interface TextProps {
   html: string;
@@ -44,7 +45,7 @@ export const CategoryDetail: FC<{
 const Prose: FunctionComponent<TextProps> = ({ html, className }) => {
   return (
     <div
-      dangerouslySetInnerHTML={{ __html: html as string }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(html as string) }}
       className={clsx(
         "prose prose-h1:text-[24px]",
         className

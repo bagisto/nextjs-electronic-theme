@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Pagination from "@/components/catalog/Pagination";
 import { REVIEWS_ITEMS_PER_PAGE } from "@/utils/constants";
+import { getProductSlug } from "@/utils/helper";
 
 export default function ReviewsTab() {
     const searchParams = useSearchParams();
@@ -110,7 +111,8 @@ export default function ReviewsTab() {
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <Link 
-                                                href={`/product/${review.productUrlKey}`}
+                                                 href={`/product/${getProductSlug(review.productUrlKey)}`}
+
                                                 className="text-lg font-semibold text-neutral-900 dark:text-white hover:text-teal-500 transition-colors"
                                             >
                                                 {review.productName}

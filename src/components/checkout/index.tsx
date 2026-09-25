@@ -52,7 +52,7 @@ const CheckOut = ({ step }: CheckOutProps) => {
           )}
         </div>
 
-        <div className="h-full w-full !z-0 justify-self-start border-0 border-l border-none border-black/[10%] dark:border-neutral-700 lg:w-1/2 lg:border-solid">
+        <div className="h-full w-full justify-self-start border-0 border-l border-none border-neutral-200 dark:border-neutral-700 lg:w-1/2 lg:border-solid">
           {isLoading ? (
             <CartSkeleton className="w-full" />
           ) : (

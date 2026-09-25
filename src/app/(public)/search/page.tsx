@@ -165,6 +165,12 @@ export default async function SearchPage({
   const totalCount = data?.products?.totalCount;
 
   // Use new client component for the new design
+  const breadcrumbItems = [
+    { name: "Home", href: "/" },
+    { name: "Products", href: "/search" },
+    ...(searchValue ? [{ name: `Search: "${searchValue}"`, href: `/search?q=${encodeURIComponent(searchValue)}` }] : []),
+  ];
+
   return (
     <SearchPageClient
       products={products}
@@ -175,6 +181,7 @@ export default async function SearchPage({
       filterAttributes={filterAttributes}
       searchValue={typeof searchValue === "string" ? searchValue : undefined}
       categoryName="All Products"
+      breadcrumbItems={breadcrumbItems}
     />
   );
 }

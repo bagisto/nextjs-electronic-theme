@@ -5,7 +5,7 @@ import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SwitchProps, useSwitch } from "@heroui/switch";
 import { useTheme } from "next-themes";
 import clsx from "clsx";
-import { MoonFilledIcon, SunFilledIcon } from "@/components/common/icons/product-icons";
+import { SunIcon, MoonIcon } from "@heroicons/react/24/solid";
 
 
 
@@ -64,9 +64,9 @@ const ThemeSwitch: FC<ThemeSwitchProps> = ({ className, classNames }) => {
         })}
       >
         {isDark ? (
-          <SunFilledIcon size={20} className="text-white hover:text-neutral-200 transition-colors" />
+          <SunIcon className="h-5 w-5 text-white hover:text-neutral-200 transition-colors" />
         ) : (
-          <MoonFilledIcon size={20} className="text-white hover:text-neutral-200 transition-colors" />
+          <MoonIcon className="h-5 w-5 text-white hover:text-neutral-200 transition-colors" />
         )}
       </div>
     </Component>

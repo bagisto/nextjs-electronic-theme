@@ -9,10 +9,11 @@ import {
   graphqlRequest,
 } from "@/graphql";
 import { COMMON_IMG, ITEMS_PER_PAGE, SortByFields } from "@utils/constants";
-import { extractNumericId, findCategoryBySlug, buildProductFilters } from "@utils/helper";
+import { extractNumericId, findCategoryBySlug, buildProductFilters, buildCategoryBreadcrumb } from "@utils/helper";
 import { getPage } from "@utils/bagisto-client";
 import { getCategoryFilters } from "@utils/getCategoryFilters";
 import SearchPageClient from "@/components/theme/search/SearchPageClient";
+import { sanitizeHtml } from "@/utils/sanitize";
 
 const RESERVED_PATHS = [
   "api",
@@ -92,6 +93,7 @@ export default async function SlugPage({
       sizeFilterData={sizeFilterData}
       brandFilterData={brandFilterData}
       resolvedParams={resolvedParams}
+      categories={categories}
     />;
   }
 
@@ -119,10 +121,10 @@ export default async function SlugPage({
             {pageData?.pageTitle}
           </h1>
           <div
-            className="prose prose-neutral dark:prose-invert max-w-none 
+            className="prose prose-neutral dark:prose-invert max-w-none
               prose-p:leading-relaxed prose-p:text-neutral-600 dark:prose-p:text-neutral-300
               prose-headings:text-neutral-900 dark:prose-headings:text-white"
-            dangerouslySetInnerHTML={{ __html: pageData?.htmlContent || "" }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(pageData?.htmlContent || "") }}
           />
           {formattedDate && (
             <div className="mt-16">
@@ -145,12 +147,14 @@ async function CategoryPLP({
   sizeFilterData,
   brandFilterData,
   resolvedParams,
+  categories,
 }: {
   categoryItem: any;
   colorFilterData: ProductFilterAttributeResponse;
   sizeFilterData: ProductFilterAttributeResponse;
   brandFilterData: ProductFilterAttributeResponse;
   resolvedParams: { [key: string]: string | string[] | undefined } | undefined;
+  categories: any[];
 }) {
   const numericId = extractNumericId(categoryItem.id);
 
@@ -225,6 +229,8 @@ async function CategoryPLP({
   const categoryName = translation?.name || "";
   const categoryDescription = translation?.description || "";
 
+  const breadcrumbItems = buildCategoryBreadcrumb(categories, categoryItem.translation?.slug || "");
+
   // Use SearchPageClient for pixel-perfect PLP design
   return (
     <SearchPageClient
@@ -238,6 +244,7 @@ async function CategoryPLP({
       categoryName={categoryName}
       categoryDescription={categoryDescription}
       categoryBanner={categoryBanner}
+      breadcrumbItems={breadcrumbItems}
     />
   );
 }

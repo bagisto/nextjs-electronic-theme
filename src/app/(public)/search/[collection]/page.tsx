@@ -19,9 +19,10 @@ import { Suspense } from "react";
 import FilterListSkeleton from "@components/common/skeleton/FilterSkeleton";
 import { TreeCategoriesResponse } from "@/types/theme/category-tree";
 import { MobileSearchBar } from "@components/layout/navbar/MobileSearch";
-import { extractNumericId, findCategoryBySlug, buildProductFilters } from "@utils/helper";
+import { extractNumericId, findCategoryBySlug, buildProductFilters, buildCategoryBreadcrumb } from "@utils/helper";
 import { getCategoryFilters } from "@utils/getCategoryFilters";
 import { cachedGraphQLRequest } from "@hooks/useCache";
+import Breadcrumb from "@/components/common/Breadcrumb";
 
 
 export async function generateMetadata({
@@ -133,17 +134,21 @@ export default async function CategoryPage({
   const totalCount = data?.products?.totalCount;
   const translation = categoryItem.translation;
 
+  const breadcrumbItems = buildCategoryBreadcrumb(categories, categoryItem.translation?.slug || "");
+
   return (
     <>
       <MobileSearchBar />
       <section className="min-h-screen bg-white dark:bg-neutral-950">
-        <Suspense fallback={<FilterListSkeleton />}>
-          <CategoryDetail
-            categoryItem={{ description: translation?.description ?? "", name: translation?.name ?? "" }}
-          />
-        </Suspense>
-
         <div className="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8 py-8">
+          <Breadcrumb items={breadcrumbItems} />
+
+          <Suspense fallback={<FilterListSkeleton />}>
+            <CategoryDetail
+              categoryItem={{ description: translation?.description ?? "", name: translation?.name ?? "" }}
+            />
+          </Suspense>
+
           <div className="my-8 hidden gap-6 md:flex md:items-baseline md:justify-between">
             <div className="w-64">
               <FilterList filterAttributes={filterAttributes} />

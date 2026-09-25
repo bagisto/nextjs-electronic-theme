@@ -142,7 +142,7 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ options }) => {
                 onMouseUp={handleMouseUp}
             >
                 {/* Main carousel area */}
-                <div className="relative w-full max-w-[1920px] mx-auto aspect-[320/613] md:aspect-[1920/781]">
+                <div className="relative w-full max-w-[1920px] mx-auto aspect-[320/500] sm:aspect-[320/613] md:aspect-[768/500] lg:aspect-[1920/781]">
                     {images.map((img, index) => {
                         const imageUrl = getFullImageUrl(img.image);
                         const isActive = index === currentIndex;

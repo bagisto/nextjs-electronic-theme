@@ -13,6 +13,8 @@ import { InlineSpinner } from "@/components/common/PageLoader";
 import Pagination from "@/components/catalog/Pagination";
 import ProductPrice from "@/components/theme/ui/ProductPrice";
 import { COMPARE_ITEMS_PER_PAGE, getImageUrl, baseUrl, NOT_IMAGE } from "@/utils/constants";
+import { getProductSlug } from "@/utils/helper";
+import { sanitizeHtml } from "@/utils/sanitize";
 
 export default function CompareClient() {
     const router = useRouter();
@@ -46,7 +48,8 @@ export default function CompareClient() {
 
     const handleAddToCart = async (product: { id: string; type?: string; urlKey?: string }) => {
         if (productRequiresOptions(product.type) && product.urlKey) {
-            router.push(`/product/${product.urlKey}`);
+                    router.push(`/product/${getProductSlug(product.urlKey)}`);
+
             return;
         }
         if (addingToCartId) return;
@@ -146,7 +149,7 @@ export default function CompareClient() {
                                         <th key={id} className="min-w-[352px] md:min-w-[368px] p-4 md:p-6 border-b border-neutral-100 dark:border-neutral-800 relative align-top bg-white dark:bg-neutral-950">
                                             <div className="product-card text-left w-[320px] relative">
                                                 <div className="image-wrapper relative w-[320px] h-[348px] bg-neutral-50 dark:bg-neutral-900 rounded-xl md:rounded-2xl overflow-hidden mb-4 group ring-1 ring-neutral-100 dark:ring-neutral-800 mx-auto">
-                                                    <Link href={`/product/${urlKey}`} className="block w-full h-full">
+                                                    <Link href={`/product/${getProductSlug(urlKey)}`} className="block w-full h-full">
                                                         <Image
                                                             src={getImageUrl(baseImageUrl, baseUrl, NOT_IMAGE) || NOT_IMAGE}
                                                             alt={name || "Product"}
@@ -193,7 +196,8 @@ export default function CompareClient() {
                                                     </button>
                                                 </div>
                                                 
-                                                <Link href={`/product/${urlKey}`} className="block group">
+                                                 <Link href={`/product/${getProductSlug(urlKey)}`} className="block group">
+
                                                     <h3 className="text-sm md:text-base font-bold text-neutral-900 dark:text-white line-clamp-2 mb-2 h-10 md:h-12 group-hover:text-primary transition-colors">
                                                         {name}
                                                     </h3>
@@ -252,7 +256,7 @@ export default function CompareClient() {
                                     <td key={item.id} className="p-4 md:p-6 border-b border-neutral-100 dark:border-neutral-800 text-neutral-600 dark:text-neutral-400 text-xs md:text-sm bg-white dark:bg-neutral-950 align-top">
                                         <div 
                                             className="line-clamp-6 leading-relaxed" 
-                                            dangerouslySetInnerHTML={{ __html: item.product?.shortDescription || "No description available" }} 
+                                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.product?.shortDescription || "No description available") }} 
                                         />
                                     </td>
                                 ))}

@@ -402,6 +402,45 @@ export function findCategoryBySlug(categories: CategoryNode[], slug: string): Ca
   return null;
 }
 
+export interface BreadcrumbItem {
+  name: string;
+  href: string;
+}
+
+export function getProductSlug(urlKey: string | undefined | null): string {
+  if (!urlKey) return "";
+  return urlKey.split("/").pop() || urlKey;
+}
+
+export function buildCategoryBreadcrumb(
+  categories: CategoryNode[],
+  targetSlug: string
+): BreadcrumbItem[] {
+  const path: BreadcrumbItem[] = [{ name: "Home", href: "/" }];
+
+  function walk(nodes: CategoryNode[], trail: CategoryNode[]): boolean {
+    for (const node of nodes) {
+      const currentTrail = [...trail, node];
+      if (node.translation?.slug === targetSlug) {
+        for (const ancestor of currentTrail) {
+          path.push({
+            name: ancestor.translation?.name || "Category",
+            href: ancestor.translation?.slug ? `/${ancestor.translation.slug}` : "/",
+          });
+        }
+        return true;
+      }
+      if (node.children && isArray(node.children)) {
+        if (walk(node.children, currentTrail)) return true;
+      }
+    }
+    return false;
+  }
+
+  walk(categories, []);
+  return path;
+}
+
 
 export function extractNumericId(id: string): string | undefined {
   if (!id) return undefined;

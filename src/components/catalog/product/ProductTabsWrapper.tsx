@@ -3,6 +3,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { ProductMoreDetails } from "./ProductMoreDetail";
 import { ProductData, ProductReviewNode } from "../type";
 import DocumentIcon from "@/components/common/icons/DocumentIcon";
+import InfoIcon from "@/components/common/icons/InfoIcon";
 
 type TabId = "description" | "specifications" | "reviews";
 
@@ -99,6 +100,14 @@ export function ProductTabsWrapper({
       });
   }, [product?.description]);
 
+  const leftDescriptionRows = descriptionRows.slice(
+    0,
+    Math.ceil(descriptionRows.length / 2)
+  );
+  const rightDescriptionRows = descriptionRows.slice(
+    Math.ceil(descriptionRows.length / 2)
+  );
+
   const tabs: { id: TabId; label: string }[] = [
     ...(hasDescription ? [{ id: "description" as TabId, label: "Description" }] : []),
     ...(hasSpecifications ? [{ id: "specifications" as TabId, label: "Technical Specifications" }] : []),
@@ -159,44 +168,75 @@ export function ProductTabsWrapper({
         {/* Description */}
         {activeTab === "description" && (
           <div className="animate-in fade-in duration-300">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
-                <thead className="bg-neutral-50 dark:bg-neutral-800/50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Attribute
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
-                      Value
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-neutral-200 dark:bg-neutral-900 dark:divide-neutral-800">
-                  {descriptionRows.length > 0 ? (
-                    descriptionRows.map((row, index) => (
-                      <tr key={index} className={`${index % 2 === 0 ? "bg-neutral-50 dark:bg-neutral-800/50" : "bg-white dark:bg-neutral-900"}`}>
-                        <td className="px-6 py-4 text-sm text-neutral-700 dark:text-neutral-300">
+            {descriptionRows.length > 0 ? (
+              <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  {/* Left Column */}
+                  <div>
+                    {leftDescriptionRows.map((row, index) => (
+                      <div
+                        key={`left-${index}`}
+                        className={`
+                          flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 px-5 py-4
+                          hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors duration-200
+                          ${index % 2 === 0
+                            ? "bg-neutral-50/50 dark:bg-neutral-800/30"
+                            : "bg-white dark:bg-neutral-900"
+                          }
+                          ${index < leftDescriptionRows.length - 1
+                            ? "border-b border-neutral-100 dark:border-neutral-800"
+                            : ""
+                          }
+                        `}
+                      >
+                        <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400 capitalize">
                           {row.attribute}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-neutral-700 dark:text-neutral-300">
+                        </span>
+                        <span className="text-sm font-semibold text-neutral-900 dark:text-white text-left sm:text-right break-all">
                           {row.value}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    // Sample data for verification
-                    <tr>
-                      <td className="px-6 py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                        Sample Attribute
-                      </td>
-                      <td className="px-6 py-4 text-sm text-neutral-700 dark:text-neutral-300">
-                        Sample Value
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Right Column */}
+                  <div className="border-t md:border-t-0 md:border-l border-neutral-200 dark:border-neutral-700">
+                    {rightDescriptionRows.map((row, index) => (
+                      <div
+                        key={`right-${index}`}
+                        className={`
+                          flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4 px-5 py-4
+                          hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors duration-200
+                          ${index % 2 === 0
+                            ? "bg-neutral-50/50 dark:bg-neutral-800/30"
+                            : "bg-white dark:bg-neutral-900"
+                          }
+                          ${index < rightDescriptionRows.length - 1
+                            ? "border-b border-neutral-100 dark:border-neutral-800"
+                            : ""
+                          }
+                        `}
+                      >
+                        <span className="text-sm font-medium text-neutral-500 dark:text-neutral-400 capitalize">
+                          {row.attribute}
+                        </span>
+                        <span className="text-sm font-semibold text-neutral-900 dark:text-white text-left sm:text-right break-all">
+                          {row.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <InfoIcon
+                  className="w-12 h-12 text-neutral-300 dark:text-neutral-600 mb-4"
+                />
+                <p className="text-neutral-500 dark:text-neutral-400 text-sm">
+                  No description available for this product.
+                </p>
+              </div>
+            )}
           </div>
         )}
 
@@ -211,13 +251,18 @@ export function ProductTabsWrapper({
                     {leftSpecs.map((spec: any, index: number) => (
                       <div
                         key={index}
-                        className={`flex items-center justify-between px-5 py-4 ${index % 2 === 0
-                            ? "bg-neutral-50 dark:bg-neutral-800/50"
+                        className={`
+                          flex items-center justify-between px-5 py-4
+                          hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors duration-200
+                          ${index % 2 === 0
+                            ? "bg-neutral-50/50 dark:bg-neutral-800/30"
                             : "bg-white dark:bg-neutral-900"
-                          } ${index < leftSpecs.length - 1
+                          }
+                          ${index < leftSpecs.length - 1
                             ? "border-b border-neutral-100 dark:border-neutral-800"
                             : ""
-                          }`}
+                          }
+                        `}
                       >
                         <span className="text-sm text-neutral-500 dark:text-neutral-400">
                           {spec.label}
@@ -233,13 +278,18 @@ export function ProductTabsWrapper({
                     {rightSpecs.map((spec: any, index: number) => (
                       <div
                         key={index}
-                        className={`flex items-center justify-between px-5 py-4 ${index % 2 === 0
-                            ? "bg-neutral-50 dark:bg-neutral-800/50"
+                        className={`
+                          flex items-center justify-between px-5 py-4
+                          hover:bg-neutral-50 dark:hover:bg-neutral-800/80 transition-colors duration-200
+                          ${index % 2 === 0
+                            ? "bg-neutral-50/50 dark:bg-neutral-800/30"
                             : "bg-white dark:bg-neutral-900"
-                          } ${index < rightSpecs.length - 1
+                          }
+                          ${index < rightSpecs.length - 1
                             ? "border-b border-neutral-100 dark:border-neutral-800"
                             : ""
-                          }`}
+                          }
+                        `}
                       >
                         <span className="text-sm text-neutral-500 dark:text-neutral-400">
                           {spec.label}

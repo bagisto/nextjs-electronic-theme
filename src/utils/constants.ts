@@ -87,6 +87,20 @@ export const configHeader = [
         value:
           "camera=(), microphone=(), geolocation=(), browsing-topics=()",
       },
+      {
+        key: "Content-Security-Policy",
+        value: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' https: data: blob:",
+          "font-src 'self' data:",
+          "connect-src 'self' https: ws:",
+          "frame-ancestors 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+        ].join("; "),
+      },
     ],
   },
   // Cache dynamic pages - shorter cache for frequently updated content

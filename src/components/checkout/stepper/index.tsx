@@ -128,20 +128,20 @@ export default function Stepper(
 
     return (
       <div key={step.id} className="flex w-full flex-col">
-        <div className="flex items-center justify-between font-outfit">
+        <div className="flex items-center justify-between font-archivo">
           <div className="flex items-center gap-3">
             <div
               className={`flex h-6 w-6 items-center justify-center rounded-full text-sm font-medium ${isCompleted
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-neutral-900"
+                ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                : "bg-neutral-200 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-300"
                 }`}
             >
               {step.id}
             </div>
             <span
               className={`text-lg font-medium max-md:text-base ${isActive
-                ? "font-medium text-neutral-900 dark:text-neutral-300"
-                : "text-neutral-900 dark:text-white"
+                ? "font-semibold text-neutral-900 dark:text-white"
+                : "text-neutral-500 dark:text-neutral-400"
                 }`}
             >
               {step.title}
@@ -159,15 +159,15 @@ export default function Stepper(
       <header className="pb-6 sm:py-6">
         <Link
           aria-label={SITE_NAME}
-          className="flex items-center gap-2 text-black dark:text-white md:pt-1 hidden lg:block"
+          className="flex items-center gap-2 text-neutral-900 dark:text-white md:pt-1 hidden lg:block"
           href="/"
         >
           <CheckoutLogoIcon />
         </Link>
-        <h1 className="text-xl px-2 font-semibold block lg:hidden">Checkout</h1>
+        <h1 className="text-xl px-2 font-semibold text-neutral-900 dark:text-white block lg:hidden">Checkout</h1>
       </header>
 
-      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-500 dark:scrollbar-thumb-neutral-300 h-[calc(100dvh-200px)] overflow-y-auto lg:h-[calc(100dvh-124px)]">
+      <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-neutral-400 dark:scrollbar-thumb-neutral-600 h-[calc(100dvh-200px)] overflow-y-auto lg:h-[calc(100dvh-124px)]">
         <div className="flex h-full flex-col gap-y-8 pl-2 pr-6 sm:px-3 sm:pr-10" style={{ marginTop: "20px" }}>
           {steps.map((step) => (
             <StepItem key={step.id} step={step} />

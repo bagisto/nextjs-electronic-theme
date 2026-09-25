@@ -4,6 +4,15 @@ import { Suspense } from "react";
 import CustomerLayout from "@components/customer/credentials/customer-detail/CustomerLayout";
 import { useAppSelector } from "@/store/hooks";
 import { useSearchParams } from "next/navigation";
+import Breadcrumb from "@/components/common/Breadcrumb";
+
+const TAB_LABELS: Record<string, string> = {
+  profile: "Profile",
+  addresses: "Addresses",
+  wishlist: "Wishlist",
+  orders: "Orders",
+  reviews: "Reviews",
+};
 
 function CustomerDetailContent() {
   const { user } = useAppSelector((state) => state.user);
@@ -16,11 +25,20 @@ function CustomerDetailContent() {
     avatar: user?.image || undefined,
   };
 
+  const tabLabel = TAB_LABELS[initialTab] || "Account";
+
   return (
-    <CustomerLayout
-      customerData={customerData}
-      initialTab={initialTab}
-    />
+    <div className="mx-auto max-w-screen-2xl px-4 md:px-6 lg:px-8 py-6">
+      <Breadcrumb items={[
+        { name: "Home", href: "/" },
+        { name: "Account", href: "/customer-details" },
+        { name: tabLabel, href: `/customer-details?tab=${initialTab}` },
+      ]} />
+      <CustomerLayout
+        customerData={customerData}
+        initialTab={initialTab}
+      />
+    </div>
   );
 }
 

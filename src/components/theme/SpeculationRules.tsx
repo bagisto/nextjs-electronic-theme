@@ -1,5 +1,6 @@
 'use client';
 import Script from 'next/script';
+import { sanitizeJsonForScriptTag } from "@/utils/sanitize";
 
 export function SpeculationRules() {
   return (
@@ -7,7 +8,7 @@ export function SpeculationRules() {
       id="speculation-rules"
       type="speculationrules"
       dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
+        __html: sanitizeJsonForScriptTag(JSON.stringify({
           prerender: [
             {
               where: {
@@ -30,7 +31,7 @@ export function SpeculationRules() {
               referrer_policy: 'no-referrer',
             },
           ],
-        }),
+        })),
       }}
     />
   );

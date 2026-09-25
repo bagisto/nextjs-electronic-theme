@@ -7,6 +7,7 @@ import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { generateMetadataForPage } from "@utils/helper";
 import { staticSeo } from "@utils/metadata";
 import { SpeculationRules } from "@components/theme/SpeculationRules";
+import { sanitizeJsonForScriptTag } from "@/utils/sanitize";
 
 const bagistoImageOrigin = (() => {
   try {
@@ -39,7 +40,7 @@ export default function RootLayout({
         <script
           type="speculationrules"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: sanitizeJsonForScriptTag(JSON.stringify({
               prerender: [
                 {
                   where: {
@@ -60,7 +61,7 @@ export default function RootLayout({
                   referrer_policy: "no-referrer",
                 },
               ],
-            }),
+            })),
           }}
         />
       </head>

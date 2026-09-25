@@ -217,55 +217,55 @@ export const GuestAddAdressForm: FC<{
         <div className="mt-4  items-start  hidden sm:flex">
           <div className="flex flex-col justify-between w-full">
             <div className="flex">
-              <p className="w-[184px] text-base font-normal text-black/60 dark:text-white/60">
+              <p className="w-[184px] text-base font-normal text-neutral-500 dark:text-neutral-400">
                 Billing Address
               </p>
               <div className="block cursor-pointer rounded-xl p-2 max-sm:rounded-lg">
                 <div className="flex flex-col">
-                  <p className="text-base font-medium">
+                  <p className="text-base font-medium text-neutral-900 dark:text-white">
                       {`${billingAddress?.firstName || ""} ${billingAddress?.lastName || ""
                     }`}
                   </p>
-                  <p className="text-base font-medium text-zinc-500">
+                  <p className="text-base font-medium text-neutral-500 dark:text-neutral-400">
                     {`${billingAddress?.companyName || ""}`}
                   </p>
                 </div>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                     {`${billingAddress?.address || ""}, ${billingAddress?.postcode || ""
                   }`}
                 </p>
-                <p className="text-zinc-500">
+                <p className="text-neutral-500 dark:text-neutral-400">
                   {billingAddress?.city || ""} {billingAddress?.state || ""},
                   {billingAddress?.country || ""}
                 </p>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                   {`T: ${billingAddress?.phone || ""}`}
                 </p>
               </div>
             </div>
             <div className="flex">
-              <p className="w-[184px] text-base font-normal text-black/60 dark:text-white/60">
+              <p className="w-[184px] text-base font-normal text-neutral-500 dark:text-neutral-400">
                 Shipping Address
               </p>
               <div className="block cursor-pointer rounded-xl p-2 max-sm:rounded-lg">
                 <div className="flex flex-col">
-                  <p className="text-base font-medium">
+                  <p className="text-base font-medium text-neutral-900 dark:text-white">
                       {`${shippingAddress?.firstName || ""} ${shippingAddress?.lastName || ""
                     }`}
                   </p>
-                  <p className="text-base font-medium text-zinc-500">
+                  <p className="text-base font-medium text-neutral-500 dark:text-neutral-400">
                     {`${shippingAddress?.companyName || ""}`}
                   </p>
                 </div>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                     {`${shippingAddress?.address || ""}, ${shippingAddress?.postcode || ""
                   }`}
                 </p>
-                <p className="text-zinc-500">
+                <p className="text-neutral-500 dark:text-neutral-400">
                   {shippingAddress?.city || ""} {shippingAddress?.state || ""},
                   {shippingAddress?.country || ""}
                 </p>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                   {`T: ${shippingAddress?.phone || ""}`}
                 </p>
               </div>
@@ -276,7 +276,7 @@ export const GuestAddAdressForm: FC<{
             onClick={() => {
               setIsOpen(false);
             }}
-            className="cursor-pointer text-base font-normal text-black/[60%] underline dark:text-neutral-300"
+            className="cursor-pointer text-base font-normal text-neutral-500 underline dark:text-neutral-300"
           >
             Change
           </button>
@@ -284,55 +284,55 @@ export const GuestAddAdressForm: FC<{
         <div className="mt-4 flex sm:hidden items-start justify-between relative">
           <div className="flex flex-col justify-between w-full">
             <div className="flex justify-between justify-between  flex-1 wrap">
-              <p className="w-[184px] text-base font-normal text-black/60 dark:text-white/60">
+              <p className="w-[184px] text-base font-normal text-neutral-500 dark:text-neutral-400">
                 Billing Address
               </p>
               <div className="block cursor-pointer rounded-xl p-2 max-sm:rounded-lg">
                 <div className="flex flex-col">
-                  <p className="text-base font-medium">
+                  <p className="text-base font-medium text-neutral-900 dark:text-white">
                       {`${billingAddress?.firstName || ""} ${billingAddress?.lastName || ""
                     }`}
                   </p>
-                  <p className="text-base font-medium text-zinc-500">
+                  <p className="text-base font-medium text-neutral-500 dark:text-neutral-400">
                     {`${billingAddress?.companyName || ""}`}
                   </p>
                 </div>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                     {`${billingAddress?.address || ""}, ${billingAddress?.postcode || ""
                   }`}
                 </p>
-                <p className="text-zinc-500">
+                <p className="text-neutral-500 dark:text-neutral-400">
                   {billingAddress?.city || ""} {billingAddress?.state || ""},
                   {billingAddress?.country || ""}
                 </p>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                   {`T: ${billingAddress?.phone || ""}`}
                 </p>
               </div>
             </div>
             <div className="flex justify-between justify-between  flex-1 wrap">
-              <p className="w-[184px] text-base font-normal text-black/60 dark:text-white/60">
+              <p className="w-[184px] text-base font-normal text-neutral-500 dark:text-neutral-400">
                 Shipping Address
               </p>
               <div className="block cursor-pointer rounded-xl p-2 max-sm:rounded-lg">
                 <div className="flex flex-col">
-                  <p className="text-base font-medium">
+                  <p className="text-base font-medium text-neutral-900 dark:text-white">
                       {`${shippingAddress?.firstName || ""} ${shippingAddress?.lastName || ""
                     }`}
                   </p>
-                  <p className="text-base font-medium text-zinc-500">
+                  <p className="text-base font-medium text-neutral-500 dark:text-neutral-400">
                     {`${shippingAddress?.companyName || ""}`}
                   </p>
                 </div>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                     {`${shippingAddress?.address || ""}, ${shippingAddress?.postcode || ""
                   }`}
                 </p>
-                <p className="text-zinc-500">
+                <p className="text-neutral-500 dark:text-neutral-400">
                   {shippingAddress?.city || ""} {shippingAddress?.state || ""},
                   {shippingAddress?.country || ""}
                 </p>
-                <p className="mt-2 text-sm text-zinc-500 max-md:mt-2 max-sm:mt-0">
+                <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 max-md:mt-2 max-sm:mt-0">
                   {`T: ${shippingAddress?.phone || ""}`}
                 </p>
               </div>
@@ -343,7 +343,7 @@ export const GuestAddAdressForm: FC<{
             onClick={() => {
               setIsOpen(false);
             }}
-            className="cursor-pointer absolute right-0 text-base font-normal text-black/[60%] underline dark:text-neutral-300"
+            className="cursor-pointer absolute right-0 text-base font-normal text-neutral-500 underline dark:text-neutral-300"
             style={{ top: "-36px" }}
           >
             Change

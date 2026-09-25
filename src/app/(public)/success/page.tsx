@@ -4,6 +4,7 @@ import { ClearCartButton } from "@components/checkout/success/EmptyCart";
 import OrderDetail from "@components/cart/OrderDetail";
 import CheckSign from "@components/common/icons/CheckSign";
 import { ORDER_ID } from "@/utils/constants";
+import Breadcrumb from "@/components/common/Breadcrumb";
 
 const SuccessPage = async () => {
   const orderId = (await cookies()).get(ORDER_ID)?.value;
@@ -13,7 +14,11 @@ const SuccessPage = async () => {
 
   return (
     <div className="flex min-h-[calc(100vh-450px)] items-center px-4">
-      <div className="flex w-full flex-col items-center justify-center overflow-hidden mt-20 md:mt-50">
+      <div className="flex w-full flex-col items-center justify-center overflow-hidden">
+        <Breadcrumb items={[
+          { name: "Home", href: "/" },
+          { name: "Order Confirmed", href: `/success?order=${orderId}` },
+        ]} />
         <CheckSign className="h-28 w-28 sm:h-38 sm:w-38" />
         <OrderDetail orderId={orderId} />
         <ClearCartButton buttonName="Continue shopping" redirect="/" />

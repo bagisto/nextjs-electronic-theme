@@ -1,3 +1,5 @@
+import { sanitizeCss, sanitizeHtml } from "@/utils/sanitize";
+
 interface StaticContentProps {
     options: {
         html: string;
@@ -11,9 +13,9 @@ export default function StaticContent({ options }: StaticContentProps) {
     return (
         <div className="static-content-wrapper">
             {options.css && (
-                <style dangerouslySetInnerHTML={{ __html: options.css }} />
+                <style dangerouslySetInnerHTML={{ __html: sanitizeCss(options.css) }} />
             )}
-            <div dangerouslySetInnerHTML={{ __html: options.html }} />
+            <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(options.html) }} />
         </div>
     );
 }

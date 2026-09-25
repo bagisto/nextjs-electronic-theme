@@ -31,21 +31,21 @@ export default function OrderReview({
     <div className="mt-4 flex-col mb-20 sm:mb-0">
       <div className="relative">
         {isObject(shippingAddress) && (
-          <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
+          <table className="w-full text-left text-sm text-neutral-500 dark:text-neutral-400">
             <tbody>
               <tr className="">
-                <td className="py-4">Contact</td>
+                <td className="py-4 text-neutral-600 dark:text-neutral-400">Contact</td>
                 <th
-                  className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                  className="break-all px-6 py-4 font-medium text-neutral-900 dark:text-white"
                   scope="row"
                 >
                   {shippingAddress?.email}
                 </th>
               </tr>
               <tr className="">
-                <td className="py-4">Billing to</td>
+                <td className="py-4 text-neutral-600 dark:text-neutral-400">Billing to</td>
                 <th
-                  className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                  className="break-all px-6 py-4 font-medium text-neutral-900 dark:text-white"
                   scope="row"
                 >
                   {billingAddress?.firstName}, {billingAddress?.lastName},{" "}
@@ -57,9 +57,9 @@ export default function OrderReview({
               {isShippingRequired && (
                 <>
                   <tr className="">
-                    <td className="py-4">Ship to</td>
+                    <td className="py-4 text-neutral-600 dark:text-neutral-400">Ship to</td>
                     <th
-                      className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                      className="break-all px-6 py-4 font-medium text-neutral-900 dark:text-white"
                       scope="row"
                     >
                       {shippingAddress?.firstName}, {shippingAddress?.lastName},{" "}
@@ -69,9 +69,9 @@ export default function OrderReview({
                     </th>
                   </tr>
                   <tr className="">
-                    <td className="py-4">Method</td>
+                    <td className="py-4 text-neutral-600 dark:text-neutral-400">Method</td>
                     <th
-                      className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                      className="break-all px-6 py-4 font-medium text-neutral-900 dark:text-white"
                       scope="row"
                     >
                       {selectedShippingRateTitle}
@@ -80,9 +80,9 @@ export default function OrderReview({
                 </>
               )}
               <tr className="">
-                <td className="py-4">Payment</td>
+                <td className="py-4 text-neutral-600 dark:text-neutral-400">Payment</td>
                 <th
-                  className="break-all px-6 py-4 font-medium text-gray-900 dark:text-white"
+                  className="break-all px-6 py-4 font-medium text-neutral-900 dark:text-white"
                   scope="row"
                 >
                   {selectedPaymentTitle}

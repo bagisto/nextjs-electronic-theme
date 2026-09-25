@@ -27,8 +27,9 @@ import ProductInfo from "@components/catalog/product/ProductInfo";
 import { LRUCache } from "@/utils/LRUCache";
 import { ProductVariant } from "@/types/category/type";
 import { MobileSearchBar } from "@components/layout/navbar/MobileSearch";
-import Link from "next/link";
 import { ProductTabsWrapper } from "@/components/catalog/product/ProductTabsWrapper";
+import Breadcrumb from "@/components/common/Breadcrumb";
+import { sanitizeJsonForScriptTag } from "@/utils/sanitize";
 
 const productCache = new LRUCache<ProductNode>(100, 10);
 export const dynamic = "force-static";
@@ -209,30 +210,18 @@ export default async function ProductPage({
       <MobileSearchBar />
       <script
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(productJsonLd),
+          __html: sanitizeJsonForScriptTag(JSON.stringify(productJsonLd)),
         }}
         type="application/ld+json"
       />
 
       <div className="max-w-screen-2xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-10 mt-5">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400 mb-8">
-          <Link href="/" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
-            Home
-          </Link>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          <Link href="/search" className="hover:text-neutral-900 dark:hover:text-white transition-colors">
-            Products
-          </Link>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-          <span className="text-neutral-900 dark:text-white font-medium truncate max-w-[200px]">
-            {product?.name}
-          </span>
-        </nav>
+        <Breadcrumb items={[
+          { name: "Home", href: "/" },
+          { name: "Products", href: "/search" },
+          { name: product?.name || "Product", href: `/product/${fullPath}` },
+        ]} />
 
         {/* Product Section - Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">

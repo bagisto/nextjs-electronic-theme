@@ -1,10 +1,11 @@
 {
   "name": "headless-nextjs-electronic-theme",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_ENV=production eslint . && next build",
+    "build": " next build",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -21,6 +22,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
     "graphql": "^16.12.0",
+    "isomorphic-dompurify": "^2.36.0",
     "next": "^16.2.7",
     "next-auth": "^4.24.13",
     "next-themes": "^0.4.6",
